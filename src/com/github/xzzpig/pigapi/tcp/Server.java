@@ -1,11 +1,18 @@
 package com.github.xzzpig.pigapi.tcp;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.github.xzzpig.pigapi.customevent.ClientConnectEvent;
+import com.github.xzzpig.pigapi.event.Event;
 
 public class Server
 {
 	public static Server server;
 	
 	public ServerSocket ss;
+
+	private List<Client> clients = new ArrayList<Client>();
 	
 	public Server(int port) throws Exception{
 		Server.server = this;
@@ -15,7 +22,9 @@ public class Server
 				public void run(){
 					while(true){
 						try{
-							new Client(ss.accept());
+							Client client =new Client(ss.accept());
+							clients.add(client);
+							Event.callEvent(new ClientConnectEvent(Server.this,client));
 							System.out.println("新客户端连接");
 						}
 						catch(Exception e){
@@ -25,4 +34,7 @@ public class Server
 				}
 		}).start();
 	}
+	
+	public List<Client> getClients(){
+		return clients ;}
 }
