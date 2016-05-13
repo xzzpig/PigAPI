@@ -47,7 +47,6 @@ public class Client
 					while(in!=null||s.isConnected()){
 						try{
 							Object data = in.readObject();
-							System.out.println("数据到达:"+data);
 							Event.callEvent(new ServerDataReachEvent(Client.this,data));
 						}
 						catch(Exception e){}
