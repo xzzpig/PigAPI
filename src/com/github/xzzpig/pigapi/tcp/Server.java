@@ -29,6 +29,8 @@ public class Server
 						}
 						catch(Exception e){
 							System.out.println("服务器接受客户端错误");
+							if(Server.this.ss.isClosed())
+								break;
 						}
 					}
 				}
