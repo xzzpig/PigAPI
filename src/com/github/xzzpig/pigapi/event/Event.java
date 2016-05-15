@@ -9,7 +9,6 @@ public class Event
 
 	public static final void registListener(Listener listener){
 		for(Method meth: listener.getClass().getMethods()){
-			System.out.println(meth.getName());
 			for(Annotation ann:meth.getAnnotations()){
 				if(ann.toString().contains("EventHandler()")){
 					meth.setAccessible(true);
