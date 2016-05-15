@@ -9,14 +9,15 @@ public class Event
 
 	public static final void registListener(Listener listener){
 		for(Method meth: listener.getClass().getMethods()){
+			System.out.println(meth.getName());
 			for(Annotation ann:meth.getAnnotations()){
 				if(ann.toString().contains("EventHandler()")){
+					meth.setAccessible(true);
 					try{
 						Type type = meth.getGenericParameterTypes()[0];
 						if(!events.containsKey(type))
 							events.put(type,new ArrayList<EventMethod>());
 						events.get(type).add(new EventMethod(meth,listener));
-						System.out.println(type+"|"+meth.getName());
 					}
 					catch(Exception e){}
 				}
