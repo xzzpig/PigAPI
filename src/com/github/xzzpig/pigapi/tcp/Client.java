@@ -2,6 +2,8 @@ package com.github.xzzpig.pigapi.tcp;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+
+import com.github.xzzpig.pigapi.TData;
 import com.github.xzzpig.pigapi.event.*;
 import com.github.xzzpig.pigapi.customevent.*;
 
@@ -12,6 +14,7 @@ public class Client
 	
 	public Socket s;
 	public String from;
+	public TData data = new TData();
 
 	public Client(Socket s){
 		clients.add(this);
