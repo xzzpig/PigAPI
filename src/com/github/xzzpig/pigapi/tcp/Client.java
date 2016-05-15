@@ -37,7 +37,22 @@ public class Client
 		catch(Exception e){e.printStackTrace();System.out.println("数据发送错误");}
 		return this;
 	}
-	
+	public Object receiveData(int timeout){
+					ObjectInputStream in = null;
+					try{
+						s.setSoTimeout(timeout);
+						in = new ObjectInputStream(s.getInputStream());
+					Object object = in.readObject();
+					s.setSoTimeout(0);
+					return object;
+					}
+					catch(Exception e){try {
+						s.setSoTimeout(0);
+					} catch (SocketException e1) {
+					}System.out.println("数据接受错误");}
+					return null;
+			
+	}
 	private void acceptData(){
 		new Thread(new Runnable(){
 				@Override
