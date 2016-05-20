@@ -1,13 +1,17 @@
 package com.github.xzzpig.pigapi.tcp;
 
-import java.net.*;
-import java.util.*;
-import java.io.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.xzzpig.pigapi.Debuger;
 import com.github.xzzpig.pigapi.TData;
-import com.github.xzzpig.pigapi.event.*;
-import com.github.xzzpig.pigapi.customevent.*;
+import com.github.xzzpig.pigapi.customevent.ServerDataReachEvent;
+import com.github.xzzpig.pigapi.event.Event;
 
 public class Client {
 	public static List<Client> clients = new ArrayList<Client>();
