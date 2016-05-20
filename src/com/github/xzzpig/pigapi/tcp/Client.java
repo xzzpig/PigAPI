@@ -58,7 +58,7 @@ public class Client {
 			try {
 				s.setSoTimeout(0);
 			} catch (SocketException e1) {
-				Debuger.print(e.toString() + e.getMessage());
+				Debuger.print(e);
 			}
 			System.out.println("数据接受错误");
 		}
@@ -75,7 +75,7 @@ public class Client {
 					in = new ObjectInputStream(s.getInputStream());
 				} catch (Exception e) {
 					System.out.println("数据接受错误");
-					Debuger.print(e.toString() + e.getMessage());
+					Debuger.print(e);
 				}
 				while (in != null || s.isConnected()) {
 					try {
