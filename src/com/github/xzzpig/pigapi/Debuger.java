@@ -3,7 +3,7 @@ package com.github.xzzpig.pigapi;
 public class Debuger {
 	public static long time;
 
-	private static boolean debug = false;
+	public static boolean debug = false;
 
 	public static void print(Object s) {
 		if (debug == false)
