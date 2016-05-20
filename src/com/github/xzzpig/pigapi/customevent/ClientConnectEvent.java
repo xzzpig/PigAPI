@@ -7,17 +7,17 @@ import com.github.xzzpig.pigapi.tcp.Server;
 public class ClientConnectEvent extends Event {
 	private Client client;
 	private Server server;
-	
-	public ClientConnectEvent(Server server,Client client){
+
+	public ClientConnectEvent(Server server, Client client) {
 		this.client = client;
 		this.server = server;
 	}
-	
-	public Client getClient(){
+
+	public Client getClient() {
 		return client;
 	}
-	
-	public Server getServer(){
+
+	public Server getServer() {
 		return server;
 	}
 }
