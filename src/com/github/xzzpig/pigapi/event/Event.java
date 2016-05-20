@@ -1,8 +1,11 @@
 package com.github.xzzpig.pigapi.event;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Event {
 	private static final HashMap<Type, List<EventMethod>> events = new HashMap<Type, List<EventMethod>>();
