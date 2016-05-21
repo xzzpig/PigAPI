@@ -11,15 +11,13 @@ public class Debuger {
 	public static void print(Object s) {
 		if (debug == false)
 			return;
-		if(s instanceof Exception){
+		if (s instanceof Exception) {
 			((Exception) s).printStackTrace();
 			return;
-		}
-		else if (s instanceof List<?>) {
+		} else if (s instanceof List<?>) {
 			System.err.println(Arrays.toString(((List<?>) s).toArray()));
 			return;
-		}
-		else if (s.getClass().isArray()) {
+		} else if (s.getClass().isArray()) {
 			System.err.println(Arrays.toString((Object[]) s));
 			return;
 		}
