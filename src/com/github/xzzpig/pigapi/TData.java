@@ -21,6 +21,26 @@ public class TData implements Serializable {
 	public TData() {
 	}
 
+	public TData(String souce) {
+		for (String ele : souce.split("\n")) {
+			if (!ele.contains("\t"))
+				continue;
+			String key = ele.split("\t")[0];
+			String value = ele.split("\t")[1];
+			try {
+				ints.put(key, Integer.valueOf(value));
+				continue;
+			} catch (Exception e) {
+			}
+			if (value.equalsIgnoreCase("true"))
+				boos.put(key, true);
+			else if (value.equalsIgnoreCase("false"))
+				boos.put(key, false);
+			else
+				strs.put(key, value);
+		}
+	}
+
 	public String getString(String key) {
 		if (!this.strs.containsKey(key))
 			return null;
@@ -90,7 +110,7 @@ public class TData implements Serializable {
 			ss.add(ise.getKey() + "\t" + ise.getValue());
 		}
 		Iterator<Entry<String, Integer>> ii = ints.entrySet().iterator();
-		while (is.hasNext()) {
+		while (ii.hasNext()) {
 			Entry<String, Integer> iie = ii.next();
 			ss.add(iie.getKey() + "\t" + iie.getValue());
 		}
