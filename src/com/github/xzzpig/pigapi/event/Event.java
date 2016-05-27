@@ -33,7 +33,6 @@ public class Event {
 			return;
 		for (EventMethod em : events.get(eventtype)) {
 			try {
-				System.out.println(em.method.getName());
 				em.method.invoke(em.listener, new Object[] { event });
 			} catch (Exception e) {
 				System.out.println("触发事件错误" + e);
