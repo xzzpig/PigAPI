@@ -1,4 +1,4 @@
-package com.github.xzzpig.pigapi.bukkit;
+package com.github.xzzpig.pigapi;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

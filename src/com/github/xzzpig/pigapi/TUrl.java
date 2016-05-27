@@ -1,4 +1,4 @@
-package com.github.xzzpig.pigapi.bukkit;
+package com.github.xzzpig.pigapi;
 
 public class TUrl {
 	public static String getHtml(String urlString) {
@@ -25,5 +25,14 @@ public class TUrl {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public static String getConfig(String key,String url) {
+		if(url ==null)
+			url = "https://github.com/xzzpig/Files/blob/Config/verson.txt";
+		String html = TUrl.getHtml(url);
+		int first = html.indexOf("[/"+key+"/]")+4+key.length();
+		int end = html.indexOf("[/"+key+"/]",first);
+		return html.substring(first,end);
 	}
 }

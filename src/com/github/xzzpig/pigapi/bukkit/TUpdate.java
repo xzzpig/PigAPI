@@ -2,6 +2,8 @@ package com.github.xzzpig.pigapi.bukkit;
 
 import org.bukkit.plugin.Plugin;
 
+import com.github.xzzpig.pigapi.TUrl;
+
 public class TUpdate {
 	public static String mess;
 

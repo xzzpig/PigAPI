@@ -1,4 +1,4 @@
-package com.github.xzzpig.pigapi.bukkit;
+package com.github.xzzpig.pigapi;
 
 import java.util.Deque;
 import java.util.LinkedList;
