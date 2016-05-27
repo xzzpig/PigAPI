@@ -25,10 +25,8 @@ public class TClass {
 
 	public static TData run(Class<TRunnable> rclass, TData data) {
 		try {
-			return (TData) rclass.getMethod("run", TData.class).invoke(data);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException
-				| SecurityException e) {
+			return ((TRunnable)rclass.newInstance()).run(data);
+		} catch (Exception e) {
 			Debuger.print(e);
 			return null;
 		}
