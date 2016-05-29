@@ -21,5 +21,6 @@
 			<attribute name="javadoc_location" value="https://jd.bukkit.org"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry exported="true" kind="lib" path="/PigAPI/bin" sourcepath="/PigAPI/src"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
