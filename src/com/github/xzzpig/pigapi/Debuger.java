@@ -1,27 +1,40 @@
 package com.github.xzzpig.pigapi;
 
+import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Debuger {
 	public static long time;
+	
+	public static PrintStream out = System.err;
 
 	public static boolean debug = false;
 
+	private static HashMap<String, Boolean> debugMap = new HashMap<String, Boolean>();
+
 	public static void print(Object s) {
-		if (debug == false)
+		StackTraceElement stack[] = Thread.currentThread().getStackTrace();
+		String callName = stack[2].getClassName();
+		boolean isdebug;
+		if (debugMap.containsKey(callName))
+			isdebug = debugMap.get(callName);
+		else
+			isdebug = debug;
+		if (isdebug == false)
 			return;
 		if (s instanceof Exception) {
 			((Exception) s).printStackTrace();
 			return;
 		} else if (s instanceof List<?>) {
-			System.err.println(Arrays.toString(((List<?>) s).toArray()));
+			out.println(Arrays.toString(((List<?>) s).toArray()));
 			return;
 		} else if (s.getClass().isArray()) {
-			System.err.println(Arrays.toString((Object[]) s));
+			out.println(Arrays.toString((Object[]) s));
 			return;
 		}
-		System.err.println(s);
+		out.println(s);
 	}
 
 	public static void timeStart() {
@@ -30,5 +43,9 @@ public class Debuger {
 
 	public static void timeStop(String s) {
 		Debuger.print(s + (System.nanoTime() - time));
+	}
+
+	public static void setIsDebug(Class<?> classname, boolean isdebug) {
+		debugMap.put(classname.getName(), isdebug);
 	}
 }

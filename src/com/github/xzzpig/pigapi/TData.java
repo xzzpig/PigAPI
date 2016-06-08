@@ -97,7 +97,7 @@ public class TData implements Serializable {
 		return this;
 	}
 
-	public HashMap<String, Object> getaObjects() {
+	public HashMap<String, Object> getObjects() {
 		return this.obs;
 	}
 
