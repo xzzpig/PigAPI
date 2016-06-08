@@ -1,0 +1,5 @@
+PigAPI: 
+  enable: 
+    chatmanager: false
+  chatmanager: 
+    chatformat: '&2</world/></n/></prefix/></colorid/>&r:</message/>'

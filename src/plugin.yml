@@ -1,0 +1,4 @@
+name: PigAPI
+main: com.github.xzzpig.pigapi.plugin.Main
+version: V0.1
+author: xzzpig
