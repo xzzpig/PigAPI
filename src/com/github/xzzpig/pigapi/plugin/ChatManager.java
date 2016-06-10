@@ -19,7 +19,6 @@ public class ChatManager implements Listener {
 //		Debuger.setIsDebug(ChatManager.class, true);
 //		Debuger.print(event.getFormat());
 		String[] formats = TStringMatcher.buildStr(Vars.chatformat,event.getPlayer(),false).replaceAll("</message/>",event.getMessage()).split("\n");
-		Debuger.print(formats);
 		for (int i = 0; i < formats.length-1; i++) {
 			for (Player player:TPlayer.getAllPlayers()) {
 				player.sendMessage(formats[i]);

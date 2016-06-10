@@ -1,4 +1,3 @@
-
 package com.github.xzzpig.pigapi.bukkit;
 
 import java.util.ArrayList;
@@ -55,10 +54,10 @@ public class TCommandHelp {
 
 	public static TCommandHelp valueOf(TCommandHelp basichelp, String command) {
 		String[] cmds = command.split(" ");
-		for(int i=cmds.length-1;i>=0;i--){
+		for (int i = cmds.length - 1; i >= 0; i--) {
 			String cmd = cmds[0];
-			for(int i2=1;i2<=i;i2++){
-				cmd = cmd + " "+cmds[i2];
+			for (int i2 = 1; i2 <= i; i2++) {
+				cmd = cmd + " " + cmds[i2];
 			}
 			for (TCommandHelp ch : basichelp.getAllSubs())
 				if (ch.toString().equalsIgnoreCase(cmd))
@@ -75,13 +74,13 @@ public class TCommandHelp {
 	}
 
 	public TMessage getHelpMessage(String pluginname) {
-		TMessage help = new TMessage(TString
-				.Prefix(pluginname, 3) + "/");
+		TMessage help = new TMessage(TString.Prefix(pluginname, 3) + "/");
 		String parts[] = this.toStrings();
 		String com = "";
+		TCommandHelp ch = null;
 		for (String arg : parts) {
 			com = com + arg;
-			TCommandHelp ch = TCommandHelp.valueOf(this.getFinalUpHelp(), com);
+			ch = TCommandHelp.valueOf(this.getFinalUpHelp(), com);
 			help.then(arg)
 					.suggest("/" + com)
 					.tooltip(
@@ -90,6 +89,8 @@ public class TCommandHelp {
 									+ ChatColor.GRAY + ch.useage).then(" ");
 			com = com + " ";
 		}
+		if (ch != null)
+			help.then(ch.getVar() + " ");
 		help.then(ChatColor.BLUE + " -" + describe)
 				.tooltip(ChatColor.GRAY + useage)
 				.then("  " + ChatColor.GREEN + "" + ChatColor.UNDERLINE + "点我")
@@ -144,32 +145,34 @@ public class TCommandHelp {
 	public String[] toStrings() {
 		return command.split(" ");
 	}
-	
-	public List<String> getTabComplete(String pluginname,CommandSender sender, Command command,
-			String alias, String[] args) {
-		//Debuger.print(command.getName()+"|"+alias+"|"+Arrays.toString(args));
+
+	public List<String> getTabComplete(String pluginname, CommandSender sender,
+			Command command, String alias, String[] args) {
+		// Debuger.print(command.getName()+"|"+alias+"|"+Arrays.toString(args));
 		List<String> tab = new ArrayList<String>();
 		String cmd = command.getName();
-		for(String arg:args){
-			cmd = cmd +" " + arg;
+		for (String arg : args) {
+			cmd = cmd + " " + arg;
 		}
-		if(cmd.endsWith(" "))
-			cmd = cmd.substring(0,cmd.length()-1);
-		for(TCommandHelp help:TCommandHelp.valueOf(this,cmd).getSubCommandHelps()){
-			tab.add(help.toStrings()[help.toStrings().length-1]);
+		if (cmd.endsWith(" "))
+			cmd = cmd.substring(0, cmd.length() - 1);
+		for (TCommandHelp help : TCommandHelp.valueOf(this, cmd)
+				.getSubCommandHelps()) {
+			tab.add(help.toStrings()[help.toStrings().length - 1]);
 		}
 		List<String> tab2 = new ArrayList<String>();
-		for(String str:tab){
-			if(str.contains(args[args.length-1])){
+		for (String str : tab) {
+			if (str.contains(args[args.length - 1])) {
 				tab2.add(str);
 			}
 		}
-		if(!tab2.isEmpty())
+		if (!tab2.isEmpty())
 			tab = tab2;
-		for(String str:tab)
-			TCommandHelp.valueOf(this,cmd).getSubCommandHelp(str).getHelpMessage(pluginname).send((Player)sender);
-		if(tab.isEmpty())
-			tab.add(TCommandHelp.valueOf(this,cmd).getVar());
+		for (String str : tab)
+			TCommandHelp.valueOf(this, cmd).getSubCommandHelp(str)
+					.getHelpMessage(pluginname).send((Player) sender);
+		if (tab.isEmpty())
+			tab.add(TCommandHelp.valueOf(this, cmd).getVar());
 		return tab;
 	}
 }

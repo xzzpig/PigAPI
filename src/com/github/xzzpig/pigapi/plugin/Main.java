@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.xzzpig.pigapi.Debuger;
 import com.github.xzzpig.pigapi.PigData;
-import com.github.xzzpig.pigapi.TData;
 import com.github.xzzpig.pigapi.bukkit.TConfig;
 import com.github.xzzpig.pigapi.bukkit.TPrefix;
 
@@ -28,11 +27,11 @@ public class Main extends JavaPlugin {
 		try {
 			Vars.dataFile.createNewFile();
 			Vars.pigData = new PigData(Vars.dataFile);
-			Vars.prefix = new TData(Vars.pigData.getString("prefix"));
+			Vars.prefix = Vars.pigData.getSub("prefix");
 			// Debuger.print(Vars.prefix.getStrings());
 		} catch (Exception e) {
 			Vars.pigData = new PigData();
-			Vars.prefix = new TData();
+			Vars.prefix = Vars.pigData.getSub("prefix");
 			TPrefix.setPrefix("default", "default");
 		}
 		Vars.enable_chatmanager = Vars.config.getBoolean(

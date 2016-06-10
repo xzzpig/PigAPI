@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.plugin.Vars;
 
 public class TPrefix {
@@ -14,7 +16,7 @@ public class TPrefix {
 	public static void setPrefix(String player, String prefix, String id) {
 		if (id == null || id.equalsIgnoreCase(""))
 			id = "default";
-		Vars.prefix.setString(player + "$" + id, prefix);
+		Vars.prefix.set(player + "." + id, prefix);
 		if (autoSave)
 			savePrefix();
 	}
@@ -24,31 +26,35 @@ public class TPrefix {
 	}
 
 	public static void removePrefix(String player, String id) {
-		Vars.prefix.getStrings().remove(player + "$" + id);
+		Vars.prefix.remove(player + "." + id);
 		if (autoSave)
 			savePrefix();
 	}
 
 	public static void removePrefix(String player, boolean isALL) {
 		if (isALL) {
-			HashMap<String, String> map = Vars.prefix.getStrings();
-			for (Entry<String, String> ele : map.entrySet()) {
-				if (ele.getKey().replace('$', '＄').split("＄")[0]
-						.equalsIgnoreCase(player))
-					map.remove(ele.getKey());
-			}
+			// HashMap<String, String> map = Vars.prefix.getStrings();
+			// for (Entry<String, String> ele : map.entrySet()) {
+			// if (ele.getKey().replace('$', '＄').split("＄")[0]
+			// .equalsIgnoreCase(player))
+			// map.remove(ele.getKey());
+			// }
+			Vars.prefix.remove(player);
 		} else {
-			Vars.prefix.getStrings().remove(player + "$default");
+			Vars.prefix.remove(player + ".default");
 		}
 		if (autoSave)
 			savePrefix();
 	}
 
 	public static void removePrefix(String prefix) {
-		HashMap<String, String> map = Vars.prefix.getStrings();
-		for (Entry<String, String> ele : map.entrySet()) {
-			if (ele.getValue().equalsIgnoreCase(prefix))
-				map.remove(ele.getKey());
+		List<PigData> players = Vars.prefix.getSubList(null);
+		for (PigData ids : players) {
+			Set<Entry<String, Object>> entrys = ids.getData().entrySet();
+			for (Entry<String, Object> entry : entrys) {
+				if((entry.getValue()+"").equalsIgnoreCase(prefix))
+					ids.getData().remove(entry.getKey());
+			}
 		}
 		if (autoSave)
 			savePrefix();
@@ -56,23 +62,21 @@ public class TPrefix {
 
 	public static List<String> getPrefixs(String player) {
 		List<String> prefixs = new ArrayList<String>();
-		HashMap<String, String> map = Vars.prefix.getStrings();
-		for (Entry<String, String> ele : map.entrySet()) {
-			if (ele.getKey().replace('$', '＄').split("＄")[0]
-					.equalsIgnoreCase(player))
-				prefixs.add(ele.getValue());
+		Set<Entry<String, Object>> entrys = Vars.prefix.getSub(player).getData().entrySet();
+		for (Entry<String, Object> entry : entrys) {
+			prefixs.add(entry.getValue()+"");
 		}
 		return prefixs;
 	}
 
 	public static Map<String, String> getPrefixMap(String player) {
 		Map<String, String> prefixs = new HashMap<String, String>();
-		HashMap<String, String> map = Vars.prefix.getStrings();
-		for (Entry<String, String> ele : map.entrySet()) {
-			if (ele.getKey().replace('$', '＄').split("＄")[0]
-					.equalsIgnoreCase(player))
-				prefixs.put(ele.getKey().replace('$', '＄').split("＄")[1],
-						ele.getValue());
+		Set<Entry<String, Object>> entrys = Vars.prefix.getSub(player).getData().entrySet();
+		for (Entry<String, Object> entry : entrys) {
+			try {
+				prefixs.put(entry.getKey(),(String)entry.getValue());				
+			} catch (Exception e) {
+			}
 		}
 		return prefixs;
 	}

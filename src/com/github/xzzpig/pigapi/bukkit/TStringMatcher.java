@@ -8,6 +8,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.github.xzzpig.pigapi.TCalculate;
+import com.github.xzzpig.pigapi.bukkit.event.StringMatcherEvent;
+import com.github.xzzpig.pigapi.event.Event;
 
 public class TStringMatcher {
 	public static String solve(String ps) {
@@ -16,6 +18,9 @@ public class TStringMatcher {
 
 	@SuppressWarnings("deprecation")
 	public static String buildStr(String str, LivingEntity entity, boolean isInt) {
+		StringMatcherEvent event = new StringMatcherEvent(str, entity);
+		Event.callEvent(event);
+		str = event.getSouce();
 		String re = str
 				.replaceAll("</world/>", entity.getWorld().getName())
 				.replaceAll("</loc/>", entity.getLocation().toString())
