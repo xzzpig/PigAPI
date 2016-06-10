@@ -13,7 +13,7 @@ public class Event {
 	public static final void registListener(Listener listener) {
 		for (Method meth : listener.getClass().getMethods()) {
 			for (Annotation ann : meth.getAnnotations()) {
-				if (ann.toString().contains("EventHandler()")) {
+				if (ann.toString().contains("EventHandler")) {
 					meth.setAccessible(true);
 					try {
 						Type type = meth.getGenericParameterTypes()[0];

@@ -25,7 +25,7 @@ public class TClass {
 
 	public static TData run(Class<TRunnable> rclass, TData data) {
 		try {
-			return ((TRunnable)rclass.newInstance()).run(data);
+			return rclass.newInstance().run(data);
 		} catch (Exception e) {
 			Debuger.print(e);
 			return null;
@@ -65,6 +65,7 @@ public class TClass {
 			while (stack.isEmpty() == false) {
 				File path = stack.pop();
 				File[] classFiles = path.listFiles(new FileFilter() {
+					@Override
 					public boolean accept(File pathname) {
 						return pathname.isDirectory()
 								|| pathname.getName().endsWith(".class");
@@ -129,6 +130,7 @@ public class TClass {
 		File libPath = new File(dir);
 		// 获取所有的.jar和.zip文件
 		File[] jarFiles = libPath.listFiles(new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".jar") || name.endsWith(".zip");
 			}

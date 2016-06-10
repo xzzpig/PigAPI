@@ -52,15 +52,18 @@ public class TClipBoard {
       
      public static void setClipboardImage(final Image image) { 
          Transferable trans = new Transferable() { 
-             public DataFlavor[] getTransferDataFlavors() { 
+             @Override
+			public DataFlavor[] getTransferDataFlavors() { 
                  return new DataFlavor[] { DataFlavor.imageFlavor }; 
              } 
   
-             public boolean isDataFlavorSupported(DataFlavor flavor) { 
+             @Override
+			public boolean isDataFlavorSupported(DataFlavor flavor) { 
                  return DataFlavor.imageFlavor.equals(flavor); 
              } 
   
-             public Object getTransferData(DataFlavor flavor) 
+             @Override
+			public Object getTransferData(DataFlavor flavor) 
                      throws UnsupportedFlavorException, IOException { 
                  if (isDataFlavorSupported(flavor)) 
                      return image; 
