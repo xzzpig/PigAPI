@@ -10,12 +10,12 @@ import java.util.List;
 
 import com.github.xzzpig.pigapi.Debuger;
 import com.github.xzzpig.pigapi.TData;
-import com.github.xzzpig.pigapi.customevent.ServerDataReachEvent;
-import com.github.xzzpig.pigapi.event.Event;
 
 public class Client {
 	public static List<Client> clients = new ArrayList<Client>();
 	public static Client client;
+	
+	public static Class<? extends AcceptData> acceptDataClass = AcceptData_Default.class;
 
 	public Socket s;
 	public String from;
@@ -67,25 +67,11 @@ public class Client {
 	}
 
 	private void acceptData() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				ObjectInputStream in = null;
-				try {
-					in = new ObjectInputStream(s.getInputStream());
-				} catch (Exception e) {
-					System.out.println("数据接受错误");
-					Debuger.print(e);
-				}
-				while (in != null || s.isConnected()) {
-					try {
-						Object data = in.readObject();
-						Event.callEvent(new ServerDataReachEvent(Client.this,
-								data));
-					} catch (Exception e) {
-					}
-				}
-			}
-		}).start();
+		try {
+			AcceptData ad = acceptDataClass.newInstance();
+			ad.start();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 }

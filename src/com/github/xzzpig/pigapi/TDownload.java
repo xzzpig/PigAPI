@@ -16,6 +16,8 @@ public class TDownload {
 	private URL url;
 	private String name;
 
+	private boolean print;
+
 	public TDownload(String url) throws Exception {
 		this(new URL(url));
 	}
@@ -64,14 +66,19 @@ public class TDownload {
 		return finish;
 	}
 
+	public TDownload isBarPrint(boolean arg) {
+		this.print = arg;
+		return this;
+	}
+
 	public void setURL(URL url) {
 		this.url = url;
 	}
-	
-	public String getFileName(){
+
+	public String getFileName() {
 		return name;
 	}
-	
+
 	public TDownload start(final File savedFile) {
 		new Thread(new Runnable() {
 			@Override
@@ -91,13 +98,21 @@ public class TDownload {
 					}
 					FileOutputStream out = new FileOutputStream(outFile, false);
 					byte[] buffer = new byte[BUFFER_SIZE];
+					short i = 0;
 					while (true) {
 						int length = in.read(buffer);
 						if (length == -1)
 							break;
 						downloadsize += length;
 						out.write(buffer, 0, length);
+						if (print){
+							for (int j = 0; j < (getPrecent() / 10 - i); j++) {
+								System.out.print("["+i+"]");
+							}
+							i=(short) (getPrecent()/10);
+						}
 					}
+					System.out.println();
 					in.close();
 					out.close();
 				} catch (Exception e) {

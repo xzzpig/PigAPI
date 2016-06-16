@@ -1,5 +1,6 @@
 package com.github.xzzpig.pigapi.customevent;
 
+import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.tcp.Client;
 
@@ -18,5 +19,9 @@ public class ServerDataReachEvent extends Event {
 
 	public Object getData() {
 		return data;
+	}
+	
+	public PigData getPigData(){
+		return new PigData(data.toString());
 	}
 }

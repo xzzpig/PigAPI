@@ -66,6 +66,9 @@ public class PigData implements Serializable {
 				} else if (c == ';') {
 					value = sb.toString();
 					sb = new StringBuffer();
+					value = value.replace('：',':')
+							.replace( '；',';').replace( '｛','{')
+							.replace( '｝','}');
 					data.put(key, value);
 					continue;
 				} else if (c == '{') {
@@ -114,7 +117,7 @@ public class PigData implements Serializable {
 		return false;
 	}
 
-	public HashMap<String, Object> getData(){
+	public HashMap<String, Object> getData() {
 		return data;
 	}
 
@@ -271,17 +274,17 @@ public class PigData implements Serializable {
 
 	public String getString(String key) {
 		String str = get(key).toString();
-		if(str.equalsIgnoreCase(""))
+		if (str.equalsIgnoreCase(""))
 			return null;
 		return str;
 	}
-	
+
 	public PigData getSub(String key) {
 		String[] keys = key.replace('.', '。').split("。");
 		if (keys.length == 1) {
-			if (data.containsKey(key)&&data.get(key)instanceof PigData)
+			if (data.containsKey(key) && data.get(key) instanceof PigData)
 				return (PigData) data.get(key);
-			else{
+			else {
 				data.put(key, new PigData(this));
 				return getSub(key);
 			}
@@ -297,17 +300,17 @@ public class PigData implements Serializable {
 		return pData.getSub(key.replaceFirst(thiskey + ".", ""));
 	}
 
-	public List<PigData> getSubList(String key){
+	public List<PigData> getSubList(String key) {
 		PigData data = this;
 		List<PigData> subs = new ArrayList<PigData>();
-		if(key != null){
+		if (key != null) {
 			data = getSub(key);
-			if(data==null)
+			if (data == null)
 				return subs;
 		}
 		Collection<Object> values = data.data.values();
 		for (Object object : values) {
-			if(object instanceof PigData)
+			if (object instanceof PigData)
 				subs.add((PigData) object);
 		}
 		return subs;
@@ -335,13 +338,13 @@ public class PigData implements Serializable {
 		if (file == null)
 			throw (new NullPointerException("File为null"));
 		try {
-			new FileWriter(file,false).append(toString()).close();
+			new FileWriter(file, false).append(toString()).close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return this;
 	}
-	
+
 	public PigData set(String key, Object value) {
 		String[] keys = key.replace('.', '。').split("。");
 		if (keys.length == 1) {
@@ -360,7 +363,7 @@ public class PigData implements Serializable {
 		pData.set(key.replaceFirst(thiskey + ".", ""), value);
 		return this;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -371,9 +374,9 @@ public class PigData implements Serializable {
 				sb.append('{').append(TString.toString(value)).append('}');
 			} else {
 				sb.append(':')
-						.append(TString.toString(value).replace(':', '_')
-								.replace(';', '_').replace('{', '_')
-								.replace('}', '_')).append(';');
+						.append(TString.toString(value).replace(':', '：')
+								.replace(';', '；').replace('{', '｛')
+								.replace('}', '｝')).append(';');
 			}
 		}
 		return sb.toString();
