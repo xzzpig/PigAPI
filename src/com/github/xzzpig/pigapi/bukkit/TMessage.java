@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonWriter;
 import org.bukkit.entity.Player;
 
@@ -152,6 +153,14 @@ public class TMessage{
 			version = null;
 			System.err.println("FM发送错误,将以普通方式发送");
 			send(player);
+		}
+	}
+	
+	public void send(CommandSender sender) {
+		if(sender instanceof Player)
+			send((Player)sender);
+		else {
+			sender.sendMessage(toString());
 		}
 	}
 
