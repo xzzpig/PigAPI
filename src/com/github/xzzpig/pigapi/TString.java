@@ -44,18 +44,19 @@ public class TString {
 		}
 		return ret;
 	}
-	
+
 	public static String toString(Object object) {
 		StringBuffer sb = new StringBuffer();
-		if(object instanceof List<?>){
+		if (object instanceof List<?>) {
 			List<?> list = (List<?>) object;
 			sb.append('[');
 			for (Object object2 : list) {
 				sb.append(toString(object2)).append(',');
 			}
-			sb.replace(sb.length()-1,sb.length(),"]");
-		}
-		else{
+			if (sb.toString().equalsIgnoreCase("["))
+				sb.append(',');
+			sb.replace(sb.length() - 1, sb.length(), "]");
+		} else {
 			sb.append(object);
 		}
 		return sb.toString();

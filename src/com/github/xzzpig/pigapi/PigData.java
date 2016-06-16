@@ -53,7 +53,7 @@ public class PigData implements Serializable {
 		int i = 0;
 		StringBuffer sb = new StringBuffer();
 		String key = "", value;
-		while (true) {
+		while (true)
 			try {
 				i = source.read();
 				if (i == -1)
@@ -66,63 +66,74 @@ public class PigData implements Serializable {
 				} else if (c == ';') {
 					value = sb.toString();
 					sb = new StringBuffer();
-					value = value.replace('：',':')
-							.replace( '；',';').replace( '｛','{')
-							.replace( '｝','}');
-					data.put(key, value);
+					value = value.replace('：', ':').replace('；', ';')
+							.replace('｛', '{').replace('｝', '}');
+					this.data.put(key, value);
 					continue;
 				} else if (c == '{') {
 					key = sb.toString();
-					data.put(key, new PigData(source, this));
+					this.data.put(key, new PigData(source, this));
 					sb = new StringBuffer();
 					continue;
-				} else if (c == '}') {
+				} else if (c == '}')
 					return;
-				} else {
+				else
 					sb.append(c);
-				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
 	}
 
 	public PigData(String soruce) {
 		this(new StringReader(soruce));
 	}
 
-	public Object get(String key) {
+	public boolean contianKey(String key) {
 		String[] keys = key.replace('.', '。').split("。");
-		if (keys.length == 1) {
-			if (data.containsKey(key))
-				return data.get(key);
-			else
-				return "";
-		}
+		if (keys.length == 1)
+			return (this.data.containsKey(key));
 		String thiskey = keys[0];
 		Object thisvalue;
-		if ((!data.containsKey(thiskey))
-				|| (!(data.get(thiskey) instanceof PigData))) {
+		if ((!this.data.containsKey(thiskey))
+				|| (!(this.data.get(thiskey) instanceof PigData)))
+			return false;
+		else
+			thisvalue = this.data.get(thiskey);
+		PigData pData = (PigData) thisvalue;
+		return pData.contianKey(key.replaceFirst(thiskey + ".", ""));
+	}
+
+	public Object get(String key) {
+		String[] keys = key.replace('.', '。').split("。");
+		if (keys.length == 1)
+			if (this.data.containsKey(key))
+				return this.data.get(key);
+			else
+				return "";
+		String thiskey = keys[0];
+		Object thisvalue;
+		if ((!this.data.containsKey(thiskey))
+				|| (!(this.data.get(thiskey) instanceof PigData)))
 			thisvalue = new PigData(this);
-		} else
-			thisvalue = data.get(thiskey);
+		else
+			thisvalue = this.data.get(thiskey);
 		PigData pData = (PigData) thisvalue;
 		return pData.get(key.replaceFirst(thiskey + ".", ""));
 	}
 
 	public boolean getBoolean(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		if (str.equalsIgnoreCase("true"))
 			return true;
 		return false;
 	}
 
 	public HashMap<String, Object> getData() {
-		return data;
+		return this.data;
 	}
 
 	public double getDouble(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		try {
 			return Double.valueOf(str);
 		} catch (Exception e) {
@@ -132,24 +143,22 @@ public class PigData implements Serializable {
 
 	public List<Double> getDoubleList(String key) {
 		List<Double> list = new ArrayList<Double>();
-		for (String string : getList(key)) {
+		for (String string : this.getList(key))
 			try {
 				list.add(Double.valueOf(string));
 			} catch (Exception e) {
 			}
-		}
 		return list;
 	}
 
 	public PigData getFinalParent() {
-		if (parent == null) {
+		if (this.parent == null)
 			return this;
-		}
-		return parent.getFinalParent();
+		return this.parent.getFinalParent();
 	}
 
 	public float getFloat(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		try {
 			return Float.valueOf(str);
 		} catch (Exception e) {
@@ -159,17 +168,16 @@ public class PigData implements Serializable {
 
 	public List<Float> getFloatList(String key) {
 		List<Float> list = new ArrayList<Float>();
-		for (String string : getList(key)) {
+		for (String string : this.getList(key))
 			try {
 				list.add(Float.valueOf(string));
 			} catch (Exception e) {
 			}
-		}
 		return list;
 	}
 
 	public int getInt(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		try {
 			return Integer.valueOf(str);
 		} catch (Exception e) {
@@ -179,30 +187,35 @@ public class PigData implements Serializable {
 
 	public List<Integer> getIntList(String key) {
 		List<Integer> list = new ArrayList<Integer>();
-		for (String string : getList(key)) {
+		for (String string : this.getList(key))
 			try {
 				list.add(Integer.valueOf(string));
 			} catch (Exception e) {
 			}
-		}
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getList(String key) {
-		String str = get(key).toString();
-		List<String> list = new ArrayList<String>();
-		if (!(str.startsWith("[") && str.endsWith("]")))
-			return list;
-		String[] strs = str.substring(1, str.length() - 1).replace(',', '，')
-				.split("，");
-		for (String string : strs) {
-			list.add(string);
+		Object object = this.get(key);
+		List<String> list;
+		try {
+			list = (List<String>) object;
+		} catch (Exception e) {
+			String str = this.get(key).toString();
+			list = new ArrayList<String>();
+			if (!(str.startsWith("[") && str.endsWith("]")))
+				return list;
+			String[] strs = str.substring(1, str.length() - 1)
+					.replace(',', '，').split("，");
+			for (String string : strs)
+				list.add(string);
 		}
 		return list;
 	}
 
 	public long getLong(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		try {
 			return Long.valueOf(str);
 		} catch (Exception e) {
@@ -212,21 +225,20 @@ public class PigData implements Serializable {
 
 	public List<Long> getLongList(String key) {
 		List<Long> list = new ArrayList<Long>();
-		for (String string : getList(key)) {
+		for (String string : this.getList(key))
 			try {
 				list.add(Long.valueOf(string));
 			} catch (Exception e) {
 			}
-		}
 		return list;
 	}
 
 	public PigData getParent() {
-		return parent;
+		return this.parent;
 	}
 
 	public String getPrintString() {
-		return getPrintString(0);
+		return this.getPrintString(0);
 	}
 
 	private String getPrintString(int before) {
@@ -234,26 +246,25 @@ public class PigData implements Serializable {
 		for (int i = 0; i < before; i++)
 			beforeBuffer.append(' ');
 		StringBuffer sb = new StringBuffer();
-		for (Entry<String, Object> entry : data.entrySet()) {
+		for (Entry<String, Object> entry : this.data.entrySet()) {
 			sb.append(beforeBuffer + entry.getKey());
 			Object value = entry.getValue();
-			if (value instanceof PigData) {
+			if (value instanceof PigData)
 				sb.append('{')
-						.append("\n")
-						.append(((PigData) value).getPrintString(before + 2)
-								+ beforeBuffer).append('}').append("\n");
-			} else {
+				.append("\n")
+				.append(((PigData) value).getPrintString(before + 2)
+						+ beforeBuffer).append('}').append("\n");
+			else
 				sb.append(':')
-						.append(TString.toString(value).replace(':', '_')
-								.replace(';', '_').replace('{', '_')
-								.replace('}', '_')).append(';').append("\n");
-			}
+				.append(TString.toString(value).replace(':', '_')
+						.replace(';', '_').replace('{', '_')
+						.replace('}', '_')).append(';').append("\n");
 		}
 		return sb.toString();
 	}
 
 	public short getShort(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		try {
 			return Short.valueOf(str);
 		} catch (Exception e) {
@@ -263,17 +274,16 @@ public class PigData implements Serializable {
 
 	public List<Short> getShortList(String key) {
 		List<Short> list = new ArrayList<Short>();
-		for (String string : getList(key)) {
+		for (String string : this.getList(key))
 			try {
 				list.add(Short.valueOf(string));
 			} catch (Exception e) {
 			}
-		}
 		return list;
 	}
 
 	public String getString(String key) {
-		String str = get(key).toString();
+		String str = this.get(key).toString();
 		if (str.equalsIgnoreCase(""))
 			return null;
 		return str;
@@ -281,21 +291,20 @@ public class PigData implements Serializable {
 
 	public PigData getSub(String key) {
 		String[] keys = key.replace('.', '。').split("。");
-		if (keys.length == 1) {
-			if (data.containsKey(key) && data.get(key) instanceof PigData)
-				return (PigData) data.get(key);
+		if (keys.length == 1)
+			if (this.data.containsKey(key) && (this.data.get(key) instanceof PigData))
+				return (PigData) this.data.get(key);
 			else {
-				data.put(key, new PigData(this));
-				return getSub(key);
+				this.data.put(key, new PigData(this));
+				return this.getSub(key);
 			}
-		}
 		String thiskey = keys[0];
 		Object thisvalue;
-		if ((!data.containsKey(thiskey))
-				|| (!(data.get(thiskey) instanceof PigData))) {
+		if ((!this.data.containsKey(thiskey))
+				|| (!(this.data.get(thiskey) instanceof PigData)))
 			thisvalue = new PigData(this);
-		} else
-			thisvalue = data.get(thiskey);
+		else
+			thisvalue = this.data.get(thiskey);
 		PigData pData = (PigData) thisvalue;
 		return pData.getSub(key.replaceFirst(thiskey + ".", ""));
 	}
@@ -304,31 +313,30 @@ public class PigData implements Serializable {
 		PigData data = this;
 		List<PigData> subs = new ArrayList<PigData>();
 		if (key != null) {
-			data = getSub(key);
+			data = this.getSub(key);
 			if (data == null)
 				return subs;
 		}
 		Collection<Object> values = data.data.values();
-		for (Object object : values) {
+		for (Object object : values)
 			if (object instanceof PigData)
 				subs.add((PigData) object);
-		}
 		return subs;
 	}
 
 	public PigData remove(String key) {
 		String[] keys = key.replace('.', '。').split("。");
 		if (keys.length == 1) {
-			data.remove(key);
+			this.data.remove(key);
 			return this;
 		}
 		String thiskey = keys[0];
 		Object thisvalue;
-		if ((!data.containsKey(thiskey))
-				|| (!(data.get(thiskey) instanceof PigData))) {
+		if ((!this.data.containsKey(thiskey))
+				|| (!(this.data.get(thiskey) instanceof PigData)))
 			return this;
-		} else
-			thisvalue = data.get(thiskey);
+		else
+			thisvalue = this.data.get(thiskey);
 		PigData pData = (PigData) thisvalue;
 		pData.remove(key.replaceFirst(thiskey + ".", ""));
 		return this;
@@ -338,7 +346,7 @@ public class PigData implements Serializable {
 		if (file == null)
 			throw (new NullPointerException("File为null"));
 		try {
-			new FileWriter(file, false).append(toString()).close();
+			new FileWriter(file, false).append(this.toString()).close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -348,17 +356,17 @@ public class PigData implements Serializable {
 	public PigData set(String key, Object value) {
 		String[] keys = key.replace('.', '。').split("。");
 		if (keys.length == 1) {
-			data.put(key, value);
+			this.data.put(key, value);
 			return this;
 		}
 		String thiskey = keys[0];
 		Object thisvalue;
-		if ((!data.containsKey(thiskey))
-				|| (!(data.get(thiskey) instanceof PigData))) {
+		if ((!this.data.containsKey(thiskey))
+				|| (!(this.data.get(thiskey) instanceof PigData))) {
 			thisvalue = new PigData(this);
-			data.put(thiskey, thisvalue);
+			this.data.put(thiskey, thisvalue);
 		} else
-			thisvalue = data.get(thiskey);
+			thisvalue = this.data.get(thiskey);
 		PigData pData = (PigData) thisvalue;
 		pData.set(key.replaceFirst(thiskey + ".", ""), value);
 		return this;
@@ -367,17 +375,16 @@ public class PigData implements Serializable {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		for (Entry<String, Object> entry : data.entrySet()) {
+		for (Entry<String, Object> entry : this.data.entrySet()) {
 			sb.append(entry.getKey());
 			Object value = entry.getValue();
-			if (value instanceof PigData) {
+			if (value instanceof PigData)
 				sb.append('{').append(TString.toString(value)).append('}');
-			} else {
+			else
 				sb.append(':')
-						.append(TString.toString(value).replace(':', '：')
-								.replace(';', '；').replace('{', '｛')
-								.replace('}', '｝')).append(';');
-			}
+				.append(TString.toString(value).replace(':', '：')
+						.replace(';', '；').replace('{', '｛')
+						.replace('}', '｝')).append(';');
 		}
 		return sb.toString();
 	}
