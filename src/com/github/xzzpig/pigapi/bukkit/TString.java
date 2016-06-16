@@ -7,7 +7,7 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class TString {
+public class TString extends com.github.xzzpig.pigapi.TString{
 	public static final String s = "§";
 
 	private TString() {

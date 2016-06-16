@@ -28,6 +28,7 @@ public class TStringMatcher {
 				.replaceAll("</y/>", entity.getLocation().getBlockY() + "")
 				.replaceAll("</z/>", entity.getLocation().getBlockZ() + "")
 				.replaceAll("</currenthealth/>", "" + TEntity.getHealth(entity))
+				.replaceAll("</maxhealth/>", TEntity.getMaxHealth(entity) + "")
 				.replaceAll("</name/>", entity.getCustomName())
 				.replaceAll("</type/>", entity.getType().toString())
 				.replaceAll("</online/>", Bukkit.getOnlinePlayers().length + "")
@@ -42,6 +43,10 @@ public class TStringMatcher {
 				colorid = ChatColor.GREEN + player.getName();
 			re = re.replaceAll("</fly/>", player.getAllowFlight() + "")
 					.replaceAll("</exp/>", TExp.getTotalExperience(player) + "")
+					.replaceAll(
+							"</level/>",
+							TPlayer.ExpToLevel(TExp.getTotalExperience(player))
+									+ "")
 					.replaceAll("</handid/>",
 							player.getItemInHand().getTypeId() + "")
 					.replaceAll("</gamemode/>", player.getGameMode().name())
