@@ -9,6 +9,8 @@ import com.github.xzzpig.pigapi.customevent.ServerDataReachEvent;
 import com.github.xzzpig.pigapi.event.Event;
 
 public class AcceptData_Default extends AcceptData {
+	public static int SIZE = 1024*1024;
+	
 	Socket s;
 	private Client c;
 
@@ -39,7 +41,7 @@ public class AcceptData_Default extends AcceptData {
 		}
 		while (in != null || s.isConnected()) {
 			try {
-				byte[] data = new byte[1024 * 1024];
+				byte[] data = new byte[SIZE];
 				int length = in.read(data);
 				String s = new String(data, 0, length);
 				Event.callEvent(new ServerDataReachEvent(c, s));

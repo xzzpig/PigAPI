@@ -342,6 +342,7 @@ public class PigData implements Serializable {
 		return this;
 	}
 
+	@SuppressWarnings("resource")
 	public PigData saveToFile(File file) {
 		if (file == null)
 			throw (new NullPointerException("File为null"));

@@ -2,6 +2,7 @@ package com.github.xzzpig.pigapi.tcp;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.xzzpig.pigapi.Debuger;
+import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.TData;
 
 public class Client {
@@ -39,6 +41,21 @@ public class Client {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 			out.writeObject(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("数据发送错误");
+		}
+		return this;
+	}
+	public Client sendData(PigData data) {
+		sendData(data.toString().getBytes());
+		return this;
+	}
+	
+	public Client sendData(byte[] data) {
+		try {
+			OutputStream out = s.getOutputStream();
+			out.write(data);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("数据发送错误");
