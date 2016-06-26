@@ -63,7 +63,7 @@ public class Client {
 		return this;
 	}
 
-	public Object receiveData(int timeout) {
+	public Object receiveObjectData(int timeout) {
 		ObjectInputStream in = null;
 		try {
 			s.setSoTimeout(timeout);
@@ -80,12 +80,26 @@ public class Client {
 			System.out.println("数据接受错误");
 		}
 		return null;
-
+	}
+	public byte[] receiveData(int timeout) {
+		try {
+			s.setSoTimeout(timeout);
+			byte[] data = new byte[1024*1024];
+			int length = s.getInputStream().read(data);
+			String str = new String(data, 0, length);
+			
+			s.setSoTimeout(0);
+			return str.getBytes();			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private void acceptData() {
 		try {
 			AcceptData ad = acceptDataClass.newInstance();
+			ad.setClient(this);
 			ad.start();
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();

@@ -53,6 +53,7 @@ public class AcceptData_Default extends AcceptData {
 	@Override
 	public AcceptData setClient(Client c) {
 		this.c = c;
+		this.s = c.s;
 		return this;
 	}
 
