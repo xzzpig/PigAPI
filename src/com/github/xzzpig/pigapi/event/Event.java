@@ -35,7 +35,8 @@ public class Event {
 			try {
 				em.method.invoke(em.listener, new Object[] { event });
 			} catch (Exception e) {
-				System.out.println("触发事件错误" + e);
+				e.printStackTrace();
+				System.out.println("触发事件错误");
 			}
 		}
 	}

@@ -59,6 +59,8 @@ public class Client {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("数据发送错误");
+			if(s.isClosed()&&from.equalsIgnoreCase("server"))
+				Server.server.getClients().remove(this);
 		}
 		return this;
 	}

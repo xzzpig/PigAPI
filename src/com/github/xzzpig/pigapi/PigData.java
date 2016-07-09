@@ -211,6 +211,7 @@ public class PigData implements Serializable {
 			for (String string : strs)
 				list.add(string);
 		}
+		set(key, list);
 		return list;
 	}
 
@@ -283,7 +284,7 @@ public class PigData implements Serializable {
 	}
 
 	public String getString(String key) {
-		String str = this.get(key).toString();
+		String str = TString.toString(this.get(key));
 		if (str.equalsIgnoreCase(""))
 			return null;
 		return str;
