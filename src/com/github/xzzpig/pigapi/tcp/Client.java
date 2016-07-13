@@ -16,12 +16,13 @@ import com.github.xzzpig.pigapi.TData;
 public class Client {
 	public static List<Client> clients = new ArrayList<Client>();
 	public static Client client;
-	
+
 	public static Class<? extends AcceptData> acceptDataClass = AcceptData_Default.class;
 
 	public Socket s;
 	public String from;
 	public TData data = new TData();
+	public long cooldown = System.currentTimeMillis();
 
 	public Client(Socket s) {
 		clients.add(this);
@@ -38,20 +39,24 @@ public class Client {
 	}
 
 	public Client sendData(Object data) {
+		while (System.currentTimeMillis() < cooldown) {
+		}
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 			out.writeObject(data);
+			cooldown = System.currentTimeMillis() + 50;
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("数据发送错误");
 		}
 		return this;
 	}
+
 	public Client sendData(PigData data) {
 		sendData(data.toString().getBytes());
 		return this;
 	}
-	
+
 	public Client sendData(byte[] data) {
 		try {
 			OutputStream out = s.getOutputStream();
@@ -59,7 +64,7 @@ public class Client {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("数据发送错误");
-			if(s.isClosed()&&from.equalsIgnoreCase("server"))
+			if (s.isClosed() && from.equalsIgnoreCase("server"))
 				Server.server.getClients().remove(this);
 		}
 		return this;
@@ -83,15 +88,16 @@ public class Client {
 		}
 		return null;
 	}
+
 	public byte[] receiveData(int timeout) {
 		try {
 			s.setSoTimeout(timeout);
-			byte[] data = new byte[1024*1024];
+			byte[] data = new byte[1024 * 1024];
 			int length = s.getInputStream().read(data);
 			String str = new String(data, 0, length);
-			
+
 			s.setSoTimeout(0);
-			return str.getBytes();			
+			return str.getBytes();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
