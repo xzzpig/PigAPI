@@ -43,9 +43,9 @@ import org.nanohttpd.util.IFactoryThrowing;
  */
 public class DefaultServerSocketFactory implements IFactoryThrowing<ServerSocket, IOException> {
 
-    @Override
-    public ServerSocket create() throws IOException {
-        return new ServerSocket();
-    }
+	@Override
+	public ServerSocket create() throws IOException {
+		return new ServerSocket();
+	}
 
 }

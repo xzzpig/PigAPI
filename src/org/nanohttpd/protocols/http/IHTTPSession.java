@@ -47,54 +47,54 @@ import org.nanohttpd.protocols.http.request.Method;
  */
 public interface IHTTPSession {
 
-    void execute() throws IOException;
+	void execute() throws IOException;
 
-    CookieHandler getCookies();
+	CookieHandler getCookies();
 
-    Map<String, String> getHeaders();
+	Map<String, String> getHeaders();
 
-    InputStream getInputStream();
+	InputStream getInputStream();
 
-    Method getMethod();
+	Method getMethod();
 
-    /**
-     * This method will only return the first value for a given parameter. You
-     * will want to use getParameters if you expect multiple values for a given
-     * key.
-     * 
-     * @deprecated use {@link #getParameters()} instead.
-     */
-    @Deprecated
-    Map<String, String> getParms();
+	/**
+	 * This method will only return the first value for a given parameter. You
+	 * will want to use getParameters if you expect multiple values for a given
+	 * key.
+	 * 
+	 * @deprecated use {@link #getParameters()} instead.
+	 */
+	@Deprecated
+	Map<String, String> getParms();
 
-    Map<String, List<String>> getParameters();
+	Map<String, List<String>> getParameters();
 
-    String getQueryParameterString();
+	String getQueryParameterString();
 
-    /**
-     * @return the path part of the URL.
-     */
-    String getUri();
+	/**
+	 * @return the path part of the URL.
+	 */
+	String getUri();
 
-    /**
-     * Adds the files in the request body to the files map.
-     * 
-     * @param files
-     *            map to modify
-     */
-    void parseBody(Map<String, String> files) throws IOException, ResponseException;
+	/**
+	 * Adds the files in the request body to the files map.
+	 * 
+	 * @param files
+	 *            map to modify
+	 */
+	void parseBody(Map<String, String> files) throws IOException, ResponseException;
 
-    /**
-     * Get the remote ip address of the requester.
-     * 
-     * @return the IP address.
-     */
-    String getRemoteIpAddress();
+	/**
+	 * Get the remote ip address of the requester.
+	 * 
+	 * @return the IP address.
+	 */
+	String getRemoteIpAddress();
 
-    /**
-     * Get the remote hostname of the requester.
-     * 
-     * @return the hostname.
-     */
-    String getRemoteHostName();
+	/**
+	 * Get the remote hostname of the requester.
+	 * 
+	 * @return the hostname.
+	 */
+	String getRemoteHostName();
 }

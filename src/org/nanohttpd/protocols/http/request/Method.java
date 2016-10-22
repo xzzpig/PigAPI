@@ -38,32 +38,17 @@ package org.nanohttpd.protocols.http.request;
  * to its enum value.
  */
 public enum Method {
-    GET,
-    PUT,
-    POST,
-    DELETE,
-    HEAD,
-    OPTIONS,
-    TRACE,
-    CONNECT,
-    PATCH,
-    PROPFIND,
-    PROPPATCH,
-    MKCOL,
-    MOVE,
-    COPY,
-    LOCK,
-    UNLOCK;
+	GET, PUT, POST, DELETE, HEAD, OPTIONS, TRACE, CONNECT, PATCH, PROPFIND, PROPPATCH, MKCOL, MOVE, COPY, LOCK, UNLOCK;
 
-    public static Method lookup(String method) {
-        if (method == null)
-            return null;
+	public static Method lookup(String method) {
+		if (method == null)
+			return null;
 
-        try {
-            return valueOf(method);
-        } catch (IllegalArgumentException e) {
-            // TODO: Log it?
-            return null;
-        }
-    }
+		try {
+			return valueOf(method);
+		} catch (IllegalArgumentException e) {
+			// TODO: Log it?
+			return null;
+		}
+	}
 }

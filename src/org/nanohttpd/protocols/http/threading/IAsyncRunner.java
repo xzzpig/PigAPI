@@ -40,9 +40,9 @@ import org.nanohttpd.protocols.http.ClientHandler;
  */
 public interface IAsyncRunner {
 
-    void closeAll();
+	void closeAll();
 
-    void closed(ClientHandler clientHandler);
+	void closed(ClientHandler clientHandler);
 
-    void exec(ClientHandler code);
+	void exec(ClientHandler code);
 }

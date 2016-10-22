@@ -6,12 +6,14 @@ public class HandshakeImpl1Client extends HandshakedataImpl1 implements ClientHa
 	public HandshakeImpl1Client() {
 	}
 
-	public void setResourceDescriptor( String resourceDescriptor ) throws IllegalArgumentException {
-		if(resourceDescriptor==null)
-			throw new IllegalArgumentException( "http resource descriptor must not be null" );
+	@Override
+	public void setResourceDescriptor(String resourceDescriptor) throws IllegalArgumentException {
+		if (resourceDescriptor == null)
+			throw new IllegalArgumentException("http resource descriptor must not be null");
 		this.resourceDescriptor = resourceDescriptor;
 	}
 
+	@Override
 	public String getResourceDescriptor() {
 		return resourceDescriptor;
 	}

@@ -52,34 +52,34 @@ import org.nanohttpd.protocols.http.NanoHTTPD;
  */
 public class DefaultTempFileManager implements ITempFileManager {
 
-    private final File tmpdir;
+	private final File tmpdir;
 
-    private final List<ITempFile> tempFiles;
+	private final List<ITempFile> tempFiles;
 
-    public DefaultTempFileManager() {
-        this.tmpdir = new File(System.getProperty("java.io.tmpdir"));
-        if (!tmpdir.exists()) {
-            tmpdir.mkdirs();
-        }
-        this.tempFiles = new ArrayList<ITempFile>();
-    }
+	public DefaultTempFileManager() {
+		this.tmpdir = new File(System.getProperty("java.io.tmpdir"));
+		if (!tmpdir.exists()) {
+			tmpdir.mkdirs();
+		}
+		this.tempFiles = new ArrayList<ITempFile>();
+	}
 
-    @Override
-    public void clear() {
-        for (ITempFile file : this.tempFiles) {
-            try {
-                file.delete();
-            } catch (Exception ignored) {
-                NanoHTTPD.LOG.log(Level.WARNING, "could not delete file ", ignored);
-            }
-        }
-        this.tempFiles.clear();
-    }
+	@Override
+	public void clear() {
+		for (ITempFile file : this.tempFiles) {
+			try {
+				file.delete();
+			} catch (Exception ignored) {
+				NanoHTTPD.LOG.log(Level.WARNING, "could not delete file ", ignored);
+			}
+		}
+		this.tempFiles.clear();
+	}
 
-    @Override
-    public ITempFile createTempFile(String filename_hint) throws Exception {
-        DefaultTempFile tempFile = new DefaultTempFile(this.tmpdir);
-        this.tempFiles.add(tempFile);
-        return tempFile;
-    }
+	@Override
+	public ITempFile createTempFile(String filename_hint) throws Exception {
+		DefaultTempFile tempFile = new DefaultTempFile(this.tmpdir);
+		this.tempFiles.add(tempFile);
+		return tempFile;
+	}
 }

@@ -46,28 +46,28 @@ import org.nanohttpd.util.IFactoryThrowing;
  */
 public class SecureServerSocketFactory implements IFactoryThrowing<ServerSocket, IOException> {
 
-    private SSLServerSocketFactory sslServerSocketFactory;
+	private SSLServerSocketFactory sslServerSocketFactory;
 
-    private String[] sslProtocols;
+	private String[] sslProtocols;
 
-    public SecureServerSocketFactory(SSLServerSocketFactory sslServerSocketFactory, String[] sslProtocols) {
-        this.sslServerSocketFactory = sslServerSocketFactory;
-        this.sslProtocols = sslProtocols;
-    }
+	public SecureServerSocketFactory(SSLServerSocketFactory sslServerSocketFactory, String[] sslProtocols) {
+		this.sslServerSocketFactory = sslServerSocketFactory;
+		this.sslProtocols = sslProtocols;
+	}
 
-    @Override
-    public ServerSocket create() throws IOException {
-        SSLServerSocket ss = null;
-        ss = (SSLServerSocket) this.sslServerSocketFactory.createServerSocket();
-        if (this.sslProtocols != null) {
-            ss.setEnabledProtocols(this.sslProtocols);
-        } else {
-            ss.setEnabledProtocols(ss.getSupportedProtocols());
-        }
-        ss.setUseClientMode(false);
-        ss.setWantClientAuth(false);
-        ss.setNeedClientAuth(false);
-        return ss;
-    }
+	@Override
+	public ServerSocket create() throws IOException {
+		SSLServerSocket ss = null;
+		ss = (SSLServerSocket) this.sslServerSocketFactory.createServerSocket();
+		if (this.sslProtocols != null) {
+			ss.setEnabledProtocols(this.sslProtocols);
+		} else {
+			ss.setEnabledProtocols(ss.getSupportedProtocols());
+		}
+		ss.setUseClientMode(false);
+		ss.setWantClientAuth(false);
+		ss.setNeedClientAuth(false);
+		return ss;
+	}
 
 }

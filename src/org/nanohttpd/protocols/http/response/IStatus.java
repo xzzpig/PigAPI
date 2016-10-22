@@ -35,7 +35,7 @@ package org.nanohttpd.protocols.http.response;
 
 public interface IStatus {
 
-    String getDescription();
+	String getDescription();
 
-    int getRequestStatus();
+	int getRequestStatus();
 }

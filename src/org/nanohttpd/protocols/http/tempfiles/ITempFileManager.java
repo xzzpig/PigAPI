@@ -43,7 +43,7 @@ package org.nanohttpd.protocols.http.tempfiles;
  */
 public interface ITempFileManager {
 
-    void clear();
+	void clear();
 
-    public ITempFile createTempFile(String filename_hint) throws Exception;
+	public ITempFile createTempFile(String filename_hint) throws Exception;
 }
