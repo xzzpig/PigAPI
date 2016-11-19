@@ -40,7 +40,7 @@ public class Main extends JavaPlugin {
 		getLogger().info(getName() + getDescription().getVersion() + "插件已被加载");
 		new Thread(()->{
 			JSPlugin.freshPluginState();			
-		});
+		}).start();;
 		getServer().getPluginManager().registerEvents(JSListener.instance, this);
 		getServer().getPluginManager().registerEvents(JSListener_1.instance, this);
 		getServer().getPluginManager().registerEvents(JSListener_2.instance, this);
