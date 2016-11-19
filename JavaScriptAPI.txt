@@ -1,0 +1,26 @@
+事件说明:
+	将JS脚本放在 *服务器目录/plugins/PigAPI/script/*事件名称 下
+	脚本将在事件发生时自动调用
+
+BukkitAPI事件:
+	在https://jd.bukkit.org/自行查询方法
+	
+自定义事件:
+	StringMatcherEvent:
+		说明:匹配文本时调用
+		方法:
+			Entity getEntity()		:获取匹配的生物(可能不存在)
+			String getSouce()		:获取源文本
+			void setEntity(Entity)	:设置匹配生物
+			void setSouce(String)	:设置源文本
+	PluginLoadEvent:
+		说明:PigAPI载入时调用
+	PluginUnLoadEvent:
+		说明:PigAPI卸载时调用
+
+api变量使用:
+	变量说明:每个脚本都自动定义并赋值个变量api
+	api方法:
+		void setData(String key,Object value)	:设置永久值(服务器关闭前)
+		Object getData()			:取永久值
+		File getPluginFolder()		:取到./plugins/PigAPI目录对象
