@@ -28,12 +28,12 @@ public class JSListener implements Listener, com.github.xzzpig.pigapi.event.List
 	}
 
 	public static void runScript(com.github.xzzpig.pigapi.event.Event event) {
-		if(!scriptmap.containsKey(event.getClass().getName()))
+		if(!scriptmap.containsKey(event.getClass().getSimpleName()))
 			return;
 		ScriptEngine engine = getEngine();
 		engine.put("API", api);
 		engine.put("event", event);
-		for (File script : scriptmap.get(event.getClass().getName())) {
+		for (File script : scriptmap.get(event.getClass().getSimpleName())) {
 			try {
 				engine.eval(new FileReader(script));
 			} catch (Exception e) {

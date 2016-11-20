@@ -45,6 +45,7 @@ public class TPlayer {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static Player[] getAllPlayers() {
 		return Bukkit.getOnlinePlayers();
 	}

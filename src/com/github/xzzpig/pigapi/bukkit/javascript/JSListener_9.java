@@ -19,16 +19,8 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
-import com.github.xzzpig.pigapi.bukkit.event.StringMatcherEvent;
-
 public class JSListener_9 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_9 instance = new JSListener_9();
-	
-	@com.github.xzzpig.pigapi.event.EventHandler
-	public void onEvent(StringMatcherEvent event) {
-		JSListener.runScript(event);
-	}
-
 	
 	@EventHandler
 	public void onEvent(StructureGrowEvent event) {

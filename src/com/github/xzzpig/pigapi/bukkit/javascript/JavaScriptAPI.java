@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.entity.LivingEntity;
+
 import com.github.xzzpig.pigapi.PigData;
+import com.github.xzzpig.pigapi.bukkit.TStringMatcher;
+import com.github.xzzpig.pigapi.json.JSONObject;
 import com.github.xzzpig.pigapi.plugin.Main;
 
 public class JavaScriptAPI {
@@ -42,5 +46,25 @@ public class JavaScriptAPI {
 	
 	public File getSubFile(File file,String path){
 		return new File(file,path);
+	}
+	
+	public JSONObject createJsonObject(String source){
+		if(source==null)
+			return new JSONObject();
+		return new JSONObject(source);
+	}
+	
+	public String buildStr(String str, LivingEntity entity, boolean isInt) {
+		return TStringMatcher.buildStr(str, entity, isInt);
+	}
+	
+	public boolean loadClass(String classpath){
+		try {
+			this.getClass();
+			Class.forName(classpath);
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+		return true;
 	}
 }

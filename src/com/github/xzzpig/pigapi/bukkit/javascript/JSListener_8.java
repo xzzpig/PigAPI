@@ -11,8 +11,6 @@ import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.entity.SheepRegrowWoolEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -25,16 +23,6 @@ public class JSListener_8 implements Listener, com.github.xzzpig.pigapi.event.Li
 	public static final JSListener_8 instance = new JSListener_8();
 	@EventHandler
 	public void onEvent(PlayerVelocityEvent event) {
-		JSListener.runScript(event);
-	}
-
-	@EventHandler
-	public void onEvent(PluginDisableEvent event) {
-		JSListener.runScript(event);
-	}
-
-	@EventHandler
-	public void onEvent(PluginEnableEvent event) {
 		JSListener.runScript(event);
 	}
 	

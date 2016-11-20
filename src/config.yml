@@ -1,5 +1,12 @@
 PigAPI: 
   enable: 
     chatmanager: false
+    jsplugin: false
+    websocket: false
+    simplewebserver: false
   chatmanager: 
     chatformat: '&2</world/></n/></prefix/></colorid/>&r:</message/>'
+  websocket:
+    port: 10727
+  simplewebserver:
+    port: 80

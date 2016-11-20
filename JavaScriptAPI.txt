@@ -17,10 +17,36 @@ BukkitAPI事件:
 		说明:PigAPI载入时调用
 	PluginUnLoadEvent:
 		说明:PigAPI卸载时调用
+	WebSocketOpenEvent:
+		说明:WebSocket客户端连接时调用
+		方法:
+			WebSocketServer getServer()		:获取WS服务器
+			WebSocket getClient()			:获取WS客户端
+			ClientHandshake getHandshake()	:获取ClientHandshake
+	WebSocketCloseEvent:
+		说明:WebSocket客户端断开时调用
+		方法:
+			WebSocketServer getServer()		:获取WS服务器
+			WebSocket getClient()			:获取WS客户端
+			int getCode()					:获取Code
+			String getReason()				:获取原因
+			boolean isRemote()				:断开是否来自于客户端
+	WebSocketMessageEvent:
+		说明:WebSocket客户端消息到达时调用
+		方法:
+			WebSocketServer getServer()		:获取WS服务器
+			WebSocket getClient()			:获取WS客户端
+			String getMessage()				:获取客户端发来的消息
+	WebSocketErrorEvent:
+		说明:连接发送发生错误时调用
+		方法:
+			WebSocketServer getServer()		:获取WS服务器
+			WebSocket getClient()			:获取WS客户端
+			Exception getError()			:获取错误信息
 
 api变量使用:
 	变量说明:每个脚本都自动定义并赋值个变量api
 	api方法:
 		void setData(String key,Object value)	:设置永久值(服务器关闭前)
-		Object getData()			:取永久值
-		File getPluginFolder()		:取到./plugins/PigAPI目录对象
+		Object getData()						:取永久值
+		File getPluginFolder()					:取到./plugins/PigAPI目录对象
