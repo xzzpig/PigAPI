@@ -1,28 +1,28 @@
 package com.github.xzzpig.pigapi.bukkit.event;
 
-import org.bukkit.entity.LivingEntity;
+import java.util.HashMap;
 
 import com.github.xzzpig.pigapi.event.Event;
 
 public class StringMatcherEvent extends Event {
-	LivingEntity entity;
+	HashMap<String,Object> data;
 	String souce;
 
-	public StringMatcherEvent(String souce, LivingEntity entity) {
+	public StringMatcherEvent(String souce, HashMap<String,Object> data) {
 		this.souce = souce;
-		this.entity = entity;
+		this.data = data;
 	}
 
-	public LivingEntity getEntity() {
-		return entity;
+	public HashMap<String,Object> getData() {
+		return data;
 	}
 
 	public String getSouce() {
 		return souce;
 	}
 
-	public void setEntity(LivingEntity entity) {
-		this.entity = entity;
+	public void setData(HashMap<String,Object> data) {
+		this.data = data;
 	}
 
 	public void setSouce(String souce) {
