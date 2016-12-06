@@ -8,9 +8,9 @@ public interface Paintable {
 		CUT,ZOOM
 	}
 	
-	void paint(Graphics g);
-	
 	Image getImage();
 	
 	Image getSizedImage(Rect size,SizeType type);
+	
+	void paint(Graphics g);
 }

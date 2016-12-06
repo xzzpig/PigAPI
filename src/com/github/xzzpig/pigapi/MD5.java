@@ -9,9 +9,6 @@ public class MD5 {
 	private final static String[] strDigits = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d",
 			"e", "f" };
 
-	public MD5() {
-	}
-
 	// ������ʽΪ���ָ��ַ���
 	private static String byteToArrayString(byte bByte) {
 		int iRet = bByte;
@@ -44,5 +41,8 @@ public class MD5 {
 			ex.printStackTrace();
 		}
 		return resultString;
+	}
+
+	public MD5() {
 	}
 }

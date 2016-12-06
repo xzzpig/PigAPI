@@ -17,47 +17,47 @@ public class Rect {
 		height = r.height;
 		width = r.width;
 	}
-	public int getTop(){
-		return top;
-	}
-	public int getLeft(){
-		return left;
-	}
-	public int getWidth(){
-		return width;
+	public int getBottom(){
+		return top+height;
 	}
 	public int getHeight(){
 		return height;
 	}
-	public int getBottom(){
-		return top+height;
+	public int getLeft(){
+		return left;
 	}
 	public int getRight(){
 		return left+width;
 	}
+	public int getTop(){
+		return top;
+	}
+	public int getWidth(){
+		return width;
+	}
 	
-	public Rect setTop(int top){
-		this.top = top;
-		return this;
-	}
-	public Rect setLeft(int left){
-		this.left = left;
-		return this;
-	}
-	public Rect setWidth(int width){
-		this.width = width;
+	public Rect setBottom(int bottom){
+		this.height = bottom-top;
 		return this;
 	}
 	public Rect setHeight(int height){
 		this.height = height;
 		return this;
 	}
-	public Rect setBottom(int bottom){
-		this.height = bottom-top;
+	public Rect setLeft(int left){
+		this.left = left;
 		return this;
 	}
 	public Rect setRight(int right){
 		this.width = right-left;
+		return this;
+	}
+	public Rect setTop(int top){
+		this.top = top;
+		return this;
+	}
+	public Rect setWidth(int width){
+		this.width = width;
 		return this;
 	}
 }

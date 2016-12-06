@@ -41,13 +41,44 @@ SOFTWARE.
  */
 public class JSONTokener {
 
+	/**
+	 * Get the hex value of a character (base16).
+	 * 
+	 * @param c
+	 *            A character between '0' and '9' or between 'A' and 'F' or
+	 *            between 'a' and 'f'.
+	 * @return An int between 0 and 15, or -1 if c was not a hex digit.
+	 */
+	public static int dehexchar(char c) {
+		if (c >= '0' && c <= '9') {
+			return c - '0';
+		}
+		if (c >= 'A' && c <= 'F') {
+			return c - ('A' - 10);
+		}
+		if (c >= 'a' && c <= 'f') {
+			return c - ('a' - 10);
+		}
+		return -1;
+	}
 	private long character;
 	private boolean eof;
 	private long index;
 	private long line;
 	private char previous;
 	private Reader reader;
+
 	private boolean usePrevious;
+
+	/**
+	 * Construct a JSONTokener from an InputStream.
+	 * 
+	 * @param inputStream
+	 *            The source.
+	 */
+	public JSONTokener(InputStream inputStream) throws JSONException {
+		this(new InputStreamReader(inputStream));
+	}
 
 	/**
 	 * Construct a JSONTokener from a Reader.
@@ -63,16 +94,6 @@ public class JSONTokener {
 		this.index = 0;
 		this.character = 1;
 		this.line = 1;
-	}
-
-	/**
-	 * Construct a JSONTokener from an InputStream.
-	 * 
-	 * @param inputStream
-	 *            The source.
-	 */
-	public JSONTokener(InputStream inputStream) throws JSONException {
-		this(new InputStreamReader(inputStream));
 	}
 
 	/**
@@ -98,27 +119,6 @@ public class JSONTokener {
 		this.character -= 1;
 		this.usePrevious = true;
 		this.eof = false;
-	}
-
-	/**
-	 * Get the hex value of a character (base16).
-	 * 
-	 * @param c
-	 *            A character between '0' and '9' or between 'A' and 'F' or
-	 *            between 'a' and 'f'.
-	 * @return An int between 0 and 15, or -1 if c was not a hex digit.
-	 */
-	public static int dehexchar(char c) {
-		if (c >= '0' && c <= '9') {
-			return c - '0';
-		}
-		if (c >= 'A' && c <= 'F') {
-			return c - ('A' - 10);
-		}
-		if (c >= 'a' && c <= 'f') {
-			return c - ('a' - 10);
-		}
-		return -1;
 	}
 
 	public boolean end() {

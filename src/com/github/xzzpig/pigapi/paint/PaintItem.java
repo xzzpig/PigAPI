@@ -7,8 +7,8 @@ import java.util.List;
 
 public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 
-	private PaintItem parent;
 	private String name;
+	private PaintItem parent;
 	private Rect size;
 	private List<PaintItem> subs;
 
@@ -20,22 +20,36 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 		setParent(parent);
 	}
 
+	public PaintItem addSub(PaintItem item) {
+		subs.add(item);
+		return this;
+	}
+
+	@Override
+	public abstract PaintItem clone();
+
+	public final Image getFinalImage(){
+		Image image = getSizedImage();
+		for (PaintItem subItem : subs) {
+			Image image2 = subItem.getFinalImage();
+			image.getGraphics().drawImage(image2, subItem.getSize().left, subItem.getSize().top, null);
+		}
+		return image;
+	}
+
 	public final String getName() {
 		return name;
 	}
 
-	public final PaintItem setName(String name) {
-		this.name = name;
-		return this;
+	@Override
+	public PaintItem getParent() {
+		return parent;
 	}
-
 	public Rect getSize() {
 		return size;
 	}
-
-	public PaintItem setSize(Rect size) {
-		size = new Rect(size);
-		return this;
+	public Image getSizedImage() {
+		return getSizedImage(getSize(), SizeType.ZOOM);
 	}
 
 	@Override
@@ -48,31 +62,10 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 			return image;
 		}
 	}
-	public Image getSizedImage() {
-		return getSizedImage(getSize(), SizeType.ZOOM);
-	}
-	@Override
-	public PaintItem getParent() {
-		return parent;
-	}
-
-	public PaintItem setParent(PaintItem parent){
-		if(this.parent!=null){
-			this.parent.removeSub(getName());
-		}
-		parent.addSub(this);
-		this.parent = parent;
-		return this;
-	}
 	
 	@Override
 	public PaintItem[] getSubs() {
 		return subs.toArray(new PaintItem[0]);
-	}
-
-	public PaintItem addSub(PaintItem item) {
-		subs.add(item);
-		return this;
 	}
 
 	public PaintItem removeSub(String name) {
@@ -85,15 +78,22 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 		return this;
 	}
 
-	public final Image getFinalImage(){
-		Image image = getSizedImage();
-		for (PaintItem subItem : subs) {
-			Image image2 = subItem.getFinalImage();
-			image.getGraphics().drawImage(image2, subItem.getSize().left, subItem.getSize().top, null);
+	public final PaintItem setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	public PaintItem setParent(PaintItem parent){
+		if(this.parent!=null){
+			this.parent.removeSub(getName());
 		}
-		return image;
+		parent.addSub(this);
+		this.parent = parent;
+		return this;
 	}
 	
-	@Override
-	public abstract PaintItem clone();
+	public PaintItem setSize(Rect size) {
+		size = new Rect(size);
+		return this;
+	}
 }

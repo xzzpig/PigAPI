@@ -14,15 +14,15 @@ import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.TData;
 
 public class Client {
-	public static List<Client> clients = new ArrayList<Client>();
+	public static Class<? extends AcceptData> acceptDataClass = AcceptData_Default.class;
 	public static Client client;
 
-	public static Class<? extends AcceptData> acceptDataClass = AcceptData_Default.class;
+	public static List<Client> clients = new ArrayList<Client>();
 
-	public Socket s;
-	public String from;
-	public TData data = new TData();
 	public long cooldown = System.currentTimeMillis();
+	public TData data = new TData();
+	public String from;
+	public Socket s;
 
 	public Client(Socket s) {
 		clients.add(this);
@@ -38,36 +38,29 @@ public class Client {
 		client = this;
 	}
 
-	public Client sendData(Object data) {
-		while (System.currentTimeMillis() < cooldown) {
-		}
+	private void acceptData() {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-			out.writeObject(data);
-			cooldown = System.currentTimeMillis() + 50;
-		} catch (Exception e) {
+			AcceptData ad = acceptDataClass.newInstance();
+			ad.setClient(this);
+			ad.start();
+		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
-			System.out.println("数据发送错误");
 		}
-		return this;
 	}
 
-	public Client sendData(PigData data) {
-		sendData(data.toString().getBytes());
-		return this;
-	}
-
-	public Client sendData(byte[] data) {
+	public byte[] receiveData(int timeout) {
 		try {
-			OutputStream out = s.getOutputStream();
-			out.write(data);
+			s.setSoTimeout(timeout);
+			byte[] data = new byte[1024 * 1024];
+			int length = s.getInputStream().read(data);
+			String str = new String(data, 0, length);
+
+			s.setSoTimeout(0);
+			return str.getBytes();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("数据发送错误");
-			if (s.isClosed() && from.equalsIgnoreCase("server"))
-				Server.server.getClients().remove(this);
 		}
-		return this;
+		return null;
 	}
 
 	public Object receiveObjectData(int timeout) {
@@ -89,28 +82,35 @@ public class Client {
 		return null;
 	}
 
-	public byte[] receiveData(int timeout) {
+	public Client sendData(byte[] data) {
 		try {
-			s.setSoTimeout(timeout);
-			byte[] data = new byte[1024 * 1024];
-			int length = s.getInputStream().read(data);
-			String str = new String(data, 0, length);
-
-			s.setSoTimeout(0);
-			return str.getBytes();
+			OutputStream out = s.getOutputStream();
+			out.write(data);
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("数据发送错误");
+			if (s.isClosed() && from.equalsIgnoreCase("server"))
+				Server.server.getClients().remove(this);
 		}
-		return null;
+		return this;
 	}
 
-	private void acceptData() {
-		try {
-			AcceptData ad = acceptDataClass.newInstance();
-			ad.setClient(this);
-			ad.start();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+	public Client sendData(Object data) {
+		while (System.currentTimeMillis() < cooldown) {
 		}
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+			out.writeObject(data);
+			cooldown = System.currentTimeMillis() + 50;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("数据发送错误");
+		}
+		return this;
+	}
+
+	public Client sendData(PigData data) {
+		sendData(data.toString().getBytes());
+		return this;
 	}
 }

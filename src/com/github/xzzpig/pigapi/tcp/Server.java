@@ -10,9 +10,9 @@ import com.github.xzzpig.pigapi.event.Event;
 public class Server {
 	public static Server server;
 
-	public ServerSocket ss;
-
 	private List<Client> clients = new ArrayList<Client>();
+
+	public ServerSocket ss;
 
 	public Server(int port) throws Exception {
 		Server.server = this;

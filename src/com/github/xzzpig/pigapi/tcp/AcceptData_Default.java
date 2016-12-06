@@ -11,13 +11,12 @@ import com.github.xzzpig.pigapi.event.Event;
 public class AcceptData_Default extends AcceptData {
 	public static int SIZE = 1024 * 1024;
 
-	Socket s;
 	private Client c;
+	Socket s;
 
 	@Override
-	public AcceptData setSocket(Socket s) {
-		this.s = s;
-		return this;
+	public Client getClient() {
+		return c;
 	}
 
 	@Override
@@ -58,8 +57,9 @@ public class AcceptData_Default extends AcceptData {
 	}
 
 	@Override
-	public Client getClient() {
-		return c;
+	public AcceptData setSocket(Socket s) {
+		this.s = s;
+		return this;
 	}
 
 }

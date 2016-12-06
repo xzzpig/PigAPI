@@ -50,16 +50,6 @@ public class TMySql extends TSql {
 	}
 
 	@Override
-	public TMySql connect(String host, int port, String username, String password, String database) throws Exception {
-		String url = "jdbc:mysql://" + host + ":3306/" + database + "?" + "user=" + username + "&password=" + password
-				+ "&useUnicode=true&characterEncoding=UTF8";
-		conn = DriverManager.getConnection(url);
-		stmt = conn.createStatement();
-
-		return this;
-	}
-
-	@Override
 	public void close() {
 		try {
 			stmt.close();
@@ -71,5 +61,15 @@ public class TMySql extends TSql {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public TMySql connect(String host, int port, String username, String password, String database) throws Exception {
+		String url = "jdbc:mysql://" + host + ":3306/" + database + "?" + "user=" + username + "&password=" + password
+				+ "&useUnicode=true&characterEncoding=UTF8";
+		conn = DriverManager.getConnection(url);
+		stmt = conn.createStatement();
+
+		return this;
 	}
 }

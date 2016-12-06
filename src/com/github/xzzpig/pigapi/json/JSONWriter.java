@@ -153,6 +153,13 @@ public class JSONWriter {
 		throw new JSONException("Misplaced array.");
 	}
 
+	public void end() {
+		try {
+			writer.close();
+		} catch (IOException e) {
+		}
+	}
+
 	/**
 	 * End something.
 	 * 
@@ -348,12 +355,5 @@ public class JSONWriter {
 	 */
 	public JSONWriter value(Object object) throws JSONException {
 		return this.append(JSONObject.valueToString(object));
-	}
-
-	public void end() {
-		try {
-			writer.close();
-		} catch (IOException e) {
-		}
 	}
 }

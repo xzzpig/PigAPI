@@ -6,15 +6,26 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TCalculate {
-	public static double getResult(String expression, double def) {
-		try {
-			return getResult(expression);
-		} catch (Exception e) {
-			return def;
+class OPNode {
+	int level; // 运算符优先级
+	char op; // 运算符符号
+
+	public OPNode(String op) {
+		this.op = op.charAt(0);
+		// 根据不同的运算符号分配优先级
+		if (op.equals("+") || op.equals("-")) {
+			this.level = 1; // 加减运算优先级为1
+		} else if (op.equals("*") || op.equals("/")) {
+			this.level = 2; // 乘除运算优先级为2
+		} else if (op.equals("(")) {
+			this.level = -3; // "("优先级为-3
+		} else {
+			this.level = -1; // ")"优先级为-1
 		}
 	}
+}
 
+public class TCalculate {
 	public static double getResult(String expression) {
 		// String expression = "1+5*(2+1)";
 		Pattern entryOfExpression = Pattern.compile("[0-9]+(\\.[0-9]+)?|\\(|\\)|\\+|-|\\*|/");
@@ -89,23 +100,12 @@ public class TCalculate {
 		}
 		return (double) stack.pop();
 	}
-}
 
-class OPNode {
-	char op; // 运算符符号
-	int level; // 运算符优先级
-
-	public OPNode(String op) {
-		this.op = op.charAt(0);
-		// 根据不同的运算符号分配优先级
-		if (op.equals("+") || op.equals("-")) {
-			this.level = 1; // 加减运算优先级为1
-		} else if (op.equals("*") || op.equals("/")) {
-			this.level = 2; // 乘除运算优先级为2
-		} else if (op.equals("(")) {
-			this.level = -3; // "("优先级为-3
-		} else {
-			this.level = -1; // ")"优先级为-1
+	public static double getResult(String expression, double def) {
+		try {
+			return getResult(expression);
+		} catch (Exception e) {
+			return def;
 		}
 	}
 }

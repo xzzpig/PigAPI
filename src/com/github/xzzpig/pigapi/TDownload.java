@@ -12,11 +12,11 @@ public class TDownload {
 	private long downloadsize;
 	private Exception error;
 	private boolean finish;
-	private long size;
-	private URL url;
 	private String name;
-
 	private boolean print;
+	private long size;
+
+	private URL url;
 
 	public TDownload(String url) throws Exception {
 		this(new URL(url));
@@ -32,6 +32,10 @@ public class TDownload {
 
 	public Exception getError() {
 		return error;
+	}
+
+	public String getFileName() {
+		return name;
 	}
 
 	public short getPrecent() {
@@ -62,21 +66,17 @@ public class TDownload {
 		return this.error != null;
 	}
 
-	public boolean isFinished() {
-		return finish;
-	}
-
 	public TDownload isBarPrint(boolean arg) {
 		this.print = arg;
 		return this;
 	}
 
-	public void setURL(URL url) {
-		this.url = url;
+	public boolean isFinished() {
+		return finish;
 	}
 
-	public String getFileName() {
-		return name;
+	public void setURL(URL url) {
+		this.url = url;
 	}
 
 	public TDownload start(final File savedFile) {
