@@ -17,6 +17,10 @@ public class Rect {
 		height = r.height;
 		width = r.width;
 	}
+	public boolean contains(int x,int y){
+		if (x<getLeft()||x>getRight()||y<getTop()||y>getBottom())return false;
+		return true;
+	}
 	public int getBottom(){
 		return top+height;
 	}
@@ -32,10 +36,10 @@ public class Rect {
 	public int getTop(){
 		return top;
 	}
+	
 	public int getWidth(){
 		return width;
 	}
-	
 	public Rect setBottom(int bottom){
 		this.height = bottom-top;
 		return this;
@@ -56,8 +60,14 @@ public class Rect {
 		this.top = top;
 		return this;
 	}
+	
 	public Rect setWidth(int width){
 		this.width = width;
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+		return "Rect{"+getLeft()+","+getTop()+","+getWidth()+","+getHeight()+"}";
 	}
 }

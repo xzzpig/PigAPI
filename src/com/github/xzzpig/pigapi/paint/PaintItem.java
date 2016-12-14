@@ -9,7 +9,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 
 	private String name;
 	private PaintItem parent;
-	private Rect size;
+	protected Rect size;
 	private List<PaintItem> subs;
 
 	public PaintItem(PaintItem parent, String name, Rect size) {
@@ -22,6 +22,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 
 	public PaintItem addSub(PaintItem item) {
 		subs.add(item);
+		item.setParent(this);
 		return this;
 	}
 
@@ -29,7 +30,8 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	public abstract PaintItem clone();
 
 	public final Image getFinalImage(){
-		Image image = getSizedImage();
+		Image image = new BufferedImage(getSize().width,getSize().height, BufferedImage.TYPE_INT_ARGB);
+		image.getGraphics().drawImage(getSizedImage(),0,0,null);
 		for (PaintItem subItem : subs) {
 			Image image2 = subItem.getFinalImage();
 			image.getGraphics().drawImage(image2, subItem.getSize().left, subItem.getSize().top, null);
@@ -84,16 +86,20 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	}
 
 	public PaintItem setParent(PaintItem parent){
-		if(this.parent!=null){
+		if(this.parent!=null&&this.parent!=parent){
 			this.parent.removeSub(getName());
+			parent.addSub(this);
 		}
-		parent.addSub(this);
 		this.parent = parent;
 		return this;
 	}
 	
 	public PaintItem setSize(Rect size) {
-		size = new Rect(size);
+		this.size = new Rect(size);
 		return this;
+	}
+	
+	public void clarAllSubs(){
+		subs.clear();
 	}
 }
