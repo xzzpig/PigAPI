@@ -26,6 +26,10 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 		return this;
 	}
 
+	public void clarAllSubs(){
+		subs.clear();
+	}
+
 	@Override
 	public abstract PaintItem clone();
 
@@ -42,7 +46,6 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	public final String getName() {
 		return name;
 	}
-
 	@Override
 	public PaintItem getParent() {
 		return parent;
@@ -50,10 +53,11 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	public Rect getSize() {
 		return size;
 	}
+
 	public Image getSizedImage() {
 		return getSizedImage(getSize(), SizeType.ZOOM);
 	}
-
+	
 	@Override
 	public Image getSizedImage(Rect size, SizeType type) {
 		if (type == SizeType.ZOOM) {
@@ -64,7 +68,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 			return image;
 		}
 	}
-	
+
 	@Override
 	public PaintItem[] getSubs() {
 		return subs.toArray(new PaintItem[0]);
@@ -84,7 +88,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 		this.name = name;
 		return this;
 	}
-
+	
 	public PaintItem setParent(PaintItem parent){
 		if(this.parent!=null&&this.parent!=parent){
 			this.parent.removeSub(getName());
@@ -97,9 +101,5 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	public PaintItem setSize(Rect size) {
 		this.size = new Rect(size);
 		return this;
-	}
-	
-	public void clarAllSubs(){
-		subs.clear();
 	}
 }
