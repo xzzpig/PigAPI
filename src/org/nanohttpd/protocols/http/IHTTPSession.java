@@ -97,4 +97,6 @@ public interface IHTTPSession {
 	 * @return the hostname.
 	 */
 	String getRemoteHostName();
+	
+	void setUri(String uri);
 }

@@ -721,4 +721,9 @@ public class HTTPSession implements IHTTPSession {
 	public String getRemoteHostName() {
 		return this.remoteHostname;
 	}
+	
+	@Override
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 }

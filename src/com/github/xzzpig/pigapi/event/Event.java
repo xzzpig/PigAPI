@@ -19,11 +19,11 @@ public class Event {
 		Arrays.sort(os);
 		events.get(type).clear();
 		events.get(type).addAll(Arrays.asList(os));
-		if (type == Event.class) {
-			return;
-		}
-		Class<?> su = ((Class<?>) type).getSuperclass();
-		addEvent(listener, meth, su);
+//		if (type == Event.class) {
+//			return;
+//		}
+//		Class<?> su = ((Class<?>) type).getSuperclass();
+//		addEvent(listener, meth, su);
 	}
 
 	public static final void callEvent(Event event) {
