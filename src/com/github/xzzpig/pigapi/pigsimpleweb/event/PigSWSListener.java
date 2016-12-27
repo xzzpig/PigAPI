@@ -1,16 +1,22 @@
 package com.github.xzzpig.pigapi.pigsimpleweb.event;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.request.Method;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
 
+import com.github.xzzpig.pigapi.TScript;
 import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.event.EventHandler;
 import com.github.xzzpig.pigapi.event.EventHandler.EventRunLevel;
@@ -64,6 +70,38 @@ public class PigSWSListener implements Listener {
 		}
 	}
 
+	@EventHandler(mainLevel = EventRunLevel.Highest)
+	public void onPigSWSSolveMIMEEvent_pjsp_default(PigSWSSolveMIMEEvent event) {
+		File jsFile = new File(event.getPigSimpleWebServer().getRootDir()+event.getSession().getUri());
+		if (!jsFile.exists()) {
+			PigSWSFileNotFoundEvent pigSWSFileNotFoundEvent = new PigSWSFileNotFoundEvent(
+					event.getPigSimpleWebServer(), event.getSession());
+			event.setResponse(pigSWSFileNotFoundEvent.getResponse());
+			return;
+		}
+		ScriptEngine engine = TScript.getJavaScriptEngine();
+		Response response = null;
+		engine.put("event",event);
+		engine.put("webserver",event.getPigSimpleWebServer());
+		engine.put("session",event.getSession());
+		try {
+			FileReader reader = new FileReader(jsFile);
+			engine.eval("var Response = Java.type(\"org.nanohttpd.protocols.http.response.Response\");");
+			engine.eval(reader);
+			try {
+				response = (Response) engine.eval("response");	
+			} catch (Exception e) {
+				response = Response.newFixedLengthResponse("Script No Response");
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (ScriptException e) {
+			e.printStackTrace();
+			response = Response.newFixedLengthResponse("Script Run Error\n"+e);
+		}
+		event.setResponse(response);
+	}
+	
 	@EventHandler(mainLevel = EventRunLevel.Highest)
 	public void onPigSWSSolveMIMEEvent_pswp_default(PigSWSSolveMIMEEvent event) {
 		if (event.getMIME().getSolveTyle().equalsIgnoreCase("pswp")) {
@@ -125,7 +163,7 @@ public class PigSWSListener implements Listener {
 		return null;
 	}
 
-	@EventHandler
+	@EventHandler(mainLevel=EventRunLevel.Lowest)
 	public void onPigSWSGetMIMEEVent(PigSWSGetMIMEEvent event) {
 		switch (event.getType()) {
 		case "html":
@@ -134,6 +172,9 @@ public class PigSWSListener implements Listener {
 			break;
 		case "pswp":
 			event.setMIME(MIME.pigswpage);
+			break;
+		case "pjsp":
+			event.setMIME(MIME.pigjspage);
 			break;
 		}
 	}
