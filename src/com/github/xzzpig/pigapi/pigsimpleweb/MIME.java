@@ -2,6 +2,7 @@ package com.github.xzzpig.pigapi.pigsimpleweb;
 
 public class MIME {
 	public static final MIME application_octet_stream = new MIME("application_octet-stream", "file");
+	public static final MIME pigswpage = new MIME("text/html", "pswp");
 	public static final MIME text_html = new MIME("text/html", "text");
 	public static final MIME text_plain = new MIME("text/plain", "text");
 
