@@ -9,9 +9,25 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Event {
-	private static final HashMap<Type, List<EventMethod>> events = new HashMap<Type, List<EventMethod>>();
+	private static final Event eventInstance = new Event();
 
-	private static void addEvent(Listener listener, Method meth, Type type) {
+	public static final void callEvent(Event event) {
+		eventInstance.callEvent_(event);
+	}
+
+	public static final void registListener(Listener listener) {
+		eventInstance.registListener_(listener);
+	}
+
+	public static final void unregListener(Listener listener) {
+		eventInstance.unregListener_(listener);
+	}
+
+	private boolean cancel;
+
+	private final HashMap<Type, List<EventMethod>> events = new HashMap<Type, List<EventMethod>>();
+
+	private void addEvent(Listener listener, Method meth, Type type) {
 		if (!events.containsKey(type))
 			events.put(type, new ArrayList<EventMethod>());
 		events.get(type).add(new EventMethod(meth, listener));
@@ -19,19 +35,9 @@ public class Event {
 		Arrays.sort(os);
 		events.get(type).clear();
 		events.get(type).addAll(Arrays.asList(os));
-//		if (type == Event.class) {
-//			return;
-//		}
-//		Class<?> su = ((Class<?>) type).getSuperclass();
-//		addEvent(listener, meth, su);
 	}
 
-	public static final void callEvent(Event event) {
-		Type eventtype = event.getClass();
-		callEvent(event, eventtype);
-	}
-
-	private static final void callEvent(Event event, Type eventtype) {
+	private final void callEvent(Event event, Type eventtype) {
 		if (events.containsKey(eventtype)) {
 			for (EventMethod em : events.get(eventtype)) {
 				if (event.isCanceled() && !em.eventHandler.ignoreCanceled()) {
@@ -51,7 +57,20 @@ public class Event {
 		callEvent(event, ((Class<?>) eventtype).getSuperclass());
 	}
 
-	public static final void registListener(Listener listener) {
+	final void callEvent_(Event event) {
+		Type eventtype = event.getClass();
+		callEvent(event, eventtype);
+	}
+
+	public String getName() {
+		return this.getClass().getSimpleName();
+	}
+
+	public boolean isCanceled() {
+		return cancel;
+	}
+
+	final void registListener_(Listener listener) {
 		for (Method meth : listener.getClass().getMethods()) {
 			Annotation ann = meth.getDeclaredAnnotation(EventHandler.class);
 			if (ann != null) {
@@ -65,7 +84,11 @@ public class Event {
 		}
 	}
 
-	public static final void unregListener(Listener listener) {
+	public void setCancel(boolean c) {
+		cancel = c;
+	}
+
+	final void unregListener_(Listener listener) {
 		for (List<EventMethod> list : events.values()) {
 			List<EventMethod> removeList = new ArrayList<>();
 			for (EventMethod eventMethod : list) {
@@ -75,16 +98,6 @@ public class Event {
 			}
 			list.removeAll(removeList);
 		}
-	}
-
-	private boolean cancel;
-
-	public boolean isCanceled() {
-		return cancel;
-	}
-
-	public void setCancel(boolean c) {
-		cancel = c;
 	}
 }
 
