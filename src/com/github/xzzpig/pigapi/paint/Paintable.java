@@ -13,4 +13,6 @@ public interface Paintable {
 	Image getSizedImage(Rect size,SizeType type);
 	
 	void paint(Graphics g);
+	
+	Image getFinalImage();
 }

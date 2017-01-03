@@ -5,13 +5,17 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PaintItem implements IContainer, Paintable, Sizeable {
+import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigapi.event.EventAdapter;
+
+public abstract class PaintItem implements IContainer, Paintable, Sizeable ,EventAdapter{
 
 	private String name;
 	private PaintItem parent;
 	protected Rect size;
 	private List<PaintItem> subs;
-
+	private final Event event = new Event();
+	
 	public PaintItem(PaintItem parent, String name, Rect size) {
 		subs = new ArrayList<>();
 		setName(name);
@@ -33,6 +37,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	@Override
 	public abstract PaintItem clone();
 
+	@Override
 	public final Image getFinalImage(){
 		Image image = new BufferedImage(getSize().width,getSize().height, BufferedImage.TYPE_INT_ARGB);
 		image.getGraphics().drawImage(getSizedImage(),0,0,null);
@@ -101,5 +106,10 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable {
 	public PaintItem setSize(Rect size) {
 		this.size = new Rect(size);
 		return this;
+	}
+	
+	@Override
+	public Event getEventInstance() {
+		return event;
 	}
 }
