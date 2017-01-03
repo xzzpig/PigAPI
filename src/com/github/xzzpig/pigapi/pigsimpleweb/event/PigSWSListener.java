@@ -86,10 +86,9 @@ public class PigSWSListener implements Listener {
 		engine.put("session",event.getSession());
 		try {
 			FileReader reader = new FileReader(jsFile);
-			engine.eval("var Response = Java.type(\"org.nanohttpd.protocols.http.response.Response\");");
 			engine.eval(reader);
 			try {
-				response = (Response) engine.eval("response");	
+				response = Response.newFixedLengthResponse((String) engine.get("response"));
 			} catch (Exception e) {
 				response = Response.newFixedLengthResponse("Script No Response");
 			}
@@ -98,7 +97,7 @@ public class PigSWSListener implements Listener {
 		} catch (ScriptException e) {
 			e.printStackTrace();
 			response = Response.newFixedLengthResponse("Script Run Error\n"+e);
-		}
+		} 
 		event.setResponse(response);
 	}
 	
