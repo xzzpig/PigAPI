@@ -9,6 +9,28 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Event {
+	public static final EventHandler defaultEventHandler = new EventHandler() {
+		@Override
+		public Class<? extends Annotation> annotationType() {
+			return EventHandler.class;
+		}
+
+		@Override
+		public boolean ignoreCanceled() {
+			return false;
+		}
+
+		@Override
+		public EventRunLevel mainLevel() {
+			return EventRunLevel.Normal;
+		}
+
+		@Override
+		public int minorLevel() {
+			return 0;
+		}
+	};
+
 	private static final Event eventInstance = new Event();
 
 	public static final void callEvent(Event event) {
@@ -17,6 +39,10 @@ public class Event {
 
 	public static final void registListener(Listener listener) {
 		eventInstance.registListener_(listener);
+	}
+
+	public static final void registListener(SimpleListener listener) {
+		registListener((Listener) listener);
 	}
 
 	public static final void unregListener(Listener listener) {
@@ -73,6 +99,9 @@ public class Event {
 	final void registListener_(Listener listener) {
 		for (Method meth : listener.getClass().getMethods()) {
 			Annotation ann = meth.getDeclaredAnnotation(EventHandler.class);
+			if (listener instanceof SimpleListener && meth.getName().equals("run")) {
+				ann = defaultEventHandler;
+			}
 			if (ann != null) {
 				meth.setAccessible(true);
 				try {
@@ -110,6 +139,9 @@ class EventMethod implements Comparable<EventMethod> {
 		this.method = method;
 		this.listener = listener;
 		eventHandler = this.method.getDeclaredAnnotation(EventHandler.class);
+		if (eventHandler == null) {
+			eventHandler = Event.defaultEventHandler;
+		}
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 @Target({ java.lang.annotation.ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventHandler {
+
 	public enum EventRunLevel {
 		High, Highest, Low, Lowest, Normal
 	}
