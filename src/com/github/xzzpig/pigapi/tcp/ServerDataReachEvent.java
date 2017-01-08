@@ -1,8 +1,7 @@
-package com.github.xzzpig.pigapi.customevent;
+package com.github.xzzpig.pigapi.tcp;
 
 import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.event.Event;
-import com.github.xzzpig.pigapi.tcp.Client;
 
 public class ServerDataReachEvent extends Event {
 	private Client client;

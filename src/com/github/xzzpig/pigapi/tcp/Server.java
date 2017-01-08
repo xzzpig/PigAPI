@@ -4,7 +4,6 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.xzzpig.pigapi.customevent.ClientConnectEvent;
 import com.github.xzzpig.pigapi.event.Event;
 
 public class Server {

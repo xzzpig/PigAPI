@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.Socket;
 
 import com.github.xzzpig.pigapi.Debuger;
-import com.github.xzzpig.pigapi.customevent.ServerDataReachEvent;
 import com.github.xzzpig.pigapi.event.Event;
 
 public class AcceptData_Default extends AcceptData {
