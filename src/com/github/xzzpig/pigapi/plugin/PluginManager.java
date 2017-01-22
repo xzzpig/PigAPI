@@ -19,7 +19,7 @@ public class PluginManager {
 	public static void loadHandlePlugin() {
 		List<PluginInfo> list = new ArrayList<>(handleplugins);
 		list.forEach((PluginInfo info) -> {
-			boolean load = loadPlugin(info);
+			boolean load = (loadPlugin(info) != null);
 			if (load) {
 				handleplugins.remove(info);
 			}
@@ -27,7 +27,7 @@ public class PluginManager {
 	}
 
 	@SuppressWarnings({ "unchecked", "resource" })
-	public static boolean loadJarPlugin(File jar) {
+	public static Plugin loadJarPlugin(File jar) {
 		loadHandlePlugin();
 		try {
 			JarFile jarFile;
@@ -56,26 +56,26 @@ public class PluginManager {
 			return loadPlugin(info);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 
-	private static boolean loadPlugin(PluginInfo info) {
+	private static Plugin loadPlugin(PluginInfo info) {
 		info.getDependence().forEach((String name) -> {
 			if (plugins.containsKey(name)) {
 				handleplugins.add(info);
 			}
 		});
 		if (handleplugins.contains(info)) {
-			return false;
+			return null;
 		}
 		Plugin plugin = info.loader.loadPlugin();
 		if (plugin == null) {
-			return false;
+			return null;
 		}
 		plugin.onEnable();
 		plugins.put(plugin.pluginInfo.getName(), plugin);
-		return true;
+		return plugin;
 	}
 
 	public static void unloadPlugin(String name) {
