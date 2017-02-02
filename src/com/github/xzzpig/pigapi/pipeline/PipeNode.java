@@ -1,9 +1,11 @@
 package com.github.xzzpig.pigapi.pipeline;
 
 /**
- * @author xzzpig 
- * @param <T> 被处理对象
  * 流水线的处理节点
+ * 
+ * @author xzzpig
+ * @param <T>
+ *            被处理对象
  */
 public interface PipeNode<T> {
 
@@ -16,10 +18,19 @@ public interface PipeNode<T> {
 	<R> PipeNode<R> next(PipeLineSolver<T, R> solver);
 
 	/**
+	 * 
+	 * 
 	 * @param stayobj
 	 *            保留在堆中，可作为累积器使用
 	 * @param c
 	 * @return stayobj
 	 */
 	<S> S finish(S stayobj, PipeLineConsumer<S, T> c);
+	
+	/**
+	 * 用于限制
+	 * @param l
+	 * @return this
+	 */
+	PipeNode<T> limit(PipeLineLimiter<T> l);
 }
