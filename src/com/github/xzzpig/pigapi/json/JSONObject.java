@@ -25,6 +25,7 @@ package com.github.xzzpig.pigapi.json;
  */
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -460,6 +461,58 @@ public class JSONObject {
 		return quote(value.toString());
 	}
 
+	
+	/**
+	 * 尝试将对象转换
+	 * @param o
+	 * @return 转换结果
+	 */
+	public static JSONObject format(Object o) {
+		JSONObject json = new JSONObject();
+		Field[] fs = o.getClass().getDeclaredFields();
+		for (Field f : fs) {
+			f.setAccessible(true);
+			Object fo = null;
+			try {
+				fo = f.get(o);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			if (fo == null)
+				json.put(f.getName(), (Object) null);
+			else if (fo instanceof Number)
+				try {
+					json.put(f.getName(), f.getDouble(o));
+				} catch (JSONException | IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			else if (fo instanceof String)
+				try {
+					json.put(f.getName(), (String) f.get(o));
+				} catch (JSONException | IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			else if (fo instanceof Boolean)
+				try {
+					json.put(f.getName(), f.getBoolean(o));
+				} catch (JSONException | IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			else if (fo.getClass().isArray())
+				json.put(f.getName(), new JSONArray(fo));
+			else if (fo instanceof Collection<?>)
+				json.put(f.getName(), (Collection<?>) fo);
+			else if (fo instanceof Map<?, ?>)
+				json.put(f.getName(), (Map<?, ?>) fo);
+			else {
+				json.put(f.getName(), fo instanceof Serializable ? format(fo) : fo.toString());
+			}
+		}
+		return json;
+	}
+	
 	/**
 	 * Wrap an object, if necessary. If the object is null, return the NULL
 	 * object. If it is an array or collection, wrap it in a JSONArray. If it is
