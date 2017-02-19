@@ -21,11 +21,12 @@ import org.bukkit.event.world.SpawnChangeEvent;
 
 public class JSListener_8 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_8 instance = new JSListener_8();
+
 	@EventHandler
 	public void onEvent(PlayerVelocityEvent event) {
 		JSListener.runScript(event);
 	}
-	
+
 	@EventHandler
 	public void onEvent(PortalCreateEvent event) {
 		JSListener.runScript(event);

@@ -7,13 +7,16 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 public class ScoreboardExample {
+	public static void displayYourGameBoardWithScoreboardUtil(Player p) {
+		ScoreboardUtil.unrankedSidebarDisplay(p, new String[] { "§c§lMy stats", " ", "Your kills: " + 30,
+				"Your deaths: " + 20, "Your ration: " + (30d / 20d), "  " });
+	}
+
 	public void displayYourGameBoardWithoutScoreboardUtil(Player p) {
-		Scoreboard scoreboard = Bukkit.getScoreboardManager()
-				.getNewScoreboard();
+		Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		p.setScoreboard(scoreboard);
 
-		Objective randomObjective = scoreboard.registerNewObjective("example",
-				"dummy");
+		Objective randomObjective = scoreboard.registerNewObjective("example", "dummy");
 		randomObjective.setDisplayName("§c§lMy stats");
 		randomObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
@@ -22,12 +25,6 @@ public class ScoreboardExample {
 		randomObjective.getScore("Your deaths: " + 20).setScore(13);
 		randomObjective.getScore("Your ration: " + (30d / 20d)).setScore(12);
 		randomObjective.getScore("  ").setScore(11);
-	}
-
-	public static void displayYourGameBoardWithScoreboardUtil(Player p) {
-		ScoreboardUtil.unrankedSidebarDisplay(p, new String[] { "§c§lMy stats",
-				" ", "Your kills: " + 30, "Your deaths: " + 20,
-				"Your ration: " + (30d / 20d), "  " });
 	}
 
 }

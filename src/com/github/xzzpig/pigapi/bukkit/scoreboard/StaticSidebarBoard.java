@@ -6,8 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class StaticSidebarBoard extends Board {
-	private SidebarBoardType type;
+	public static enum SidebarBoardType {
+		RANKED(), UNRANKED();
+	}
 	private Object data;
+
+	private SidebarBoardType type;
 
 	public StaticSidebarBoard(String... elements) {
 		this.data = elements;
@@ -24,8 +28,7 @@ public class StaticSidebarBoard extends Board {
 	public void startDisplay(Player p) {
 		switch (this.type) {
 		case RANKED:
-			ScoreboardUtil.rankedSidebarDisplay(p,
-					(String) ((Object[]) data)[0],
+			ScoreboardUtil.rankedSidebarDisplay(p, (String) ((Object[]) data)[0],
 					(HashMap<String, Integer>) ((Object[]) data)[1]);
 			return;
 		case UNRANKED:
@@ -38,10 +41,6 @@ public class StaticSidebarBoard extends Board {
 	@Override
 	public void stopDisplay(Player p) {
 		p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-	}
-
-	public static enum SidebarBoardType {
-		RANKED(), UNRANKED();
 	}
 
 }

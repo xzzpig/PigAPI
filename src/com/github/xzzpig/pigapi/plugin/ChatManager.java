@@ -28,6 +28,6 @@ public class ChatManager implements Listener {
 			}
 		}
 		event.setCancelled(true);
-		//event.setFormat(formats[formats.length - 1]);
+		// event.setFormat(formats[formats.length - 1]);
 	}
 }

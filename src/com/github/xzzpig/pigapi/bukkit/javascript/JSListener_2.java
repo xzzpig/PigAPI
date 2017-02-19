@@ -21,7 +21,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class JSListener_2 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_2 instance = new JSListener_2();
-	
+
 	@EventHandler
 	public void onEvent(BlockPlaceEvent event) {
 		JSListener.runScript(event);

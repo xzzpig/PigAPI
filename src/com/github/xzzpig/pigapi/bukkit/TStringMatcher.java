@@ -13,8 +13,18 @@ import com.github.xzzpig.pigapi.bukkit.event.StringMatcherEvent;
 import com.github.xzzpig.pigapi.event.Event;
 
 public class TStringMatcher {
-	public static String solve(String ps) {
-		return ps.replaceAll("&", TString.s);
+	public static String buildStr(String str, HashMap<String, Object> data, boolean callEntity) {
+		if (callEntity) {
+			LivingEntity entity = null;
+			if (data.containsKey("entity"))
+				entity = (LivingEntity) data.get("entity");
+			str = buildStr(str, entity, false);
+		} else {
+			StringMatcherEvent event = new StringMatcherEvent(str, data);
+			Event.callEvent(event);
+			str = event.getSouce();
+		}
+		return str;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -62,17 +72,7 @@ public class TStringMatcher {
 		return re;
 	}
 
-	public static String buildStr(String str, HashMap<String, Object> data, boolean callEntity) {
-		if (callEntity) {
-			LivingEntity entity = null;
-			if (data.containsKey("entity"))
-				entity = (LivingEntity) data.get("entity");
-			str = buildStr(str, entity, false);
-		} else {
-			StringMatcherEvent event = new StringMatcherEvent(str, data);
-			Event.callEvent(event);
-			str = event.getSouce();
-		}
-		return str;
+	public static String solve(String ps) {
+		return ps.replaceAll("&", TString.s);
 	}
 }

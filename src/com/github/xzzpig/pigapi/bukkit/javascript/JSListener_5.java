@@ -22,7 +22,7 @@ import org.bukkit.event.weather.LightningStrikeEvent;
 
 public class JSListener_5 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_5 instance = new JSListener_5();
-	
+
 	@EventHandler
 	public void onEvent(InventoryInteractEvent event) {
 		JSListener.runScript(event);
@@ -72,6 +72,7 @@ public class JSListener_5 implements Listener, com.github.xzzpig.pigapi.event.Li
 	public void onEvent(NotePlayEvent event) {
 		JSListener.runScript(event);
 	}
+
 	@EventHandler
 	public void onEvent(PigZapEvent event) {
 		JSListener.runScript(event);

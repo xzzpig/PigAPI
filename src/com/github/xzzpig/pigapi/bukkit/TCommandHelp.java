@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 
 public class TCommandHelp {
 	public class CommandInstance {
-		public CommandSender sender;
+		public String[] args;
 		public Command command;
 		public String label;
-		public String[] args;
+		public CommandSender sender;
 
 		public CommandInstance(CommandSender sender, Command command, String label, String[] args) {
 			this.sender = sender;
@@ -37,8 +37,24 @@ public class TCommandHelp {
 		public boolean run(CommandInstance instance);
 	}
 
+	public static TCommandHelp valueOf(TCommandHelp basichelp, String command) {
+		String[] cmds = command.split(" ");
+		for (int i = cmds.length - 1; i >= 0; i--) {
+			String cmd = cmds[0];
+			for (int i2 = 1; i2 <= i; i2++) {
+				cmd = cmd + " " + cmds[i2];
+			}
+			for (TCommandHelp ch : basichelp.getAllSubs())
+				if (ch.toString().equalsIgnoreCase(cmd))
+					return ch;
+		}
+		return basichelp;
+	}
 	private String command, describe, useage, var;
+	private CommandRunner commandRunner;
+
 	private List<TCommandHelp> subs = new ArrayList<TCommandHelp>();
+
 	private TCommandHelp uphelp;
 
 	public TCommandHelp(String command, String describe, String useage) {
@@ -63,34 +79,33 @@ public class TCommandHelp {
 		this.uphelp = uphelp;
 	}
 
+	public TCommandHelp addSubCommandHelp(String command, String describe, String useage, String var) {
+		TCommandHelp sub = new TCommandHelp(this.command + " " + command, describe, useage, var, this);
+		subs.add(sub);
+		return sub;
+	}
+
+	public List<TCommandHelp> getAllSubs() {
+		List<TCommandHelp> sublist = new ArrayList<TCommandHelp>();
+		for (TCommandHelp pre : this.subs) {
+			sublist.add(pre);
+			List<TCommandHelp> sub = pre.getAllSubs();
+			if (sub != null) {
+				for (TCommandHelp sub2 : sub) {
+					if (!sublist.contains(sub2))
+						sublist.add(sub2);
+				}
+			}
+		}
+		return sublist;
+	}
+
 	public String getCommand() {
 		return command;
 	}
 
 	public String getDescribe() {
 		return describe;
-	}
-
-	public String getUseage() {
-		return useage;
-	}
-
-	public String getVar() {
-		return var;
-	}
-
-	public static TCommandHelp valueOf(TCommandHelp basichelp, String command) {
-		String[] cmds = command.split(" ");
-		for (int i = cmds.length - 1; i >= 0; i--) {
-			String cmd = cmds[0];
-			for (int i2 = 1; i2 <= i; i2++) {
-				cmd = cmd + " " + cmds[i2];
-			}
-			for (TCommandHelp ch : basichelp.getAllSubs())
-				if (ch.toString().equalsIgnoreCase(cmd))
-					return ch;
-		}
-		return basichelp;
 	}
 
 	public TCommandHelp getFinalUpHelp() {
@@ -120,12 +135,6 @@ public class TCommandHelp {
 		return help;
 	}
 
-	public TCommandHelp addSubCommandHelp(String command, String describe, String useage, String var) {
-		TCommandHelp sub = new TCommandHelp(this.command + " " + command, describe, useage, var, this);
-		subs.add(sub);
-		return sub;
-	}
-
 	public TCommandHelp getSubCommandHelp(String command) {
 		for (TCommandHelp c : subs) {
 			if (command.equalsIgnoreCase(c.toString()))
@@ -138,30 +147,6 @@ public class TCommandHelp {
 
 	public TCommandHelp[] getSubCommandHelps() {
 		return subs.toArray(new TCommandHelp[0]);
-	}
-
-	public List<TCommandHelp> getAllSubs() {
-		List<TCommandHelp> sublist = new ArrayList<TCommandHelp>();
-		for (TCommandHelp pre : this.subs) {
-			sublist.add(pre);
-			List<TCommandHelp> sub = pre.getAllSubs();
-			if (sub != null) {
-				for (TCommandHelp sub2 : sub) {
-					if (!sublist.contains(sub2))
-						sublist.add(sub2);
-				}
-			}
-		}
-		return sublist;
-	}
-
-	@Override
-	public String toString() {
-		return command;
-	}
-
-	public String[] toStrings() {
-		return command.split(" ");
 	}
 
 	public List<String> getTabComplete(String pluginname, CommandSender sender, Command command, String alias,
@@ -192,11 +177,12 @@ public class TCommandHelp {
 		return tab;
 	}
 
-	private CommandRunner commandRunner;
+	public String getUseage() {
+		return useage;
+	}
 
-	public TCommandHelp setCommandRunner(CommandRunner r) {
-		this.commandRunner = r;
-		return this;
+	public String getVar() {
+		return var;
 	}
 
 	public boolean runCommand(CommandInstance ci) {
@@ -211,8 +197,26 @@ public class TCommandHelp {
 			return commandRunner.run(ci);
 		}
 		TCommandHelp next = this.getSubCommandHelp(ci.args[couser]);
-		if (next == this)
-			return false;
+		if (next == this) {
+			for (TCommandHelp sub : this.getSubCommandHelps()) {
+				sub.getHelpMessage(ci.command.getLabel()).send(ci.sender);
+			}
+			return true;
+		}
 		return next.runCommand(ci, couser + 1);
+	}
+
+	public TCommandHelp setCommandRunner(CommandRunner r) {
+		this.commandRunner = r;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return command;
+	}
+
+	public String[] toStrings() {
+		return command.split(" ");
 	}
 }

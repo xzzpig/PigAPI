@@ -21,6 +21,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 public class JSListener_1 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_1 instance = new JSListener_1();
+
 	@EventHandler
 	public void onEvent(AsyncPlayerChatEvent event) {
 		JSListener.runScript(event);
@@ -75,7 +76,7 @@ public class JSListener_1 implements Listener, com.github.xzzpig.pigapi.event.Li
 	public void onEvent(BlockGrowEvent event) {
 		JSListener.runScript(event);
 	}
-	
+
 	@EventHandler
 	public void onEvent(BlockIgniteEvent event) {
 		JSListener.runScript(event);

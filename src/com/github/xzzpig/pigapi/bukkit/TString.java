@@ -7,79 +7,15 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class TString extends com.github.xzzpig.pigapi.TString{
+public class TString extends com.github.xzzpig.pigapi.TString {
 	public static final String s = "§";
 
-	private TString() {
-	}
-
-	public static String Prefix(String prefix) {
-		return ChatColor.GOLD + "[" + prefix + "]" + ChatColor.RESET;
-	}
-
-	public static String Prefix(String prefix, int colorid) {
-		return ChatColor.GOLD + "[" + prefix + "]" + Color(colorid);
-	}
-
-	public static String Prefix(String prefix, String colorid) {
-		return Color(6)+"[" + prefix + "]" + Color(colorid);
-	}
-
 	public static String Color(int colorid) {
-		return ChatColor.getByChar(colorid+"")+"";
+		return ChatColor.getByChar(colorid + "") + "";
 	}
 
 	public static String Color(String colorid) {
-		return ChatColor.getByChar(colorid)+"";
-	}
-
-	public static void Print(String message) {
-		System.out.println(message);
-	}
-
-	public static void Print(String message, Player player) {
-		Print(message);
-		player.sendMessage(message);
-	}
-
-	public static void Print(String message, String player) {
-		Print(message);
-		Player player2 = TEntity.toPlayer(player);
-		player2.sendMessage(message);
-	}
-
-	public static void Print(List<String> messages, String player) {
-		String message = "";
-		if (messages != null) {
-			for (String temp : messages) {
-				message = message + "\n" + temp;
-			}
-			Print(message, player);
-		} else
-			Print("null", player);
-	}
-
-	public static void Print(List<String> messages, Player player) {
-		Print(messages, player.getName());
-	}
-
-	public static String sub(String s, String pre, String suf) {
-		int f = s.indexOf(pre);
-		int e = s.indexOf(suf, f);
-		return s.substring(f + pre.length(), e);
-	}
-
-	public static String toUnicodeString(String s) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < s.length(); i++) {
-			char c = s.charAt(i);
-			if (c >= 0 && c <= 255) {
-				sb.append(c);
-			} else {
-				sb.append("\\u" + Integer.toHexString(c));
-			}
-		}
-		return sb.toString();
+		return ChatColor.getByChar(colorid) + "";
 	}
 
 	public static String getRandomCH(int len) {
@@ -103,6 +39,48 @@ public class TString extends com.github.xzzpig.pigapi.TString{
 		return ret;
 	}
 
+	public static String Prefix(String prefix) {
+		return ChatColor.GOLD + "[" + prefix + "]" + ChatColor.RESET;
+	}
+
+	public static String Prefix(String prefix, int colorid) {
+		return ChatColor.GOLD + "[" + prefix + "]" + Color(colorid);
+	}
+
+	public static String Prefix(String prefix, String colorid) {
+		return Color(6) + "[" + prefix + "]" + Color(colorid);
+	}
+
+	public static void Print(List<String> messages, Player player) {
+		Print(messages, player.getName());
+	}
+
+	public static void Print(List<String> messages, String player) {
+		String message = "";
+		if (messages != null) {
+			for (String temp : messages) {
+				message = message + "\n" + temp;
+			}
+			Print(message, player);
+		} else
+			Print("null", player);
+	}
+
+	public static void Print(String message) {
+		System.out.println(message);
+	}
+
+	public static void Print(String message, Player player) {
+		Print(message);
+		player.sendMessage(message);
+	}
+
+	public static void Print(String message, String player) {
+		Print(message);
+		Player player2 = TEntity.toPlayer(player);
+		player2.sendMessage(message);
+	}
+
 	public static String[] splitColor(String str) {
 		String[] result = new String[] { "", "" };
 		while (str.startsWith("§")) {
@@ -111,5 +89,27 @@ public class TString extends com.github.xzzpig.pigapi.TString{
 		}
 		result[1] = str;
 		return result;
+	}
+
+	public static String sub(String s, String pre, String suf) {
+		int f = s.indexOf(pre);
+		int e = s.indexOf(suf, f);
+		return s.substring(f + pre.length(), e);
+	}
+
+	public static String toUnicodeString(String s) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			if (c >= 0 && c <= 255) {
+				sb.append(c);
+			} else {
+				sb.append("\\u" + Integer.toHexString(c));
+			}
+		}
+		return sb.toString();
+	}
+
+	private TString() {
 	}
 }

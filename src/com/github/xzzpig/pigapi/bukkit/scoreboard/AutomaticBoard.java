@@ -11,9 +11,13 @@ public abstract class AutomaticBoard extends UpdatableBoard implements Runnable 
 		this.delay = delay;
 	}
 
+	@Override
+	public void run() {
+		this.update();
+	}
+
 	public void start(Plugin plugin) {
-		this.taskId = Bukkit.getScheduler()
-				.runTaskTimer(plugin, this, 0, this.delay).getTaskId();
+		this.taskId = Bukkit.getScheduler().runTaskTimer(plugin, this, 0, this.delay).getTaskId();
 	}
 
 	public void stop() {
@@ -21,10 +25,5 @@ public abstract class AutomaticBoard extends UpdatableBoard implements Runnable 
 			Bukkit.getScheduler().cancelTask(this.taskId);
 			this.taskId = -1;
 		}
-	}
-
-	@Override
-	public void run() {
-		this.update();
 	}
 }

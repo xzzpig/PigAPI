@@ -16,11 +16,11 @@ import org.bukkit.event.Listener;
 import com.github.xzzpig.pigapi.plugin.Main;
 
 public class JSListener implements Listener, com.github.xzzpig.pigapi.event.Listener {
+	private static final JavaScriptAPI api = new JavaScriptAPI();
+
 	public static final JSListener instance = new JSListener();
 
 	private static HashMap<String, List<File>> scriptmap;
-
-	private static final JavaScriptAPI api = new JavaScriptAPI();
 
 	private static ScriptEngine getEngine() {
 		ScriptEngineManager manager = new ScriptEngineManager();
@@ -28,7 +28,7 @@ public class JSListener implements Listener, com.github.xzzpig.pigapi.event.List
 	}
 
 	public static void runScript(com.github.xzzpig.pigapi.event.Event event) {
-		if(!scriptmap.containsKey(event.getClass().getSimpleName()))
+		if (!scriptmap.containsKey(event.getClass().getSimpleName()))
 			return;
 		ScriptEngine engine = getEngine();
 		engine.put("API", api);
@@ -43,7 +43,7 @@ public class JSListener implements Listener, com.github.xzzpig.pigapi.event.List
 	}
 
 	public static void runScript(Event event) {
-		if(!scriptmap.containsKey(event.getEventName()))
+		if (!scriptmap.containsKey(event.getEventName()))
 			return;
 		ScriptEngine engine = getEngine();
 		engine.put("API", api);
@@ -81,21 +81,4 @@ public class JSListener implements Listener, com.github.xzzpig.pigapi.event.List
 		}
 	}
 
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
 }

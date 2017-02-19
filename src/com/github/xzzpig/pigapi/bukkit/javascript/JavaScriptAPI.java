@@ -15,50 +15,46 @@ import com.github.xzzpig.pigapi.plugin.Main;
 
 public class JavaScriptAPI {
 	private PigData data = new PigData();
-	
-	public List<Object> createList(){
-		return new ArrayList<Object>();
-	}
-	
-	public Map<Object,Object> createMap(){
-		return new HashMap<>();
-	}
-	
-	public PigData createPigData(){
-		return new PigData();
-	}
-	
-	public void setData(String key,Object value){
-		data.set(key, value);
-	}
-	
-	public Object getData(String key){
-		return data.get(key);
-	}
-	
-	public File getPluginFolder(){
-		return Main.self.getDataFolder();
-	}
-	
-	public File getFile(String path){
-		return new File(path);
-	}
-	
-	public File getSubFile(File file,String path){
-		return new File(file,path);
-	}
-	
-	public JSONObject createJsonObject(String source){
-		if(source==null)
-			return new JSONObject();
-		return new JSONObject(source);
-	}
-	
+
 	public String buildStr(String str, LivingEntity entity, boolean isInt) {
 		return TStringMatcher.buildStr(str, entity, isInt);
 	}
-	
-	public boolean loadClass(String classpath){
+
+	public JSONObject createJsonObject(String source) {
+		if (source == null)
+			return new JSONObject();
+		return new JSONObject(source);
+	}
+
+	public List<Object> createList() {
+		return new ArrayList<Object>();
+	}
+
+	public Map<Object, Object> createMap() {
+		return new HashMap<>();
+	}
+
+	public PigData createPigData() {
+		return new PigData();
+	}
+
+	public Object getData(String key) {
+		return data.get(key);
+	}
+
+	public File getFile(String path) {
+		return new File(path);
+	}
+
+	public File getPluginFolder() {
+		return Main.self.getDataFolder();
+	}
+
+	public File getSubFile(File file, String path) {
+		return new File(file, path);
+	}
+
+	public boolean loadClass(String classpath) {
 		try {
 			this.getClass();
 			Class.forName(classpath);
@@ -66,5 +62,9 @@ public class JavaScriptAPI {
 			return false;
 		}
 		return true;
+	}
+
+	public void setData(String key, Object value) {
+		data.set(key, value);
 	}
 }

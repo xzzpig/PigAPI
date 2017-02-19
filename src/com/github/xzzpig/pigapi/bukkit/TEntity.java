@@ -13,21 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 public class TEntity {
-	private TEntity() {
-	}
-
-	public static ArrayList<Player> getNearPlayer(Entity entity, int x, int y,
-			int z) {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Entity entity2 : entity.getNearbyEntities(x, y, z)) {
-			if (entity2.getType().name() == "PLAYER") {
-				Player player = (Player) entity2;
-				players.add(player);
-			}
-		}
-		return players;
-	}
-
 	public static void broadMessage(String message) {
 		Player[] players = TPlayer.getAllPlayers();
 		for (Player player : players) {
@@ -44,9 +29,23 @@ public class TEntity {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public static Player toPlayer(String name) {
-		return Bukkit.getPlayer(name);
+	public static int getHealth(LivingEntity entity) {
+		return (int) ((Damageable) entity).getHealth();
+	}
+
+	public static int getMaxHealth(LivingEntity entity) {
+		return (int) ((Damageable) entity).getMaxHealth();
+	}
+
+	public static ArrayList<Player> getNearPlayer(Entity entity, int x, int y, int z) {
+		ArrayList<Player> players = new ArrayList<Player>();
+		for (Entity entity2 : entity.getNearbyEntities(x, y, z)) {
+			if (entity2.getType().name() == "PLAYER") {
+				Player player = (Player) entity2;
+				players.add(player);
+			}
+		}
+		return players;
 	}
 
 	public static LivingEntity getTarget(LivingEntity entity, int range) {
@@ -73,8 +72,7 @@ public class TEntity {
 				ex = loc.getX();
 				ey = loc.getY();
 				ez = loc.getZ();
-				if ((bx - .75 <= ex && ex <= bx + 1.75)
-						&& (bz - .75 <= ez && ez <= bz + 1.75)
+				if ((bx - .75 <= ex && ex <= bx + 1.75) && (bz - .75 <= ez && ez <= bz + 1.75)
 						&& (by - 1 <= ey && ey <= by + 2.5)) {
 					target = e;
 					break;
@@ -90,11 +88,11 @@ public class TEntity {
 		return getTarget(player, 10);
 	}
 
-	public static int getMaxHealth(LivingEntity entity) {
-		return (int) ((Damageable) entity).getMaxHealth();
+	@SuppressWarnings("deprecation")
+	public static Player toPlayer(String name) {
+		return Bukkit.getPlayer(name);
 	}
 
-	public static int getHealth(LivingEntity entity) {
-		return (int) ((Damageable) entity).getHealth();
+	private TEntity() {
 	}
 }

@@ -21,7 +21,7 @@ import org.bukkit.event.world.WorldUnloadEvent;
 
 public class JSListener_9 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_9 instance = new JSListener_9();
-	
+
 	@EventHandler
 	public void onEvent(StructureGrowEvent event) {
 		JSListener.runScript(event);
@@ -56,7 +56,7 @@ public class JSListener_9 implements Listener, com.github.xzzpig.pigapi.event.Li
 	public void onEvent(VehicleEnterEvent event) {
 		JSListener.runScript(event);
 	}
-	
+
 	@EventHandler
 	public void onEvent(VehicleEntityCollisionEvent event) {
 		JSListener.runScript(event);
@@ -81,7 +81,6 @@ public class JSListener_9 implements Listener, com.github.xzzpig.pigapi.event.Li
 	public void onEvent(WeatherChangeEvent event) {
 		JSListener.runScript(event);
 	}
-
 
 	@EventHandler
 	public void onEvent(WorldInitEvent event) {

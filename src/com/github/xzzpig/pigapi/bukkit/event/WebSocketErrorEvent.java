@@ -6,18 +6,14 @@ import org.java_websocket.server.WebSocketServer;
 import com.github.xzzpig.pigapi.event.Event;
 
 public class WebSocketErrorEvent extends Event {
-	private WebSocketServer server;
 	private WebSocket client;
 	private Exception error;
+	private WebSocketServer server;
 
 	public WebSocketErrorEvent(WebSocketServer server, WebSocket client, Exception error) {
 		this.server = server;
 		this.client = client;
 		this.error = error;
-	}
-
-	public WebSocketServer getServer() {
-		return server;
 	}
 
 	public WebSocket getClient() {
@@ -26,5 +22,9 @@ public class WebSocketErrorEvent extends Event {
 
 	public Exception getError() {
 		return error;
+	}
+
+	public WebSocketServer getServer() {
+		return server;
 	}
 }

@@ -33,20 +33,18 @@ public class TPlayer {
 		return level;
 	}
 
-	public static int toLevelExp(int level){
-		if(level<=16){
-			return level*2+7;
-		}
-		else if(level>16&&level<=31){
-			return level*5-38;
-		}
-		else{
-			return level*9-158;
-		}
-	}
-	
 	@SuppressWarnings("deprecation")
 	public static Player[] getAllPlayers() {
 		return Bukkit.getOnlinePlayers();
+	}
+
+	public static int toLevelExp(int level) {
+		if (level <= 16) {
+			return level * 2 + 7;
+		} else if (level > 16 && level <= 31) {
+			return level * 5 - 38;
+		} else {
+			return level * 9 - 158;
+		}
 	}
 }

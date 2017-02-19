@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JSListener_6 implements Listener, com.github.xzzpig.pigapi.event.Listener {
 	public static final JSListener_6 instance = new JSListener_6();
-	
+
 	@EventHandler
 	public void onEvent(PlayerChangedWorldEvent event) {
 		JSListener.runScript(event);

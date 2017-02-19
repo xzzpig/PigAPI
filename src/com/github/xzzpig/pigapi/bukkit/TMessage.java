@@ -27,12 +27,12 @@ public class TMessage {
 
 	static class MessagePart {
 
-		public ChatColor color = null;
-		public ChatColor[] styles = null;
-		public String clickActionName = null;
 		public String clickActionData = null;
-		public String hoverActionName = null;
+		public String clickActionName = null;
+		public ChatColor color = null;
 		public String hoverActionData = null;
+		public String hoverActionName = null;
+		public ChatColor[] styles = null;
 		public final String text;
 
 		public MessagePart(final String text) {

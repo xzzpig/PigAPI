@@ -39,12 +39,128 @@ import com.github.xzzpig.pigapi.event.Event;
 
 public class Main extends JavaPlugin {
 
-	public static Main self;
-
 	public static SaveThread autoSavePrefix = new SaveThread();
 
-	public WebSocketServer wsserver;
+	public static Main self;
+
+	private boolean ench, enjs, enws, enwsr;
 	public SimpleWebServer webserver;
+
+	public WebSocketServer wsserver;
+
+	public void enableChatManager() {
+		if (ench)
+			return;
+		getServer().getPluginManager().registerEvents(ChatManager.self, this);
+		Vars.chatformat = Vars.config.getString("PigAPI.chatmanager.chatformat",
+				"&2</world/></n/></prefix/></colorid/>&r:</message/>");
+		getLogger().info("ChatManager启动");
+		getLogger().info("聊天格式:" + Vars.chatformat);
+		autoSavePrefix.start();
+		ench = true;
+	}
+
+	public void enableJsPlugin() {
+		if (enjs)
+			return;
+		getLogger().info("JsPlugin启动");
+		new Thread(() -> {
+			JSPlugin.freshPluginState();
+		}).start();
+		;
+		getServer().getPluginManager().registerEvents(JSListener.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_1.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_2.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_3.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_4.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_5.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_6.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_7.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_8.instance, this);
+		getServer().getPluginManager().registerEvents(JSListener_9.instance, this);
+		Event.registListener(JSListener.instance);
+		Event.registListener(JSListener_PigAPI.instance);
+		enjs = true;
+	}
+
+	public void enableWebServer() {
+		if (enwsr)
+			return;
+		webserver = new SimpleWebServer(Vars.web_port);
+		try {
+			webserver.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		getLogger().info("SimpleWebServer启动于端口:" + Vars.web_port);
+		enwsr = true;
+	}
+
+	public void enableWebSocket() {
+		if (enws)
+			return;
+		getLogger().info("WebSocket启动于端口:" + Vars.ws_port);
+		wsserver = new WebSocketServer(new InetSocketAddress(Vars.ws_port)) {
+			@Override
+			public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+				Event.callEvent(new WebSocketCloseEvent(wsserver, conn, code, reason, remote));
+			}
+
+			@Override
+			public void onError(WebSocket conn, Exception ex) {
+				Event.callEvent(new WebSocketErrorEvent(wsserver, conn, ex));
+			}
+
+			@Override
+			public void onMessage(WebSocket conn, String message) {
+				Event.callEvent(new WebSocketMessageEvent(wsserver, conn, message));
+
+			}
+
+			@Override
+			public void onOpen(WebSocket conn, ClientHandshake handshake) {
+				Event.callEvent(new WebSocketOpenEvent(wsserver, conn, handshake));
+			}
+		};
+		wsserver.start();
+		enws = true;
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		String arg0 = "help";
+		try {
+			arg0 = args[0];
+		} catch (Exception e) {
+		}
+		if (arg0.equalsIgnoreCase("help")) {
+			if (arg0.equalsIgnoreCase("help")) {
+				for (TCommandHelp sub : Help.PigAPI.getSubCommandHelps()) {
+					sub.getHelpMessage("PigAPI").send(sender);
+				}
+				return true;
+			}
+		} else if (arg0.equalsIgnoreCase("reloadscript")) {
+			if (!sender.isOp()) {
+				sender.sendMessage("[PigAPI]" + ChatColor.RED + "你没有权限执行该命令");
+				return true;
+			}
+			JSListener.instance.loadScript();
+			sender.sendMessage("[PigAPI]" + ChatColor.GREEN + "JS脚本重载成功");
+			return true;
+		}
+		return false;
+	}
+
+	// 插件停用函数
+	@Override
+	public void onDisable() {
+		autoSavePrefix.finish();
+		if (webserver != null)
+			webserver.stop();
+		Event.callEvent(new PluginUnLoadEvent());
+		getLogger().info(getName() + "插件已被停用 ");
+	}
 
 	@Override
 	public void onEnable() {
@@ -85,126 +201,14 @@ public class Main extends JavaPlugin {
 		}
 		Event.callEvent(new PluginLoadEvent());
 	}
-
-	private boolean ench, enjs, enws, enwsr;
-
-	public void enableChatManager() {
-		if (ench)
-			return;
-		getServer().getPluginManager().registerEvents(ChatManager.self, this);
-		Vars.chatformat = Vars.config.getString("PigAPI.chatmanager.chatformat",
-				"&2</world/></n/></prefix/></colorid/>&r:</message/>");
-		getLogger().info("ChatManager启动");
-		getLogger().info("聊天格式:" + Vars.chatformat);
-		autoSavePrefix.start();
-		ench = true;
-	}
-
-	public void enableJsPlugin() {
-		if (enjs)
-			return;
-		getLogger().info("JsPlugin启动");
-		new Thread(() -> {
-			JSPlugin.freshPluginState();
-		}).start();
-		;
-		getServer().getPluginManager().registerEvents(JSListener.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_1.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_2.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_3.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_4.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_5.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_6.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_7.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_8.instance, this);
-		getServer().getPluginManager().registerEvents(JSListener_9.instance, this);
-		Event.registListener(JSListener.instance);
-		Event.registListener(JSListener_PigAPI.instance);
-		enjs = true;
-	}
-
-	public void enableWebSocket() {
-		if (enws)
-			return;
-		getLogger().info("WebSocket启动于端口:" + Vars.ws_port);
-		wsserver = new WebSocketServer(new InetSocketAddress(Vars.ws_port)) {
-			@Override
-			public void onOpen(WebSocket conn, ClientHandshake handshake) {
-				Event.callEvent(new WebSocketOpenEvent(wsserver, conn, handshake));
-			}
-
-			@Override
-			public void onMessage(WebSocket conn, String message) {
-				Event.callEvent(new WebSocketMessageEvent(wsserver, conn, message));
-
-			}
-
-			@Override
-			public void onError(WebSocket conn, Exception ex) {
-				Event.callEvent(new WebSocketErrorEvent(wsserver, conn, ex));
-			}
-
-			@Override
-			public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-				Event.callEvent(new WebSocketCloseEvent(wsserver, conn, code, reason, remote));
-			}
-		};
-		wsserver.start();
-		enws = true;
-	}
-
-	public void enableWebServer() {
-		if (enwsr)
-			return;
-		webserver = new SimpleWebServer(Vars.web_port);
-		try {
-			webserver.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		getLogger().info("SimpleWebServer启动于端口:" + Vars.web_port);
-		enwsr = true;
-	}
-
-	// 插件停用函数
-	@Override
-	public void onDisable() {
-		autoSavePrefix.finish();
-		if (webserver != null)
-			webserver.stop();
-		Event.callEvent(new PluginUnLoadEvent());
-		getLogger().info(getName() + "插件已被停用 ");
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		String arg0 = "help";
-		try {
-			arg0 = args[0];
-		} catch (Exception e) {
-		}
-		if (arg0.equalsIgnoreCase("help")) {
-			if (arg0.equalsIgnoreCase("help")) {
-				for (TCommandHelp sub : Help.PigAPI.getSubCommandHelps()) {
-					sub.getHelpMessage("PigAPI").send(sender);
-				}
-				return true;
-			}
-		} else if (arg0.equalsIgnoreCase("reloadscript")) {
-			if (!sender.isOp()) {
-				sender.sendMessage("[PigAPI]" + ChatColor.RED + "你没有权限执行该命令");
-				return true;
-			}
-			JSListener.instance.loadScript();
-			sender.sendMessage("[PigAPI]" + ChatColor.GREEN + "JS脚本重载成功");
-			return true;
-		}
-		return false;
-	}
 }
 
 class SaveThread extends Thread {
 	private boolean go = true;
+
+	public void finish() {
+		go = false;
+	}
 
 	@Override
 	public void run() {
@@ -216,9 +220,5 @@ class SaveThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public void finish() {
-		go = false;
 	}
 }

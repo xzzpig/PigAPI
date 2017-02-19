@@ -7,18 +7,14 @@ import org.java_websocket.server.WebSocketServer;
 import com.github.xzzpig.pigapi.event.Event;
 
 public class WebSocketOpenEvent extends Event {
-	private WebSocketServer server;
 	private WebSocket client;
 	private ClientHandshake handshake;
+	private WebSocketServer server;
 
 	public WebSocketOpenEvent(WebSocketServer server, WebSocket client, ClientHandshake handshake) {
 		this.server = server;
 		this.client = client;
 		this.handshake = handshake;
-	}
-
-	public WebSocketServer getServer() {
-		return server;
 	}
 
 	public WebSocket getClient() {
@@ -27,5 +23,9 @@ public class WebSocketOpenEvent extends Event {
 
 	public ClientHandshake getHandshake() {
 		return handshake;
+	}
+
+	public WebSocketServer getServer() {
+		return server;
 	}
 }

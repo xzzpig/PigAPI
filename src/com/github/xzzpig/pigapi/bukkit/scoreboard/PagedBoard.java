@@ -6,8 +6,8 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 
 public class PagedBoard extends AutomaticBoard {
-	private HashMap<BoardPage, Integer> pages;
 	private int count, currentPageId;
+	private HashMap<BoardPage, Integer> pages;
 
 	public PagedBoard() {
 		super(1);
@@ -19,17 +19,12 @@ public class PagedBoard extends AutomaticBoard {
 		this.pages.put(page, ticks);
 	}
 
-	public void removePage(BoardPage page) {
-		this.pages.remove(page);
-	}
-
-	@Override
-	public void update(Player p) {
-		getPage().update(p);
-	}
-
 	public BoardPage getPage() {
 		return new ArrayList<BoardPage>(pages.keySet()).get(currentPageId);
+	}
+
+	public void removePage(BoardPage page) {
+		this.pages.remove(page);
 	}
 
 	@Override
@@ -42,5 +37,10 @@ public class PagedBoard extends AutomaticBoard {
 			if (this.currentPageId >= this.pages.size())
 				this.currentPageId = 0;
 		}
+	}
+
+	@Override
+	public void update(Player p) {
+		getPage().update(p);
 	}
 }
