@@ -3,12 +3,14 @@ package com.github.xzzpig.pigapi.bukkit;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonWriter;
@@ -16,6 +18,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+
+import com.gmail.filoghost.holographicdisplays.HolographicDisplays;
+import com.gmail.filoghost.holographicdisplays.nms.interfaces.FancyMessage;
 
 public class TMessage {
 
@@ -40,19 +46,15 @@ public class TMessage {
 			}
 			if (styles != null) {
 				for (final ChatColor style : styles) {
-					json.name(
-							style == ChatColor.UNDERLINE ? "underlined" : style
-									.name().toLowerCase()).value(true);
+					json.name(style == ChatColor.UNDERLINE ? "underlined" : style.name().toLowerCase()).value(true);
 				}
 			}
 			if (clickActionName != null && clickActionData != null) {
-				json.name("clickEvent").beginObject().name("action")
-						.value(clickActionName).name("value")
+				json.name("clickEvent").beginObject().name("action").value(clickActionName).name("value")
 						.value(clickActionData).endObject();
 			}
 			if (hoverActionName != null && hoverActionData != null) {
-				json.name("hoverEvent").beginObject().name("action")
-						.value(hoverActionName).name("value")
+				json.name("hoverEvent").beginObject().name("action").value(hoverActionName).name("value")
 						.value(hoverActionData).endObject();
 			}
 			return json.endObject();
@@ -67,8 +69,7 @@ public class TMessage {
 			for (int b = 1; b <= 9; b++) {
 				String testversion = "v1_" + a + "_R" + b;
 				try {
-					Class.forName("org.bukkit.craftbukkit." + testversion
-							+ ".entity.CraftPlayer");
+					Class.forName("org.bukkit.craftbukkit." + testversion + ".entity.CraftPlayer");
 					version = testversion;
 					System.out.println("MC版本为" + version + ",FM将以TellRaw方式发送");
 					break;
@@ -87,22 +88,19 @@ public class TMessage {
 			name = is.getType().name() + "(" + is.getType().getId() + ")";
 		TMessage fm = new TMessage(ChatColor.GOLD + "  " + name);
 		ItemMeta im = is.getItemMeta();
-		String tip = ChatColor.RESET + "  物品名称:" + im.getDisplayName() + "\n"
-				+ ChatColor.GRAY + "  类型:" + is.getType() + "("
-				+ is.getTypeId() + ")" + "\n" + ChatColor.GREEN + "  数量:"
-				+ is.getAmount() + "\n" + ChatColor.YELLOW + "  LORE:";
+		String tip = ChatColor.RESET + "  物品名称:" + im.getDisplayName() + "\n" + ChatColor.GRAY + "  类型:" + is.getType()
+				+ "(" + is.getTypeId() + ")" + "\n" + ChatColor.GREEN + "  数量:" + is.getAmount() + "\n"
+				+ ChatColor.YELLOW + "  LORE:";
 		if (im.getLore() != null)
 			for (String lore : im.getLore())
 				tip = tip + "\n    " + ChatColor.RESET + lore;
 		else
 			tip = tip + ChatColor.RED + "无";
 		tip = tip + "\n" + ChatColor.YELLOW + "  附魔:";
-		Iterator<Entry<Enchantment, Integer>> ir = is.getEnchantments()
-				.entrySet().iterator();
+		Iterator<Entry<Enchantment, Integer>> ir = is.getEnchantments().entrySet().iterator();
 		while (ir.hasNext()) {
 			Entry<Enchantment, Integer> e = ir.next();
-			tip = tip + "\n    " + ChatColor.BLUE + e.getKey().getName() + ":"
-					+ e.getValue();
+			tip = tip + "\n    " + ChatColor.BLUE + e.getKey().getName() + ":" + e.getValue();
 		}
 		if (is.getEnchantments().isEmpty())
 			tip = tip + ChatColor.RED + "无";
@@ -134,8 +132,7 @@ public class TMessage {
 				s = s.replaceAll("#c" + s.split("#c")[1], "");
 			}
 			if (!istip) {
-				if (highlight && i != strs.length
-						&& (!strs[i].equalsIgnoreCase("")))
+				if (highlight && i != strs.length && (!strs[i].equalsIgnoreCase("")))
 					s = "§l§n" + rePlaceColor(s) + ChatColor.RESET;
 				fm.then(s);
 				istip = true;
@@ -217,42 +214,80 @@ public class TMessage {
 
 	public void send(Player player) {
 		if (version == null) {
+			Plugin p = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
+			if (p != null) {
+				FancyMessage fm = HolographicDisplays.getNMSManager().newFancyMessage("");
+				List<FancyMessage.MessagePart> ls = new ArrayList<>();
+				for (MessagePart mpt : messageParts) {
+					FancyMessage.MessagePart mp = new FancyMessage.MessagePart(mpt.text);
+					mp.clickActionData = mpt.clickActionData;
+					mp.clickActionName = mpt.clickActionName;
+					mp.color = mpt.color;
+					mp.hoverActionData = mpt.hoverActionData;
+					mp.hoverActionName = mpt.clickActionName;
+					mp.styles = mpt.styles;
+					ls.add(mp);
+				}
+				try {
+					Field f = fm.getClass().getDeclaredField("messageParts");
+					f.setAccessible(true);
+					f.set(fm, ls);
+					fm.send(player);
+					return;
+				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException
+						| IllegalAccessException e1) {
+				}
+			}
 			player.sendMessage(this.toString());
 			return;
 		}
 		try {
-			Object EntityPlayer = Class
-					.forName(
-							"org.bukkit.craftbukkit." + version
-									+ ".entity.CraftPlayer")
+			Object EntityPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
 					.getMethod("getHandle").invoke(player);
-			Object playerConnection = Class
-					.forName(
-							"net.minecraft.server." + version + ".EntityPlayer")
+			Object playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer")
 					.getField("playerConnection").get(EntityPlayer);
-			Object IChatBaseComponent = Class
-					.forName(
-							"net.minecraft.server." + version
-									+ ".ChatSerializer")
+			Object IChatBaseComponent = Class.forName("net.minecraft.server." + version + ".ChatSerializer")
 					.getMethod("a", String.class).invoke(null, toJSONString());
-			Class<?> cls = Class.forName("net.minecraft.server." + version
-					+ ".PacketPlayOutChat");
-			Class<?>[] paramTypes = { Class.forName("net.minecraft.server."
-					+ version + ".IChatBaseComponent") };
+			Class<?> cls = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat");
+			Class<?>[] paramTypes = { Class.forName("net.minecraft.server." + version + ".IChatBaseComponent") };
 			Object[] params = { IChatBaseComponent }; // 方法传入的参数
 
 			Constructor<?> con = cls.getConstructor(paramTypes); // 主要就是这句了
 			Object PacketPlayOutChat = con.newInstance(params); // BatcherBase
 																// 为自定义类
 			Method sendPack = null;
-			for (Method meth : Class.forName(
-					"net.minecraft.server." + version + ".PlayerConnection")
-					.getMethods()) {
+			for (Method meth : Class.forName("net.minecraft.server." + version + ".PlayerConnection").getMethods()) {
 				if (meth.getName().equalsIgnoreCase("sendPacket"))
 					sendPack = meth;
 			}
 			sendPack.invoke(playerConnection, PacketPlayOutChat);
 		} catch (Exception e) {
+			Plugin p = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
+			if (p != null) {
+				FancyMessage fm = HolographicDisplays.getNMSManager().newFancyMessage("");
+				List<FancyMessage.MessagePart> ls = new ArrayList<>();
+				for (MessagePart mpt : messageParts) {
+					FancyMessage.MessagePart mp = new FancyMessage.MessagePart(mpt.text);
+					mp.clickActionData = mpt.clickActionData;
+					mp.clickActionName = mpt.clickActionName;
+					mp.color = mpt.color;
+					mp.hoverActionData = mpt.hoverActionData;
+					mp.hoverActionName = mpt.clickActionName;
+					mp.styles = mpt.styles;
+					ls.add(mp);
+				}
+
+				try {
+					Field f = fm.getClass().getDeclaredField("messageParts");
+					f.setAccessible(true);
+					f.set(fm, ls);
+					fm.send(player);
+					return;
+				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException
+						| IllegalAccessException e1) {
+					e1.printStackTrace();
+				}
+			}
 			e.printStackTrace();
 			version = null;
 			System.err.println("FM发送错误,将以普通方式发送");
@@ -263,8 +298,7 @@ public class TMessage {
 	public TMessage style(ChatColor... styles) {
 		for (ChatColor style : styles) {
 			if (!style.isFormat()) {
-				throw new IllegalArgumentException(style.name()
-						+ " is not a style");
+				throw new IllegalArgumentException(style.name() + " is not a style");
 			}
 		}
 		latest().styles = styles;
@@ -289,8 +323,7 @@ public class TMessage {
 			if (messageParts.size() == 1) {
 				latest().writeJson(json);
 			} else {
-				json.beginObject().name("text").value("").name("extra")
-						.beginArray();
+				json.beginObject().name("text").value("").name("extra").beginArray();
 				for (MessagePart part : messageParts) {
 					part.writeJson(json);
 				}
