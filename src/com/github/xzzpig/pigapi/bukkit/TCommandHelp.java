@@ -9,6 +9,34 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class TCommandHelp {
+	public class CommandInstance {
+		public CommandSender sender;
+		public Command command;
+		public String label;
+		public String[] args;
+
+		public CommandInstance(CommandSender sender, Command command, String label, String[] args) {
+			this.sender = sender;
+			this.command = command;
+			this.label = label;
+			this.args = args;
+		}
+
+		@Override
+		public String toString() {
+			StringBuffer sb = new StringBuffer(label + "");
+			for (String arg : args) {
+				sb.append(" ").append(arg);
+			}
+			return sb.toString();
+		}
+	}
+
+	@FunctionalInterface
+	public interface CommandRunner {
+		public boolean run(CommandInstance instance);
+	}
+
 	private String command, describe, useage, var;
 	private List<TCommandHelp> subs = new ArrayList<TCommandHelp>();
 	private TCommandHelp uphelp;
@@ -19,8 +47,7 @@ public class TCommandHelp {
 		this.useage = useage;
 	}
 
-	private TCommandHelp(String command, String describe, String useage,
-			String var, TCommandHelp uphelp) {
+	private TCommandHelp(String command, String describe, String useage, String var, TCommandHelp uphelp) {
 		if (command == null)
 			command = "error";
 		this.command = command;
@@ -81,28 +108,20 @@ public class TCommandHelp {
 		for (String arg : parts) {
 			com = com + arg;
 			ch = TCommandHelp.valueOf(this.getFinalUpHelp(), com);
-			help.then(arg)
-					.suggest("/" + com)
-					.tooltip(
-							ChatColor.GREEN + ch.command + " " + var + "\n"
-									+ ChatColor.BLUE + ch.describe + "\n"
-									+ ChatColor.GRAY + ch.useage).then(" ");
+			help.then(arg).suggest("/" + com).tooltip(ChatColor.GREEN + ch.command + " " + var + "\n" + ChatColor.BLUE
+					+ ch.describe + "\n" + ChatColor.GRAY + ch.useage).then(" ");
 			com = com + " ";
 		}
 		if (ch != null)
 			help.then(ch.getVar() + " ");
-		help.then(ChatColor.BLUE + " -" + describe)
-				.tooltip(ChatColor.GRAY + useage)
-				.then("  " + ChatColor.GREEN + "" + ChatColor.UNDERLINE + "点我")
-				.suggest("/" + command + " " + var)
+		help.then(ChatColor.BLUE + " -" + describe).tooltip(ChatColor.GRAY + useage)
+				.then("  " + ChatColor.GREEN + "" + ChatColor.UNDERLINE + "点我").suggest("/" + command + " " + var)
 				.tooltip("快速匹配命令\n" + "/" + command + " " + var);
 		return help;
 	}
 
-	public TCommandHelp addSubCommandHelp(String command, String describe,
-			String useage, String var) {
-		TCommandHelp sub = new TCommandHelp(this.command + " " + command,
-				describe, useage, var, this);
+	public TCommandHelp addSubCommandHelp(String command, String describe, String useage, String var) {
+		TCommandHelp sub = new TCommandHelp(this.command + " " + command, describe, useage, var, this);
 		subs.add(sub);
 		return sub;
 	}
@@ -111,8 +130,7 @@ public class TCommandHelp {
 		for (TCommandHelp c : subs) {
 			if (command.equalsIgnoreCase(c.toString()))
 				return c;
-			if (c.toStrings()[c.toStrings().length - 1]
-					.equalsIgnoreCase(command))
+			if (c.toStrings()[c.toStrings().length - 1].equalsIgnoreCase(command))
 				return c;
 		}
 		return this;
@@ -146,8 +164,8 @@ public class TCommandHelp {
 		return command.split(" ");
 	}
 
-	public List<String> getTabComplete(String pluginname, CommandSender sender,
-			Command command, String alias, String[] args) {
+	public List<String> getTabComplete(String pluginname, CommandSender sender, Command command, String alias,
+			String[] args) {
 		// Debuger.print(command.getName()+"|"+alias+"|"+Arrays.toString(args));
 		List<String> tab = new ArrayList<String>();
 		String cmd = command.getName();
@@ -156,8 +174,7 @@ public class TCommandHelp {
 		}
 		if (cmd.endsWith(" "))
 			cmd = cmd.substring(0, cmd.length() - 1);
-		for (TCommandHelp help : TCommandHelp.valueOf(this, cmd)
-				.getSubCommandHelps()) {
+		for (TCommandHelp help : TCommandHelp.valueOf(this, cmd).getSubCommandHelps()) {
 			tab.add(help.toStrings()[help.toStrings().length - 1]);
 		}
 		List<String> tab2 = new ArrayList<String>();
@@ -169,10 +186,33 @@ public class TCommandHelp {
 		if (!tab2.isEmpty())
 			tab = tab2;
 		for (String str : tab)
-			TCommandHelp.valueOf(this, cmd).getSubCommandHelp(str)
-					.getHelpMessage(pluginname).send((Player) sender);
+			TCommandHelp.valueOf(this, cmd).getSubCommandHelp(str).getHelpMessage(pluginname).send((Player) sender);
 		if (tab.isEmpty())
 			tab.add(TCommandHelp.valueOf(this, cmd).getVar());
 		return tab;
+	}
+
+	private CommandRunner commandRunner;
+
+	public TCommandHelp setCommandRunner(CommandRunner r) {
+		this.commandRunner = r;
+		return this;
+	}
+
+	public boolean runCommand(CommandInstance ci) {
+		return this.getFinalUpHelp().runCommand(ci, 0);
+	}
+
+	private boolean runCommand(CommandInstance ci, int couser) {
+		int len = ci.args == null ? 0 : ci.args.length;
+		if (len == couser) {
+			if (commandRunner == null)
+				return false;
+			return commandRunner.run(ci);
+		}
+		TCommandHelp next = this.getSubCommandHelp(ci.args[couser]);
+		if (next == this)
+			return false;
+		return next.runCommand(ci, couser + 1);
 	}
 }
