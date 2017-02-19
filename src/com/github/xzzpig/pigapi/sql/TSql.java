@@ -5,7 +5,7 @@ import java.sql.Statement;
 
 public abstract class TSql {
 	public enum Type {
-		MYSQL
+		MYSQL,SQLITE
 	}
 
 	protected Connection conn;
@@ -26,9 +26,6 @@ public abstract class TSql {
 	protected abstract void build();
 
 	public abstract void close();
-
-	public abstract TSql connect(String host, int port, String username, String password, String database)
-			throws Exception;
 
 	public Connection getConn() {
 		return conn;

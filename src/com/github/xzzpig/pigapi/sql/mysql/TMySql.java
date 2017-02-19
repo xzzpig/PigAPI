@@ -11,9 +11,23 @@ import com.github.xzzpig.pigapi.sql.TSql;
 
 public class TMySql extends TSql {
 
-	public TMySql() {
+	public TMySql(String host, int port, String username, String password, String database) {
 		super();
+		try {
+			connect(host, port, username, password, database);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		type = Type.MYSQL;
+	}
+
+	public TMySql connect(String host, int port, String username, String password, String database) throws Exception {
+		String url = "jdbc:mysql://" + host + ":3306/" + database + "?" + "user=" + username + "&password=" + password
+				+ "&useUnicode=true&characterEncoding=UTF8";
+		conn = DriverManager.getConnection(url);
+		stmt = conn.createStatement();
+
+		return this;
 	}
 
 	@Override
@@ -63,13 +77,4 @@ public class TMySql extends TSql {
 		}
 	}
 
-	@Override
-	public TMySql connect(String host, int port, String username, String password, String database) throws Exception {
-		String url = "jdbc:mysql://" + host + ":3306/" + database + "?" + "user=" + username + "&password=" + password
-				+ "&useUnicode=true&characterEncoding=UTF8";
-		conn = DriverManager.getConnection(url);
-		stmt = conn.createStatement();
-
-		return this;
-	}
 }
