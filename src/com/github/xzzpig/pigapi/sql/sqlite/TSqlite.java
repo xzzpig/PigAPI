@@ -38,6 +38,7 @@ public class TSqlite extends TSql {
 	public void set(String table, String key, Object value) {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		ObjectOutputStream oout;
+		Statement stm = null;
 		try {
 			oout = new ObjectOutputStream(bout);
 			oout.writeObject(value);
@@ -53,17 +54,31 @@ public class TSqlite extends TSql {
 		}
 		if (!isTabbleExist(table)) {
 			try {
-				c.createStatement().execute("CREATE TABLE " + table + " ([key] TEXT PRIMARY KEY,value BLOB);");
+				stm = c.createStatement();
+				stm.execute("CREATE TABLE " + table + " ([key] TEXT PRIMARY KEY,value BLOB);");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		try {
+			stm = c.createStatement();
+			stm.execute("delete from " + table + " where key == '" + key + "' or value is NULL");
+			stm.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stm.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		try {
-			c.createStatement().execute("delete from " + table + " where key == '" + key + "' or value is NULL");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
 		String sb = ("insert into " + table + "  (key,value) values('" + key + "',?)");
 		PreparedStatement prep = null;
 		try {
@@ -72,16 +87,30 @@ public class TSqlite extends TSql {
 			prep.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				prep.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T get(String table, String key, Class<T> type) {
 		ResultSet result = null;
+		Statement stm = null;
 		try {
-			result = c.createStatement().executeQuery("select value from " + table + " where key == '" + key + "'");
+			stm = c.createStatement();
+			result = stm.executeQuery("select value from " + table + " where key == '" + key + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				stm.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		try {
 			byte[] bs = (byte[]) result.getObject(1);
@@ -118,6 +147,12 @@ public class TSqlite extends TSql {
 			stm.executeQuery("select * from " + tableName);
 		} catch (SQLException e1) {
 			return false;
+		} finally {
+			try {
+				stm.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}
@@ -129,5 +164,10 @@ public class TSqlite extends TSql {
 
 	@Override
 	public void close() {
+		try {
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
