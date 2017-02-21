@@ -298,7 +298,7 @@ public class TMessage {
 	public TMessage style(ChatColor... styles) {
 		for (ChatColor style : styles) {
 			if (!style.isFormat()) {
-				throw new IllegalArgumentException(style.name() + " is not a style");
+				this.color(style);
 			}
 		}
 		latest().styles = styles;

@@ -22,6 +22,13 @@ public class TCommandHelp {
 			this.args = args;
 		}
 
+		public CommandInstance sendMsg(String msg) {
+			msg = "&6[" + command.getName() + "]&r" + msg;
+			msg = msg.replaceAll("&", ChatColor.COLOR_CHAR + "");
+			sender.sendMessage(msg);
+			return this;
+		}
+
 		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer(label + "");
@@ -30,6 +37,14 @@ public class TCommandHelp {
 			}
 			return sb.toString();
 		}
+	}
+
+	public interface CommandLimit {
+		/**
+		 * @param ins
+		 * @return 禁止原因,null为允许,否则禁止
+		 */
+		public TMessage canRun(CommandInstance ins);
 	}
 
 	@FunctionalInterface
@@ -50,12 +65,22 @@ public class TCommandHelp {
 		}
 		return basichelp;
 	}
+
 	private String command, describe, useage, var;
 	private CommandRunner commandRunner;
+
+	private List<CommandLimit> limits = new ArrayList<>();
 
 	private List<TCommandHelp> subs = new ArrayList<TCommandHelp>();
 
 	private TCommandHelp uphelp;
+
+	public static final CommandLimit isPlayer = ci->{
+		if(ci.sender instanceof Player)return null;else{
+			return new TMessage("[" + ci.label + "]").then("此命令")
+					.color(ChatColor.GRAY).style(ChatColor.UNDERLINE).tooltip(ci.toString()).then("只能有玩家执行");
+		}
+	};
 
 	public TCommandHelp(String command, String describe, String useage) {
 		this.command = command;
@@ -77,6 +102,11 @@ public class TCommandHelp {
 			var = "";
 		this.var = var;
 		this.uphelp = uphelp;
+	}
+
+	public TCommandHelp addLimit(CommandLimit limit) {
+		limits.add(limit);
+		return this;
 	}
 
 	public TCommandHelp addSubCommandHelp(String command, String describe, String useage, String var) {
@@ -171,7 +201,7 @@ public class TCommandHelp {
 		if (!tab2.isEmpty())
 			tab = tab2;
 		for (String str : tab)
-			TCommandHelp.valueOf(this, cmd).getSubCommandHelp(str).getHelpMessage(pluginname).send((Player) sender);
+			TCommandHelp.valueOf(this, cmd).getSubCommandHelp(str).getHelpMessage(pluginname).send(sender);
 		if (tab.isEmpty())
 			tab.add(TCommandHelp.valueOf(this, cmd).getVar());
 		return tab;
@@ -189,26 +219,58 @@ public class TCommandHelp {
 		return this.getFinalUpHelp().runCommand(ci, 0);
 	}
 
-	private boolean runCommand(CommandInstance ci, int couser) {
-		int len = ci.args == null ? 0 : ci.args.length;
-		if (len == couser) {
-			if (commandRunner == null)
-				return false;
-			return commandRunner.run(ci);
+	private boolean runCommand(CommandInstance ci, int i) {
+		TCommandHelp sub = this;
+		try {
+			sub = this.getSubCommandHelp(ci.args[i]);
+		} catch (Exception e) {
 		}
-		TCommandHelp next = this.getSubCommandHelp(ci.args[couser]);
-		if (next == this) {
-			for (TCommandHelp sub : this.getSubCommandHelps()) {
-				sub.getHelpMessage(ci.command.getLabel()).send(ci.sender);
+		if (sub == this) {
+			for (CommandLimit commandLimit : limits) {
+				TMessage msg = commandLimit.canRun(ci);
+				if (msg != null) {
+					msg.send(ci.sender);
+					return true;
+				}
 			}
-			return true;
+			if (commandRunner == null || commandRunner.run(ci) == false) {
+				for (TCommandHelp sub2 : this.getSubCommandHelps()) {
+					sub2.getHelpMessage(ci.command.getLabel()).send(ci.sender);
+				}
+				return true;
+			} else
+				return true;
+		} else {
+			return sub.runCommand(ci, i + 1);
 		}
-		return next.runCommand(ci, couser + 1);
 	}
 
 	public TCommandHelp setCommandRunner(CommandRunner r) {
 		this.commandRunner = r;
 		return this;
+	}
+
+	public TCommandHelp setPermission(String permission) {
+		limits.add(ci -> {
+			if (!ci.sender.hasPermission(permission)) {
+				return new TMessage("[" + ci.label + "]").then("你").color(ChatColor.GREEN).style(ChatColor.UNDERLINE)
+						.tooltip(ci.sender.getName()).then("没有该").color(ChatColor.RED).then("权限").color(ChatColor.BLUE)
+						.style(ChatColor.UNDERLINE).tooltip(permission).then("执行").color(ChatColor.RED).then("此命令")
+						.color(ChatColor.GRAY).style(ChatColor.UNDERLINE).tooltip(this.toDeepString());
+			}
+			return null;
+		});
+		return this;
+	}
+
+	public String toDeepString() {
+		String str = this.command + " " + var;
+		TCommandHelp up = this.uphelp;
+		while (up != null && up != this) {
+			str = up.command + " " + str;
+			up = up.uphelp;
+		}
+		return str;
 	}
 
 	@Override
