@@ -19,7 +19,7 @@ public interface EventAdapter {
 		getEventInstance().registListener_(listener);
 	}
 
-	public default void registListener(SimpleListener listener) {
+	public default <T extends Event> void registListener(SimpleListener<T> listener) {
 		getEventInstance().registListener_(listener);
 	}
 

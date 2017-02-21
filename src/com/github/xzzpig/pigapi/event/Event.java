@@ -1,6 +1,7 @@
 package com.github.xzzpig.pigapi.event;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class Event {
 		eventInstance.registListener_(listener);
 	}
 
-	public static final void registListener(SimpleListener listener) {
-		registListener((Listener) listener);
+	public static final <T extends Event> void registListener(SimpleListener<T> listener) {
+		registListener((Listener)listener);
 	}
 
 	public static final void unregListener(Listener listener) {
@@ -72,6 +73,8 @@ public class Event {
 				try {
 					em.method.invoke(em.listener, new Object[] { event });
 				} catch (Exception e) {
+					if (e instanceof InvocationTargetException)
+						continue;
 					e.printStackTrace();
 					System.out.println("触发事件错误");
 				}
