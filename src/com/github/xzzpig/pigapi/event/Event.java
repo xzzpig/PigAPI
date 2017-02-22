@@ -43,7 +43,7 @@ public class Event {
 	}
 
 	public static final <T extends Event> void registListener(SimpleListener<T> listener) {
-		registListener((Listener)listener);
+		registListener((Listener) listener);
 	}
 
 	public static final void unregListener(Listener listener) {
@@ -103,7 +103,7 @@ public class Event {
 		for (Method meth : listener.getClass().getMethods()) {
 			Annotation ann = meth.getDeclaredAnnotation(EventHandler.class);
 			if (listener instanceof SimpleListener && meth.getName().equals("run")) {
-				ann = defaultEventHandler;
+				ann = ((SimpleListener<?>) listener).getHandler();
 			}
 			if (ann != null) {
 				meth.setAccessible(true);
