@@ -146,7 +146,7 @@ public class TCommandHelp {
 	}
 
 	public TMessage getHelpMessage(String pluginname) {
-		TMessage help = new TMessage(TString.Prefix(pluginname, 3) + "/");
+		TMessage help = new TMessage(TString.Prefix(pluginname, 3) + "/").tooltip("/"+pluginname+" help").suggest("/"+pluginname+" help");
 		String parts[] = this.toStrings();
 		String com = "";
 		TCommandHelp ch = null;

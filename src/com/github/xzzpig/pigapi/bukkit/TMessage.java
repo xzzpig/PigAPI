@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import com.github.xzzpig.pigapi.plugin.Main;
 import com.gmail.filoghost.holographicdisplays.HolographicDisplays;
 import com.gmail.filoghost.holographicdisplays.nms.interfaces.FancyMessage;
 
@@ -64,6 +65,8 @@ public class TMessage {
 
 	private static String version = null;
 
+	private FancyMessage fm;
+
 	static {
 		for (int a = 1; a <= 8; a++) {
 			for (int b = 1; b <= 9; b++) {
@@ -80,6 +83,8 @@ public class TMessage {
 		if (version == null)
 			System.out.println("版本获取失败,FM将以普通方式发送");
 	}
+
+	private static Plugin hd;
 
 	@SuppressWarnings("deprecation")
 	public static TMessage getBy(ItemStack is) {
@@ -156,13 +161,15 @@ public class TMessage {
 	private List<MessagePart> messageParts;
 
 	public TMessage() {
-		messageParts = new ArrayList<MessagePart>();
-		messageParts.add(new MessagePart(""));
+		this("");
 	}
 
 	public TMessage(String firstPartText) {
 		messageParts = new ArrayList<MessagePart>();
 		messageParts.add(new MessagePart(firstPartText));
+		if (hd != null) {
+			fm = HolographicDisplays.getNMSManager().newFancyMessage(firstPartText);
+		}
 	}
 
 	public TMessage color(ChatColor color) {
@@ -170,16 +177,22 @@ public class TMessage {
 			throw new IllegalArgumentException(color.name() + " is not a color");
 		}
 		latest().color = color;
+		if (fm != null)
+			fm.color(color);
 		return this;
 	}
 
 	public TMessage command(String command) {
 		onClick("run_command", command);
+		if (fm != null)
+			fm.command(command);
 		return this;
 	}
 
 	public TMessage file(String path) {
 		onClick("open_file", path);
+		if (fm != null)
+			fm.file(path);
 		return this;
 	}
 
@@ -189,6 +202,8 @@ public class TMessage {
 
 	public TMessage link(String url) {
 		onClick("open_url", url);
+		if (fm != null)
+			fm.link(url);
 		return this;
 	}
 
@@ -214,38 +229,13 @@ public class TMessage {
 
 	public void send(Player player) {
 		if (version == null) {
-			Plugin p = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
-			if (p != null) {
-				FancyMessage fm = HolographicDisplays.getNMSManager().newFancyMessage("");
-				List<FancyMessage.MessagePart> ls = new ArrayList<>();
-				for (MessagePart mpt : messageParts) {
-					FancyMessage.MessagePart mp = new FancyMessage.MessagePart(mpt.text);
-					mp.clickActionData = mpt.clickActionData;
-					mp.clickActionName = mpt.clickActionName;
-					mp.color = mpt.color;
-					mp.hoverActionData = mpt.hoverActionData;
-					mp.hoverActionName = mpt.clickActionName;
-					mp.styles = mpt.styles;
-					ls.add(mp);
-				}
-				try {
-					Field f = fm.getClass().getDeclaredField("messageParts");
-					f.setAccessible(true);
-					f.set(fm, ls);
-					fm.send(player);
-					return;
-				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException
-						| IllegalAccessException e1) {
-				}
-			}
 			player.sendMessage(this.toString());
 			return;
 		}
 		try {
 			Object EntityPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
 					.getMethod("getHandle").invoke(player);
-			Object playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer")
-					.getField("playerConnection").get(EntityPlayer);
+			Object playerConnection = EntityPlayer.getClass().getField("playerConnection").get(EntityPlayer);
 			Object IChatBaseComponent = Class.forName("net.minecraft.server." + version + ".ChatSerializer")
 					.getMethod("a", String.class).invoke(null, toJSONString());
 			Class<?> cls = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat");
@@ -256,15 +246,23 @@ public class TMessage {
 			Object PacketPlayOutChat = con.newInstance(params); // BatcherBase
 																// 为自定义类
 			Method sendPack = null;
-			for (Method meth : Class.forName("net.minecraft.server." + version + ".PlayerConnection").getMethods()) {
+			for (Method meth : playerConnection.getClass().getMethods()) {
 				if (meth.getName().equalsIgnoreCase("sendPacket"))
 					sendPack = meth;
 			}
 			sendPack.invoke(playerConnection, PacketPlayOutChat);
 		} catch (Exception e) {
-			Plugin p = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
-			if (p != null) {
-				FancyMessage fm = HolographicDisplays.getNMSManager().newFancyMessage("");
+			if (hd == null) {
+				hd = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
+				if (hd != null)
+					Main.self.getLogger().info("尝试使用HolographicDisplays插件发送TM");
+			}
+			if (hd != null) {
+				if (fm != null) {
+					fm.send(player);
+					return;
+				}
+				fm = HolographicDisplays.getNMSManager().newFancyMessage("");
 				List<FancyMessage.MessagePart> ls = new ArrayList<>();
 				for (MessagePart mpt : messageParts) {
 					FancyMessage.MessagePart mp = new FancyMessage.MessagePart(mpt.text);
@@ -302,16 +300,22 @@ public class TMessage {
 			}
 		}
 		latest().styles = styles;
+		if (fm != null)
+			fm.style(styles);
 		return this;
 	}
 
 	public TMessage suggest(String command) {
 		onClick("suggest_command", command);
+		if (fm != null)
+			fm.suggest(command);
 		return this;
 	}
 
 	public TMessage then(Object obj) {
 		messageParts.add(new MessagePart(obj.toString()));
+		if (fm != null)
+			fm.then(obj);
 		return this;
 	}
 
@@ -338,6 +342,8 @@ public class TMessage {
 
 	public TMessage tooltip(String text) {
 		onHover("show_text", text);
+		if (fm != null)
+			fm.tooltip(text);
 		return this;
 	}
 
