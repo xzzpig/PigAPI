@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Event {
 	public static final EventHandler defaultEventHandler = new EventHandler() {
@@ -48,6 +49,10 @@ public class Event {
 
 	public static final void unregListener(Listener listener) {
 		eventInstance.unregListener_(listener);
+	}
+
+	public static final void unregListener(Predicate<Listener> p) {
+		eventInstance.unregListener_(p);
 	}
 
 	private boolean cancel;
@@ -121,10 +126,14 @@ public class Event {
 	}
 
 	final void unregListener_(Listener listener) {
+		unregListener_(listener::equals);
+	}
+
+	final void unregListener_(Predicate<Listener> p) {
 		for (List<EventMethod> list : events.values()) {
 			List<EventMethod> removeList = new ArrayList<>();
 			for (EventMethod eventMethod : list) {
-				if (eventMethod.listener == listener) {
+				if (p.test(eventMethod.listener)) {
 					removeList.add(eventMethod);
 				}
 			}

@@ -1,5 +1,7 @@
 package com.github.xzzpig.pigapi.event;
 
+import java.util.function.Predicate;
+
 /**
  * @author xzzpig 用于接收Listener并可触发不同的事件
  */
@@ -25,5 +27,9 @@ public interface EventAdapter {
 
 	public default void unregListener(Listener listener) {
 		getEventInstance().unregListener_(listener);
+	}
+
+	public default void unregListener(Predicate<Listener> p) {
+		getEventInstance().unregListener_(p);
 	}
 }
