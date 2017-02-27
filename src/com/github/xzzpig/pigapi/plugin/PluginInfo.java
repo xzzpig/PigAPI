@@ -21,9 +21,9 @@ import com.github.xzzpig.pigapi.json.JSONTokener;
  *
  */
 public class PluginInfo {
-	JSONObject jsonObject;
+	public final JSONObject jsonObject;
 
-	PluginLoader loader;
+	public PluginLoader loader;
 
 	PluginInfo(InputStream in) {
 		jsonObject = new JSONObject(new JSONTokener(in));
