@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,7 +13,6 @@ import org.java_websocket.server.WebSocketServer;
 
 import com.github.xzzpig.pigapi.Debuger;
 import com.github.xzzpig.pigapi.PigData;
-import com.github.xzzpig.pigapi.bukkit.TCommandHelp;
 import com.github.xzzpig.pigapi.bukkit.TConfig;
 import com.github.xzzpig.pigapi.bukkit.TPrefix;
 import com.github.xzzpig.pigapi.bukkit.event.PluginLoadEvent;
@@ -128,28 +126,7 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		String arg0 = "help";
-		try {
-			arg0 = args[0];
-		} catch (Exception e) {
-		}
-		if (arg0.equalsIgnoreCase("help")) {
-			if (arg0.equalsIgnoreCase("help")) {
-				for (TCommandHelp sub : Help.PigAPI.getSubCommandHelps()) {
-					sub.getHelpMessage("PigAPI").send(sender);
-				}
-				return true;
-			}
-		} else if (arg0.equalsIgnoreCase("reloadscript")) {
-			if (!sender.isOp()) {
-				sender.sendMessage("[PigAPI]" + ChatColor.RED + "你没有权限执行该命令");
-				return true;
-			}
-			JSListener.instance.loadScript();
-			sender.sendMessage("[PigAPI]" + ChatColor.GREEN + "JS脚本重载成功");
-			return true;
-		}
-		return false;
+		return Help.PigAPI.runCommand(Help.PigAPI.new CommandInstance(sender, command, label, args));
 	}
 
 	// 插件停用函数

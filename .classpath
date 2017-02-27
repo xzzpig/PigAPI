@@ -17,11 +17,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="/PigAPI/bin" sourcepath="/PigAPI/src"/>
-	<classpathentry kind="lib" path="/home/xzzpig/Apps/MCServer/plugins/浮空字体.jar" sourcepath="E:/BaiduYunDownload/浮空字体.src.zip"/>
-	<classpathentry kind="lib" path="/home/xzzpig/Apps/MCServer/craftbukkit-1.7.10-R0.1-20140713.051447-4.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="https://jd.bukkit.org"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Bukkit"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
