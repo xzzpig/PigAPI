@@ -2,7 +2,6 @@ package com.github.xzzpig.pigapi;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -257,16 +256,15 @@ public class TClass {
 
 	}
 
+	public static boolean isJarFile(File dir, String name) {
+		return name.endsWith(".jar") || name.endsWith(".zip");
+	}
+
 	public static void loadJar(String dir) {
 		// 系统类库路径
 		File libPath = new File(dir);
 		// 获取所有的.jar和.zip文件
-		File[] jarFiles = libPath.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".jar") || name.endsWith(".zip");
-			}
-		});
+		File[] jarFiles = libPath.listFiles(TClass::isJarFile);
 
 		if (jarFiles != null) {
 			// 从URLClassLoader类中获取类所在文件夹的方法
