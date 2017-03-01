@@ -34,6 +34,7 @@ import com.github.xzzpig.pigapi.bukkit.javascript.JSListener_9;
 import com.github.xzzpig.pigapi.bukkit.javascript.JSListener_PigAPI;
 import com.github.xzzpig.pigapi.bukkit.javascript.JSPlugin;
 import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
 
 public class Main extends JavaPlugin {
 
@@ -42,7 +43,7 @@ public class Main extends JavaPlugin {
 	public static Main self;
 
 	private boolean ench, enjs, enws, enwsr;
-	public SimpleWebServer webserver;
+	public PigSimpleWebServer webserver;
 
 	public WebSocketServer wsserver;
 
@@ -84,7 +85,7 @@ public class Main extends JavaPlugin {
 	public void enableWebServer() {
 		if (enwsr)
 			return;
-		webserver = new SimpleWebServer(Vars.web_port);
+		webserver = new PigSimpleWebServer(Vars.web_port);
 		try {
 			webserver.start();
 		} catch (IOException e) {

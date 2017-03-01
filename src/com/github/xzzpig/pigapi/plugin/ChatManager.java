@@ -9,10 +9,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.github.xzzpig.pigapi.bukkit.TMessage;
 import com.github.xzzpig.pigapi.bukkit.TPlayer;
 import com.github.xzzpig.pigapi.bukkit.TStringMatcher;
+import com.github.xzzpig.pigapi.bukkit.event.ChatMessageSendEvent;
+import com.github.xzzpig.pigapi.event.Event;
 
 public class ChatManager implements Listener {
 	public static ChatManager self = new ChatManager();
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent event) {
 		if (!Vars.enable_chatmanager)
@@ -20,12 +22,13 @@ public class ChatManager implements Listener {
 		String[] formats = TStringMatcher.buildStr(Vars.chatformat, event.getPlayer(), false)
 				.replaceAll("</message/>", "^^&r" + event.getMessage() + "^^").split("\n");
 		for (int i = 0; i < formats.length; i++) {
-			TMessage message = TMessage.getBy(formats[i], false);
 			for (Player player : TPlayer.getAllPlayers()) {
-				message.send(player);
+				ChatMessageSendEvent eve = new ChatMessageSendEvent(formats[i], event.getPlayer(), player);
+				Event.callEvent(eve);
+				if (!eve.isCanceled())
+					TMessage.getBy(eve.getMessage(), eve.highlight).send(player);
 			}
 		}
 		event.setCancelled(true);
-		// event.setFormat(formats[formats.length - 1]);
 	}
 }
