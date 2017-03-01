@@ -123,39 +123,57 @@ public class TMessage {
 		if (strs.length == 1) {
 			return fm.then(str);
 		}
-		boolean istip = false;
-		int i = 1;
-		for (String s : strs) {
-			if (s.equalsIgnoreCase("")) {
-			}
-			if (s.contains("#s")) {
-				fm.suggest(s.split("#s")[1]);
-				s = s.replaceAll("#s" + s.split("#s")[1], "");
-			}
-			if (s.contains("#c")) {
-				fm.command(s.split("#c")[1]);
-				s = s.replaceAll("#c" + s.split("#c")[1], "");
-			}
-			if (!istip) {
-				if (highlight && i != strs.length && (!strs[i].equalsIgnoreCase("")))
-					s = "§l§n" + rePlaceColor(s) + ChatColor.RESET;
-				fm.then(s);
-				istip = true;
-				i++;
+		for (int i = 0; i < strs.length; i++) {
+			String sub = strs[i];
+			if (i % 2 == 0) {
+				fm.then(sub);
 			} else {
-				fm.tooltip(s);
-				istip = false;
-				i++;
+				String[] subs = sub.split("#");
+				StringBuilder tooltip = new StringBuilder(subs[0]);
+				for (int j = 1; j < subs.length; j++) {
+					String sub2 = subs[j];
+					if (sub2.startsWith("s"))
+						fm.suggest(sub2.substring(1).startsWith("/") ? sub2.substring(1) : "/" + sub2.substring(1));
+					else if (sub2.startsWith("c"))
+						fm.command(sub2.substring(1).startsWith("/") ? sub2.substring(1) : "/" + sub2.substring(1));
+					else if (sub2.startsWith("f"))
+						fm.file(sub2.substring(1));
+					else if (sub2.startsWith("l"))
+						fm.link(sub2.substring(1));
+					else
+						tooltip.append("#" + sub2);
+					if (highlight)
+						fm.style(ChatColor.UNDERLINE);
+				}
+				fm.tooltip(tooltip.toString());
 			}
 		}
+		// boolean istip = false;
+		// int i = 1;
+		// for (String s : strs) {
+		// if (s.equalsIgnoreCase("")) {
+		// }
+		// if (s.contains("#s")) {
+		// fm.suggest(s.split("#s")[1]);
+		// s = s.replaceAll("#s" + s.split("#s")[1], "");
+		// }
+		// if (s.contains("#c")) {
+		// fm.command(s.split("#c")[1]);
+		// s = s.replaceAll("#c" + s.split("#c")[1], "");
+		// }
+		// if (!istip) {
+		// if (highlight && i != strs.length && (!strs[i].equalsIgnoreCase("")))
+		// s = "§l§n" + rePlaceColor(s) + ChatColor.RESET;
+		// fm.then(s);
+		// istip = true;
+		// i++;
+		// } else {
+		// fm.tooltip(s);
+		// istip = false;
+		// i++;
+		// }
+		// }
 		return fm;
-	}
-
-	private static String rePlaceColor(String str) {
-		for (int i = 0; i < 10; i++) {
-			str = str.replaceAll("§" + i, "§" + i + "§l§n");
-		}
-		return str;
 	}
 
 	private List<MessagePart> messageParts;
