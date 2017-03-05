@@ -1,5 +1,7 @@
 package com.github.xzzpig.pigapi.plugin;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,7 +16,7 @@ import com.github.xzzpig.pigapi.event.Event;
 
 public class ChatManager implements Listener {
 	public static ChatManager self = new ChatManager();
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent event) {
 		if (!Vars.enable_chatmanager)
@@ -30,5 +32,12 @@ public class ChatManager implements Listener {
 			}
 		}
 		event.setCancelled(true);
+	}
+
+	public static void atPlayer(ChatMessageSendEvent e) {
+		if (e.msg.contains("@" + e.to.getName())) {
+			e.setMessage(e.msg.replace("@" + e.to.getName(), ChatColor.AQUA + "@" + e.to.getName() + ChatColor.RESET));
+			e.to.playSound(e.to.getLocation(), Sound.LEVEL_UP, 1, 1);
+		}
 	}
 }

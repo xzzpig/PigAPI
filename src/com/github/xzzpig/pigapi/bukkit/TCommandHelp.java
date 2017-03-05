@@ -75,10 +75,12 @@ public class TCommandHelp {
 
 	private TCommandHelp uphelp;
 
-	public static final CommandLimit isPlayer = ci->{
-		if(ci.sender instanceof Player)return null;else{
-			return new TMessage("[" + ci.label + "]").then("此命令")
-					.color(ChatColor.GRAY).style(ChatColor.UNDERLINE).tooltip(ci.toString()).then("只能有玩家执行");
+	public static final CommandLimit isPlayer = ci -> {
+		if (ci.sender instanceof Player)
+			return null;
+		else {
+			return new TMessage("[" + ci.label + "]").then("此命令").color(ChatColor.GRAY).style(ChatColor.UNDERLINE)
+					.tooltip(ci.toString()).then("只能有玩家执行");
 		}
 	};
 
@@ -146,7 +148,8 @@ public class TCommandHelp {
 	}
 
 	public TMessage getHelpMessage(String pluginname) {
-		TMessage help = new TMessage(TString.Prefix(pluginname, 3) + "/").tooltip("/"+pluginname+" help").suggest("/"+pluginname+" help");
+		TMessage help = new TMessage(TString.Prefix(pluginname, 3) + "/").tooltip("/" + pluginname + " help")
+				.suggest("/" + pluginname + " help");
 		String parts[] = this.toStrings();
 		String com = "";
 		TCommandHelp ch = null;
@@ -234,9 +237,12 @@ public class TCommandHelp {
 				}
 			}
 			if (commandRunner == null || commandRunner.run(ci) == false) {
-				for (TCommandHelp sub2 : this.getSubCommandHelps()) {
-					sub2.getHelpMessage(ci.command.getLabel()).send(ci.sender);
-				}
+				if (this.getSubCommandHelps().length != 0)
+					for (TCommandHelp sub2 : this.getSubCommandHelps()) {
+						sub2.getHelpMessage(ci.command.getLabel()).send(ci.sender);
+					}
+				else
+					this.getHelpMessage(ci.command.getLabel()).send(ci.sender);
 				return true;
 			} else
 				return true;

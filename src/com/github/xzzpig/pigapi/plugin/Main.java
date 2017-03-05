@@ -13,6 +13,8 @@ import org.java_websocket.server.WebSocketServer;
 
 import com.github.xzzpig.pigapi.Debuger;
 import com.github.xzzpig.pigapi.PigData;
+import com.github.xzzpig.pigapi.TJython;
+import com.github.xzzpig.pigapi.TScript;
 import com.github.xzzpig.pigapi.bukkit.TConfig;
 import com.github.xzzpig.pigapi.bukkit.TPrefix;
 import com.github.xzzpig.pigapi.bukkit.event.PluginLoadEvent;
@@ -42,7 +44,7 @@ public class Main extends JavaPlugin {
 
 	public static Main self;
 
-	private boolean ench, enjs, enws, enwsr;
+	private boolean ench, enjs, enws, enwsr, enjy;
 	public PigSimpleWebServer webserver;
 
 	public WebSocketServer wsserver;
@@ -57,6 +59,7 @@ public class Main extends JavaPlugin {
 		getLogger().info("聊天格式:" + Vars.chatformat);
 		autoSavePrefix.start();
 		ench = true;
+		Event.registListener(ChatManager::atPlayer);
 	}
 
 	public void enableJsPlugin() {
@@ -125,6 +128,20 @@ public class Main extends JavaPlugin {
 		enws = true;
 	}
 
+	public void enableJython() {
+		if (enjy)
+			return;
+		TJython.libPath = this.getDataFolder().getAbsolutePath() + "/lib/";
+		TJython.build();
+		if (TScript.getJythonScriptEngine() == null) {
+			this.getLogger().info("Jython脚本引擎加载失败");
+			return;
+		} else {
+			this.getLogger().info("Jython脚本引擎加载成功");
+		}
+		enjy = true;
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		return Help.PigAPI.runCommand(Help.PigAPI.new CommandInstance(sender, command, label, args));
@@ -176,6 +193,10 @@ public class Main extends JavaPlugin {
 		if (Vars.enable_webserver) {
 			Vars.web_port = Vars.config.getInt("PigAPI.simplewebserver.port", 80);
 			enableWebServer();
+		}
+		Vars.enbale_jython = Vars.config.getBoolean("PigAPI.enable.jython", true);
+		if (Vars.enbale_jython) {
+			enableJython();
 		}
 		Event.callEvent(new PluginLoadEvent());
 	}

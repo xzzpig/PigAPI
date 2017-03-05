@@ -4,6 +4,7 @@ PigAPI:
     jsplugin: false
     websocket: false
     simplewebserver: false
+    jython: false
   chatmanager: 
     chatformat: '&2</world/></n/></prefix/></colorid/>&r:</message/>'
   websocket:

@@ -6,3 +6,11 @@ commands:
   pigapi:
     description: PigAPI的主命令
     usage: /pigapi help
+permission:
+  pigapi.command.reloadscript: 
+    description: /pigapi reloadscript权限
+    default: op
+  pigapi.command.runscript: 
+    description: /pigapi runscript权限
+    default: op
+    
