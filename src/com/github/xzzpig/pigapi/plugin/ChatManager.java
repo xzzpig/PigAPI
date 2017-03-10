@@ -30,6 +30,7 @@ public class ChatManager implements Listener {
 				if (!eve.isCanceled())
 					TMessage.getBy(eve.getMessage(), eve.highlight).send(player);
 			}
+			System.out.println(formats[i]);
 		}
 		event.setCancelled(true);
 	}
@@ -39,5 +40,12 @@ public class ChatManager implements Listener {
 			e.setMessage(e.msg.replace("@" + e.to.getName(), ChatColor.AQUA + "@" + e.to.getName() + ChatColor.RESET));
 			e.to.playSound(e.to.getLocation(), Sound.LEVEL_UP, 1, 1);
 		}
+	}
+	
+	public static void deseePlayer(ChatMessageSendEvent e) {
+		if(!Help.deseemap.containsKey(e.from.getName()))
+			return;
+		if(Help.deseemap.get(e.from.getName()).contains(e.to.getName()))
+			e.setCancel(true);
 	}
 }

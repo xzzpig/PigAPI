@@ -60,6 +60,7 @@ public class Main extends JavaPlugin {
 		autoSavePrefix.start();
 		ench = true;
 		Event.registListener(ChatManager::atPlayer);
+		Event.registListener(ChatManager::deseePlayer);
 	}
 
 	public void enableJsPlugin() {
