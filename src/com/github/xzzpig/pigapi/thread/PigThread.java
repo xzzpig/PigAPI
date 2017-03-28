@@ -27,7 +27,7 @@ public class PigThread extends Thread implements EventAdapter {
 		return e;
 	}
 
-	public PigThread regListener(SimpleListener l) {
+	public <T extends Event> PigThread regListener(SimpleListener<T> l) {
 		registListener(l);
 		return this;
 	}
