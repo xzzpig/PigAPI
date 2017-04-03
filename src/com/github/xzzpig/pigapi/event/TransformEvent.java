@@ -1,5 +1,9 @@
 package com.github.xzzpig.pigapi.event;
 
+import com.github.xzzpig.pigapi.oldevent.Event;
+import com.github.xzzpig.pigapi.oldevent.EventHandler;
+import com.github.xzzpig.pigapi.oldevent.Listener;
+
 public class TransformEvent<F, R> extends Event {
 	public interface Transformer<F, R> {
 		public R transform(F f);

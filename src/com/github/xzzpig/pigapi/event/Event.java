@@ -1,175 +1,86 @@
 package com.github.xzzpig.pigapi.event;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * 事件Event由EventBus控制按一定顺序执行
+ * 
+ * @author xzzpig
+ *
+ */
 public class Event {
-	public static final EventHandler defaultEventHandler = new EventHandler() {
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return EventHandler.class;
-		}
 
-		@Override
-		public boolean ignoreCanceled() {
-			return false;
-		}
+	private static final EventBus eventInstance = new EventBus();
 
-		@Override
-		public EventRunLevel mainLevel() {
-			return EventRunLevel.Normal;
-		}
-
-		@Override
-		public int minorLevel() {
-			return 0;
-		}
-	};
-
-	private static final Event eventInstance = new Event();
-
-	public static final void callEvent(Event event) {
-		eventInstance.callEvent_(event);
+	/**
+	 * 调用默认的EventBus的{@link EventBus#callEvent(Event)}
+	 */
+	public static final EventRunResult callEvent(Event event) {
+		return eventInstance.callEvent(event);
 	}
 
+	/**
+	 * 调用默认的EventBus的{@link EventBus#regRunner(EventRunner)}
+	 */
+	public static final void regRunner(EventRunner<?> runner) {
+		eventInstance.regRunner(runner);
+	}
+
+	/**
+	 * 调用默认的EventBus的{@link EventBus#callEvent(Event, EventTunnel)}
+	 */
+	public static final EventRunResult callEvent(Event e, EventTunnel tunnel) {
+		return eventInstance.callEvent(e, tunnel);
+	}
+
+	/**
+	 * 调用默认的EventBus的{@link EventBus#regListener(Listener)}
+	 */
 	public static final void registListener(Listener listener) {
-		eventInstance.registListener_(listener);
+		eventInstance.regListener(listener);
 	}
 
-	public static final <T extends Event> void registListener(SimpleListener<T> listener) {
-		registListener((Listener) listener);
-	}
-
+	/**
+	 * 调用默认的EventBus的{@link EventBus#unregListener(Listener)}
+	 */
 	public static final void unregListener(Listener listener) {
-		eventInstance.unregListener_(listener);
+		eventInstance.unregListener(listener);
 	}
 
-	public static final void unregListener(Predicate<Listener> p) {
-		eventInstance.unregListener_(p);
+	/**
+	 * 调用默认的EventBus的{@link EventBus#unregRunner(Predicate)}
+	 */
+	public static final void unregRunner(Predicate<EventRunner<?>> p) {
+		eventInstance.unregRunner(p);
 	}
 
-	private boolean cancel;
-
-	private final HashMap<Type, List<EventMethod>> events = new HashMap<Type, List<EventMethod>>();
-
-	private void addEvent(Listener listener, Method meth, Type type) {
-		if (!events.containsKey(type))
-			events.put(type, new ArrayList<EventMethod>());
-		events.get(type).add(new EventMethod(meth, listener));
-		EventMethod[] os = events.get(type).toArray(new EventMethod[0]);
-		Arrays.sort(os);
-		events.get(type).clear();
-		events.get(type).addAll(Arrays.asList(os));
-	}
-
-	private final void callEvent(Event event, Type eventtype) {
-		if (events.containsKey(eventtype)) {
-			for (EventMethod em : events.get(eventtype)) {
-				if (event.isCanceled() && !em.eventHandler.ignoreCanceled()) {
-					continue;
-				}
-				try {
-					em.method.invoke(em.listener, new Object[] { event });
-				} catch (Exception e) {
-					if (e instanceof InvocationTargetException)
-						continue;
-					e.printStackTrace();
-					System.out.println("触发事件错误");
-				}
-			}
-		}
-		if (eventtype == Event.class) {
-			return;
-		}
-		callEvent(event, ((Class<?>) eventtype).getSuperclass());
-	}
-
-	final void callEvent_(Event event) {
-		Type eventtype = event.getClass();
-		callEvent(event, eventtype);
-	}
-
+	/**
+	 * 默认为this.getClass().getSimpleName()
+	 * 
+	 * @return 事件名称
+	 */
 	public String getName() {
 		return this.getClass().getSimpleName();
 	}
 
+	private boolean cancel;
+
+	/**
+	 * 设置事件是否继续传递下去
+	 * 
+	 * @param cancel
+	 *            true:继续,false:不继续
+	 * @return this
+	 */
+	public Event setCanceled(boolean cancel) {
+		this.cancel = cancel;
+		return this;
+	}
+
+	/**
+	 * @return 事件是否继续传递
+	 */
 	public boolean isCanceled() {
 		return cancel;
-	}
-
-	final void registListener_(Listener listener) {
-		for (Method meth : listener.getClass().getMethods()) {
-			Annotation ann = meth.getDeclaredAnnotation(EventHandler.class);
-			if (listener instanceof SimpleListener && meth.getName().equals("run")) {
-				ann = ((SimpleListener<?>) listener).getHandler();
-			}
-			if (ann != null) {
-				meth.setAccessible(true);
-				try {
-					Type type = meth.getGenericParameterTypes()[0];
-					addEvent(listener, meth, type);
-				} catch (Exception e) {
-				}
-			}
-		}
-	}
-
-	public void setCancel(boolean c) {
-		cancel = c;
-	}
-
-	final void unregListener_(Listener listener) {
-		unregListener_(listener::equals);
-	}
-
-	final void unregListener_(Predicate<Listener> p) {
-		for (List<EventMethod> list : events.values()) {
-			List<EventMethod> removeList = new ArrayList<>();
-			for (EventMethod eventMethod : list) {
-				if (p.test(eventMethod.listener)) {
-					removeList.add(eventMethod);
-				}
-			}
-			list.removeAll(removeList);
-		}
-	}
-}
-
-class EventMethod implements Comparable<EventMethod> {
-	EventHandler eventHandler;
-	Listener listener;
-	Method method;
-
-	EventMethod(Method method, Listener listener) {
-		this.method = method;
-		this.listener = listener;
-		eventHandler = this.method.getDeclaredAnnotation(EventHandler.class);
-		if (eventHandler == null) {
-			eventHandler = Event.defaultEventHandler;
-		}
-	}
-
-	@Override
-	public int compareTo(EventMethod arg0) {
-		if (eventHandler.mainLevel().ordinal() > arg0.eventHandler.mainLevel().ordinal()) {
-			return 1;
-		} else if (eventHandler.mainLevel().ordinal() < arg0.eventHandler.mainLevel().ordinal()) {
-			return -1;
-		} else {
-			if (eventHandler.minorLevel() > arg0.eventHandler.minorLevel()) {
-				return 1;
-			} else if (eventHandler.minorLevel() < arg0.eventHandler.minorLevel()) {
-				return -1;
-			} else {
-				return 0;
-			}
-		}
 	}
 }

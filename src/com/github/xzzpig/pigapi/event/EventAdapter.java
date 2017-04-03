@@ -3,33 +3,60 @@ package com.github.xzzpig.pigapi.event;
 import java.util.function.Predicate;
 
 /**
- * @author xzzpig 用于接收Listener并可触发不同的事件
+ * 持有一个EventBus对象 可作为事件的接收体
+ * 
+ * @author xzzpig
+ *
  */
 public interface EventAdapter {
-	public default void callEvent(Event event) {
-		getEventInstance().callEvent_(event);
+	/**
+	 * @return 持有的EventBus,作为该类其他方法的基础EventBus
+	 */
+	public EventBus getEventBus();
+
+	/**
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#callEvent(Event)}
+	 */
+	public default EventRunResult callEvent(Event e) {
+		return getEventBus().callEvent(e);
 	}
 
 	/**
-	 * 对于同一对象调用该方法返回值每次应相同 对于不同对象应返回不同的Event实例
-	 * 
-	 * @return Event实例
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#callEvent(Event, EventTunnel)}
 	 */
-	public Event getEventInstance();
-
-	public default void registListener(Listener listener) {
-		getEventInstance().registListener_(listener);
+	public default EventRunResult callEvent(Event e, EventTunnel tunnel) {
+		return getEventBus().callEvent(e, tunnel);
 	}
 
-	public default <T extends Event> void registListener(SimpleListener<T> listener) {
-		getEventInstance().registListener_(listener);
+	/**
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regRunner(EventRunner)}
+	 */
+	public default EventAdapter regRunner(EventRunner<Event> runner) {
+		getEventBus().regRunner(runner);
+		return this;
 	}
 
-	public default void unregListener(Listener listener) {
-		getEventInstance().unregListener_(listener);
+	/**
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regListener(Listener)}
+	 */
+	public default EventAdapter regListener(Listener listener) {
+		getEventBus().regListener(listener);
+		return this;
 	}
 
-	public default void unregListener(Predicate<Listener> p) {
-		getEventInstance().unregListener_(p);
+	/**
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregRunner(Predicate)}
+	 */
+	public default EventAdapter unregRunner(Predicate<EventRunner<?>> p) {
+		getEventBus().unregRunner(p);
+		return this;
+	}
+
+	/**
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregListener(Listener)}
+	 */
+	public default EventAdapter unregListener(Listener listener) {
+		getEventBus().unregListener(listener);
+		return this;
 	}
 }

@@ -19,8 +19,8 @@ import org.nanohttpd.protocols.http.response.Status;
 import com.github.xzzpig.pigapi.TScript;
 import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.event.EventHandler;
+import com.github.xzzpig.pigapi.event.EventRunLevel;
 import com.github.xzzpig.pigapi.event.Listener;
-import com.github.xzzpig.pigapi.event.EventHandler.EventRunLevel;
 import com.github.xzzpig.pigapi.pigsimpleweb.MIME;
 import com.github.xzzpig.pigapi.pigsimpleweb.PigSWPage;
 

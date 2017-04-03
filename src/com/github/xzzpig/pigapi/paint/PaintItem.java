@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.event.EventAdapter;
+import com.github.xzzpig.pigapi.event.EventBus;
 
 public abstract class PaintItem implements IContainer, Paintable, Sizeable ,EventAdapter{
 
@@ -14,7 +14,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 	private PaintItem parent;
 	protected Rect size;
 	private List<PaintItem> subs;
-	private final Event event = new Event();
+	private final EventBus event = new EventBus();
 	
 	public PaintItem(PaintItem parent, String name, Rect size) {
 		subs = new ArrayList<>();
@@ -109,7 +109,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 	}
 	
 	@Override
-	public Event getEventInstance() {
+	public EventBus getEventBus() {
 		return event;
 	}
 }

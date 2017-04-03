@@ -1,11 +1,10 @@
 package com.github.xzzpig.pigapi.thread;
 
-import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.event.EventAdapter;
-import com.github.xzzpig.pigapi.event.SimpleListener;
+import com.github.xzzpig.pigapi.event.EventBus;
 
 public class PigThread extends Thread implements EventAdapter {
-	public Event e = new Event();
+	public EventBus e = new EventBus();
 
 	public PigThread(Runnable r) {
 		super(r);
@@ -23,12 +22,7 @@ public class PigThread extends Thread implements EventAdapter {
 	}
 
 	@Override
-	public Event getEventInstance() {
+	public EventBus getEventBus() {
 		return e;
-	}
-
-	public <T extends Event> PigThread regListener(SimpleListener<T> l) {
-		registListener(l);
-		return this;
 	}
 }
