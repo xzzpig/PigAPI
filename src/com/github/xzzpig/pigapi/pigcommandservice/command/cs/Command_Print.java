@@ -30,8 +30,8 @@ public class Command_Print extends ClientCommand {
 	}
 
 	@Override
-	public String getType() {
-		return "Server";
+	public CommandTarget getType() {
+		return CommandTarget.Server;
 	}
 
 	public JSONObject run(String cmd, JSONObject args) {

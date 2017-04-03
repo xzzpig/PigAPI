@@ -1,5 +1,8 @@
 package com.github.xzzpig.pigapi.json;
 
+import java.io.File;
+import java.io.FileWriter;
+
 /*
  Copyright (c) 2002 JSON.org
 
@@ -461,9 +464,9 @@ public class JSONObject {
 		return quote(value.toString());
 	}
 
-	
 	/**
 	 * 尝试将对象转换
+	 * 
 	 * @param o
 	 * @return 转换结果
 	 */
@@ -512,7 +515,7 @@ public class JSONObject {
 		}
 		return json;
 	}
-	
+
 	/**
 	 * Wrap an object, if necessary. If the object is null, return the NULL
 	 * object. If it is an array or collection, wrap it in a JSONArray. If it is
@@ -1932,5 +1935,15 @@ public class JSONObject {
 		} catch (IOException exception) {
 			throw new JSONException(exception);
 		}
+	}
+
+	public void saveToFile(File f) throws IOException {
+		if (!f.exists()) {
+			f.createNewFile();
+		}
+		FileWriter fw = new FileWriter(f, false);
+		fw.write(this.toString());
+		fw.flush();
+		fw.close();
 	}
 }

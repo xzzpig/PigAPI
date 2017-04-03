@@ -4,17 +4,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import com.github.xzzpig.pigapi.json.JSONObject;
 
 public abstract class Command {
+	public enum CommandTarget {
+		Server, Client
+	}
+
 	private static List<Command> cmds = new ArrayList<>();
 
 	static {
 		regCommand(new com.github.xzzpig.pigapi.pigcommandservice.command.cs.Command_Print());
 		regCommand(new com.github.xzzpig.pigapi.pigcommandservice.command.cc.Command_Print());
 		regCommand(new com.github.xzzpig.pigapi.pigcommandservice.command.cc.Command_Help());
+		regCommand(new com.github.xzzpig.pigapi.pigcommandservice.command.sc.Command_Help());
 	}
 
 	public static Stream<Command> getCommands() {
@@ -53,7 +59,7 @@ public abstract class Command {
 
 	public abstract String getDescribe();
 
-	public abstract String getType();
+	public abstract CommandTarget getType();
 
 	public JSONObject runCommand(JSONObject args) {
 		if (getArgs().entrySet().stream().anyMatch(e -> {
@@ -64,17 +70,29 @@ public abstract class Command {
 			}
 			return false;
 		}))
-			return new JSONObject().put("msg", "命令用法错误:" + this.toString());
+			return new JSONObject().put("m", "命令用法错误:" + this.toString());
 		return getCommandRunner().run(getCmd(), args);
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(getCmd());
-		getArgs().entrySet().stream().forEach(e -> {
+		getArgs().entrySet().stream().sorted(this::compare).forEach(e -> {
 			sb.append(' ').append('-').append(e.getKey()).append(':').append(e.getValue());
 		});
 		sb.append('|').append(getDescribe());
 		return sb.toString();
+	}
+
+	int compare(Entry<String, String> arg0, Entry<String, String> arg1) {
+		if (arg0.getValue().endsWith("]") && arg1.getValue().endsWith("]"))
+			return 0;
+		if (arg0.getValue().endsWith(">") && arg1.getValue().endsWith("]"))
+			return 1;
+		if (arg0.getValue().endsWith("]") && arg1.getValue().endsWith(">"))
+			return -1;
+		if (arg0.getValue().endsWith(">") && arg1.getValue().endsWith(">"))
+			return 0;
+		return 0;
 	}
 }

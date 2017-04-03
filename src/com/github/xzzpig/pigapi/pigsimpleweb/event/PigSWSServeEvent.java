@@ -20,11 +20,11 @@ public class PigSWSServeEvent extends PigSWSEvent {
 		return response;
 	}
 	
-	public void setResponse(Response response) {
-		this.response = response;
-	}
-	
 	public IHTTPSession getSession() {
 		return session;
+	}
+	
+	public void setResponse(Response response) {
+		this.response = response;
 	}
 }

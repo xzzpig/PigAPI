@@ -19,12 +19,45 @@ import org.nanohttpd.protocols.http.response.Status;
 import com.github.xzzpig.pigapi.TScript;
 import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.event.EventHandler;
-import com.github.xzzpig.pigapi.event.EventHandler.EventRunLevel;
 import com.github.xzzpig.pigapi.event.Listener;
+import com.github.xzzpig.pigapi.event.EventHandler.EventRunLevel;
 import com.github.xzzpig.pigapi.pigsimpleweb.MIME;
 import com.github.xzzpig.pigapi.pigsimpleweb.PigSWPage;
 
 public class PigSWSListener implements Listener {
+	public File findFile(File dir, String filename) {
+		if (dir == null || !dir.exists() || !dir.isDirectory()) {
+			return null;
+		}
+		for (File file : dir.listFiles()) {
+			if (file.isFile() && file.getName().equalsIgnoreCase(filename)) {
+				return file;
+			} else if (file.isDirectory()) {
+				File file2 = findFile(file, filename);
+				if (file2 != null) {
+					return file2;
+				}
+			}
+		}
+		return null;
+	}
+
+	@EventHandler(mainLevel=EventRunLevel.Lowest)
+	public void onPigSWSGetMIMEEVent(PigSWSGetMIMEEvent event) {
+		switch (event.getType()) {
+		case "html":
+		case "htm":
+			event.setMIME(MIME.text_html);
+			break;
+		case "pswp":
+			event.setMIME(MIME.pigswpage);
+			break;
+		case "pjsp":
+			event.setMIME(MIME.pigjspage);
+			break;
+		}
+	}
+
 	@EventHandler(mainLevel = EventRunLevel.Highest)
 	public void onPigSWSServerEvent_get_default(PigSWSServeEvent event) {
 		IHTTPSession session = event.getSession();
@@ -42,32 +75,6 @@ public class PigSWSListener implements Listener {
 				event.getPigSimpleWebServer().getMIMEby(uri));
 		Event.callEvent(pigSWSSolveMIMEEvent);
 		event.setResponse(pigSWSSolveMIMEEvent.getResponse());
-	}
-
-	@EventHandler(mainLevel = EventRunLevel.Highest)
-	public void onPigSWSUriIsDicEvent(PigSWSUriIsDicEvent event) {
-		event.setFileName("index.html");
-	}
-
-	@EventHandler(mainLevel = EventRunLevel.Highest)
-	public void onPigSWSSolveMIMEEvent_text_default(PigSWSSolveMIMEEvent event) {
-		if (event.getMIME().getSolveTyle().equalsIgnoreCase("text")
-				|| event.getMIME().getSolveTyle().equalsIgnoreCase("file")) {
-			File file = new File(event.getPigSimpleWebServer().getRootDir() + event.getSession().getUri());
-			if (!file.exists()) {
-				PigSWSFileNotFoundEvent pigSWSFileNotFoundEvent = new PigSWSFileNotFoundEvent(
-						event.getPigSimpleWebServer(), event.getSession());
-				event.setResponse(pigSWSFileNotFoundEvent.getResponse());
-				return;
-			}
-			try {
-				Response response = Response.newFixedLengthResponse(Status.OK, event.getMIME().getName(),
-						file.toURI().toURL().openStream(), file.length());
-				event.setResponse(response);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@EventHandler(mainLevel = EventRunLevel.Highest)
@@ -145,36 +152,29 @@ public class PigSWSListener implements Listener {
 		}
 	}
 
-	public File findFile(File dir, String filename) {
-		if (dir == null || !dir.exists() || !dir.isDirectory()) {
-			return null;
-		}
-		for (File file : dir.listFiles()) {
-			if (file.isFile() && file.getName().equalsIgnoreCase(filename)) {
-				return file;
-			} else if (file.isDirectory()) {
-				File file2 = findFile(file, filename);
-				if (file2 != null) {
-					return file2;
-				}
+	@EventHandler(mainLevel = EventRunLevel.Highest)
+	public void onPigSWSSolveMIMEEvent_text_default(PigSWSSolveMIMEEvent event) {
+		if (event.getMIME().getSolveTyle().equalsIgnoreCase("text")
+				|| event.getMIME().getSolveTyle().equalsIgnoreCase("file")) {
+			File file = new File(event.getPigSimpleWebServer().getRootDir() + event.getSession().getUri());
+			if (!file.exists()) {
+				PigSWSFileNotFoundEvent pigSWSFileNotFoundEvent = new PigSWSFileNotFoundEvent(
+						event.getPigSimpleWebServer(), event.getSession());
+				event.setResponse(pigSWSFileNotFoundEvent.getResponse());
+				return;
+			}
+			try {
+				Response response = Response.newFixedLengthResponse(Status.OK, event.getMIME().getName(),
+						file.toURI().toURL().openStream(), file.length());
+				event.setResponse(response);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
-		return null;
 	}
 
-	@EventHandler(mainLevel=EventRunLevel.Lowest)
-	public void onPigSWSGetMIMEEVent(PigSWSGetMIMEEvent event) {
-		switch (event.getType()) {
-		case "html":
-		case "htm":
-			event.setMIME(MIME.text_html);
-			break;
-		case "pswp":
-			event.setMIME(MIME.pigswpage);
-			break;
-		case "pjsp":
-			event.setMIME(MIME.pigjspage);
-			break;
-		}
+	@EventHandler(mainLevel = EventRunLevel.Highest)
+	public void onPigSWSUriIsDicEvent(PigSWSUriIsDicEvent event) {
+		event.setFileName("index.html");
 	}
 }

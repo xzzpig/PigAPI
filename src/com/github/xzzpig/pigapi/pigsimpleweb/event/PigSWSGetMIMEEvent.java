@@ -8,13 +8,17 @@ import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
  */
 public class PigSWSGetMIMEEvent extends PigSWSEvent{
 
-	String t;
-	
 	MIME m;
+	
+	String t;
 	
 	public PigSWSGetMIMEEvent(PigSimpleWebServer psws,String type) {
 		super(psws);
 		t = type;
+	}
+	
+	public MIME getMIME(){
+		return m;
 	}
 	
 	public String getType(){
@@ -23,9 +27,5 @@ public class PigSWSGetMIMEEvent extends PigSWSEvent{
 	
 	public void setMIME(MIME mime ){
 		m = mime;
-	}
-	
-	public MIME getMIME(){
-		return m;
 	}
 }

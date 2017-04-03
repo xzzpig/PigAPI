@@ -4,7 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Random;
 
-public class TString {
+import com.github.xzzpig.pigapi.json.JSONArray;
+import com.github.xzzpig.pigapi.json.JSONObject;
+
+public class TString{
 	public static String getRandomCH(int len) {
 		String ret = "";
 		for (int i = 0; i < len; i++) {
@@ -62,5 +65,30 @@ public class TString {
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * 将args转换成JSONObject 单个arg格式: -key:value
+	 * key作为JSONObject的key，value作为JSONObject的value，
+	 * 
+	 * @param args
+	 * @return 转换成的JSONObject
+	 */
+	public static JSONObject formatArgs(String[] args) {
+		JSONObject r = new JSONObject();
+		JSONArray arr = new JSONArray();
+		for (String arg : args) {
+			if (!arg.startsWith("-")) {
+				arr.put(arg);
+				continue;
+			} else if (!arg.contains(":")) {
+				r.put(arg, true);
+			}
+			arg = arg.replaceFirst("-", "");
+			String[] kv = arg.split(":", 2);
+			r.put(kv[0], kv[1]);
+		}
+		r.put("other", arr);
+		return r;
 	}
 }

@@ -11,22 +11,22 @@ import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
  */
 public class PigSWSFileNotFoundEvent extends PigSWSEvent {
 	
-	IHTTPSession session;
 	Response r;
+	IHTTPSession session;
 	
 	public PigSWSFileNotFoundEvent(PigSimpleWebServer psws,IHTTPSession session) {
 		super(psws);
 		this.session = session;
 	}
 	
+	Response getResponse(){
+		return r;
+	}
+	
 	public IHTTPSession getSession(){
 		return this.session;
 	}
-	
 	public void setResponse(Response response){
 		r=response;
-	}
-	Response getResponse(){
-		return r;
 	}
 }

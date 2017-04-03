@@ -66,16 +66,16 @@ public class CommandServer {
 				JSONObject res = new JSONObject();
 				if (cmd == null) {
 					res.put("command", "print");
-					res.put("level", "Error");
-					res.put("msg", "命令不可未空");
+					res.put("l", "Error");
+					res.put("m", "命令不可未空");
 				}
 				ServerCommand[] ss = Command.getCommands().filter(c -> c instanceof ServerCommand)
 						.map(c -> (ServerCommand) c).filter(c -> c.getCmd().equalsIgnoreCase(cmd))
-						.filter(c -> c.getType().equalsIgnoreCase("Server")).toArray(ServerCommand[]::new);
+						.filter(c -> c.getType().toString().equalsIgnoreCase("Server")).toArray(ServerCommand[]::new);
 				if (ss.length == 0) {
 					res.put("command", "print");
-					res.put("level", "Error");
-					res.put("msg", cmd + "命令未找到");
+					res.put("l", "Error");
+					res.put("m", cmd + "命令未找到");
 				} else {
 					msg.put("client", conn);
 					for (ServerCommand sc : ss) {
@@ -83,10 +83,10 @@ public class CommandServer {
 						if (result != null) {
 							if (result.optString("side", "Client").equalsIgnoreCase("Client")) {
 								res.put("command", "print");
-								res.put("level", "Info");
-								res.put("msg", res.optString("msg", "") + result.getString("msg"));
+								res.put("l", "Info");
+								res.put("m", res.optString("m", "") + result.getString("m"));
 							} else {
-								System.out.println(result.getString("msg"));
+								System.out.println(result.getString("m"));
 							}
 						}
 					}
@@ -127,30 +127,30 @@ public class CommandServer {
 		args.put("command", cmd);
 		if (cmd == null) {
 			res.put("command", "print");
-			res.put("level", "Error");
-			res.put("msg", "命令不可未空");
+			res.put("l", "Error");
+			res.put("m", "命令不可未空");
 		}
 		ServerCommand[] ss = Command.getCommands().filter(c -> c instanceof ServerCommand).map(c -> (ServerCommand) c)
-				.filter(c -> c.getCmd().equalsIgnoreCase(cmd)).filter(c -> c.getType().equalsIgnoreCase("Client"))
-				.toArray(ServerCommand[]::new);
+				.filter(c -> c.getCmd().equalsIgnoreCase(cmd))
+				.filter(c -> c.getType().toString().equalsIgnoreCase("Client")).toArray(ServerCommand[]::new);
 		if (ss.length == 0) {
 			res.put("command", "print");
-			res.put("level", "Error");
-			res.put("msg", cmd + "命令未找到");
+			res.put("l", "Error");
+			res.put("m", cmd + "命令未找到");
 		} else
 			for (ServerCommand sc : ss) {
 				JSONObject result = sc.runCommand(args);
 				if (result != null) {
-					if (result.optString("side", "Client").equalsIgnoreCase("Client")) {
+					if (result.optString("side", "Client").equalsIgnoreCase("Server")) {
 						res.put("command", "print");
-						res.put("level", "Info");
-						res.put("msg", res.optString("msg", "") + result.getString("msg"));
+						res.put("l", "Info");
+						res.put("m", res.optString("m", "") + result.getString("m"));
 					} else {
-						System.out.println(result.getString("msg"));
+						System.out.println(result.getString("m"));
 					}
 				}
 			}
-		return res;
+		return res.length() == 0 ? null : res;
 	}
 
 	public CommandServer start() {

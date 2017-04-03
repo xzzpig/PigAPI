@@ -61,21 +61,21 @@ public class CommandClient {
 				JSONObject res = new JSONObject();
 				if (cmd == null) {
 					res.put("command", "print");
-					res.put("level", "Error");
-					res.put("msg", "命令不可未空");
+					res.put("l", "Error");
+					res.put("m", "命令不可未空");
 				}
 				ClientCommand[] ss = Command.getCommands().filter(c -> c instanceof ClientCommand)
 						.map(c -> (ClientCommand) c).filter(c -> c.getCmd().equalsIgnoreCase(cmd))
-						.filter(c -> c.getType().equalsIgnoreCase("Server")).toArray(ClientCommand[]::new);
+						.filter(c -> c.getType().toString().equalsIgnoreCase("Server")).toArray(ClientCommand[]::new);
 				if (ss.length == 0) {
 					res.put("command", "print");
-					res.put("level", "Error");
-					res.put("msg", cmd + "命令未找到");
+					res.put("l", "Error");
+					res.put("m", cmd + "命令未找到");
 				} else
 					for (ClientCommand sc : ss) {
 						JSONObject result = sc.runCommand(msg);
 						if (result != null) {
-							System.out.println(result.getString("msg"));
+							System.out.println(result.getString("m"));
 						}
 					}
 				if (res.has("command"))
@@ -113,24 +113,24 @@ public class CommandClient {
 		args.put("client",this);
 		if (cmd == null) {
 			res.put("command", "print");
-			res.put("level", "Error");
-			res.put("msg", "命令不可未空");
+			res.put("l", "Error");
+			res.put("m", "命令不可未空");
 		}
 		ClientCommand[] ss = Command.getCommands().filter(c -> c instanceof ClientCommand).map(c -> (ClientCommand) c)
-				.filter(c -> c.getCmd().equalsIgnoreCase(cmd)).filter(c -> c.getType().equalsIgnoreCase("Client"))
+				.filter(c -> c.getCmd().equalsIgnoreCase(cmd)).filter(c -> c.getType().toString().equalsIgnoreCase("Client"))
 				.toArray(ClientCommand[]::new);
 		if (ss.length == 0) {
 			res.put("command", "print");
-			res.put("level", "Error");
-			res.put("msg", cmd + "命令未找到");
+			res.put("l", "Error");
+			res.put("m", cmd + "命令未找到");
 		} else
 			for (ClientCommand sc : ss) {
 				JSONObject result = sc.runCommand(args);
 				if (result != null) {
-					System.out.println(result.getString("msg"));
+					System.out.println(result.getString("m"));
 				}
 			}
-		return res;
+		return res.length()==0?null:res;
 	}
 
 	public void stop() throws IOException, InterruptedException {

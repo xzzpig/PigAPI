@@ -8,13 +8,21 @@ import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
 
 public class PigSWSSolveMIMEEvent extends PigSWSEvent{
 
-	private IHTTPSession session;
-	private Response response;
 	private MIME mime;
+	private Response response;
+	private IHTTPSession session;
 	public PigSWSSolveMIMEEvent(PigSimpleWebServer psws,IHTTPSession session,MIME mime) {
 		super(psws);
 		this.session = session;
 		this.mime = mime;
+	}
+	
+	public MIME getMIME(){
+		return mime;
+	}
+	
+	Response getResponse(){
+		return response;
 	}
 	
 	public IHTTPSession getSession(){
@@ -23,14 +31,6 @@ public class PigSWSSolveMIMEEvent extends PigSWSEvent{
 	
 	public void setResponse(Response r){
 		response =r;
-	}
-	
-	Response getResponse(){
-		return response;
-	}
-	
-	public MIME getMIME(){
-		return mime;
 	}
 
 }
