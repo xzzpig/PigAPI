@@ -20,13 +20,6 @@ public class Event {
 	}
 
 	/**
-	 * 调用默认的EventBus的{@link EventBus#regRunner(EventRunner)}
-	 */
-	public static final void regRunner(EventRunner<?> runner) {
-		eventInstance.regRunner(runner);
-	}
-
-	/**
 	 * 调用默认的EventBus的{@link EventBus#callEvent(Event, EventTunnel)}
 	 */
 	public static final EventRunResult callEvent(Event e, EventTunnel tunnel) {
@@ -38,6 +31,13 @@ public class Event {
 	 */
 	public static final void registListener(Listener listener) {
 		eventInstance.regListener(listener);
+	}
+
+	/**
+	 * 调用默认的EventBus的{@link EventBus#regRunner(EventRunner)}
+	 */
+	public static final void regRunner(EventRunner<?> runner) {
+		eventInstance.regRunner(runner);
 	}
 
 	/**
@@ -54,6 +54,8 @@ public class Event {
 		eventInstance.unregRunner(p);
 	}
 
+	private boolean cancel;
+
 	/**
 	 * 默认为this.getClass().getSimpleName()
 	 * 
@@ -63,7 +65,12 @@ public class Event {
 		return this.getClass().getSimpleName();
 	}
 
-	private boolean cancel;
+	/**
+	 * @return 事件是否继续传递
+	 */
+	public boolean isCanceled() {
+		return cancel;
+	}
 
 	/**
 	 * 设置事件是否继续传递下去
@@ -75,12 +82,5 @@ public class Event {
 	public Event setCanceled(boolean cancel) {
 		this.cancel = cancel;
 		return this;
-	}
-
-	/**
-	 * @return 事件是否继续传递
-	 */
-	public boolean isCanceled() {
-		return cancel;
 	}
 }

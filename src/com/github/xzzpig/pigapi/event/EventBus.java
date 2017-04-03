@@ -61,6 +61,62 @@ public class EventBus {
 	}
 
 	/**
+	 * 将listener中含@{@link EventHandler}注解的方法解析为EventRunner 并使用
+	 * {@link EventBus#regRunner(EventRunner)}方法注册
+	 * 
+	 * @see EventBus#regRunner(EventRunner)
+	 * @see EventHandler
+	 * @param listener
+	 * @return this
+	 */
+	public EventBus regListener(Listener listener) {
+		for (Method method : listener.getClass().getDeclaredMethods()) {
+			EventHandler handler = method.getDeclaredAnnotation(EventHandler.class);
+			if (handler == null)
+				continue;
+			method.setAccessible(true);
+			regRunner(new EventRunner<Event>() {
+
+				public boolean canRun(Event e) {
+					Class<?> target = (Class<?>) method.getGenericParameterTypes()[0];
+					return target.isAssignableFrom(e.getClass());
+				}
+
+				public EventTunnel getEventTunnel() {
+					return handler.tunnel().equalsIgnoreCase("default") ? EventTunnel.defaultTunnel
+							: new EventTunnel(handler.tunnel());
+				}
+
+				public JSONObject getInfo() {
+					return new JSONObject().put("listener", listener.toString()).put("method", method.getName());
+				}
+
+				public int getMinorRunLevel() {
+					return handler.minorLevel();
+				}
+
+				public EventRunLevel getRunLevel() {
+					return handler.mainLevel();
+				}
+
+				public boolean ignoreCanceled() {
+					return handler.ignoreCanceled();
+				}
+
+				public EventRunResult run(Event event) {
+					try {
+						return (EventRunResult) method.invoke(listener, event);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+					return null;
+				}
+			});
+		}
+		return this;
+	}
+
+	/**
 	 * 将runner注册到本EventBus
 	 * 
 	 * @param runner
@@ -87,58 +143,19 @@ public class EventBus {
 	}
 
 	/**
-	 * 将listener中含@{@link EventHandler}注解的方法解析为EventRunner 并使用
-	 * {@link EventBus#regRunner(EventRunner)}方法注册
+	 * 解除注册所有该Listener中可被解析为 {@link EventRunner} 的方法
 	 * 
-	 * @see EventBus#regRunner(EventRunner)
-	 * @see EventHandler
 	 * @param listener
 	 * @return this
 	 */
-	public EventBus regListener(Listener listener) {
-		for (Method method : listener.getClass().getDeclaredMethods()) {
-			EventHandler handler = method.getDeclaredAnnotation(EventHandler.class);
-			if (handler == null)
-				continue;
-			method.setAccessible(true);
-			regRunner(new EventRunner<Event>() {
-
-				public EventRunResult run(Event event) {
-					try {
-						return (EventRunResult) method.invoke(listener, event);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
-					}
-					return null;
-				}
-
-				public EventTunnel getEventTunnel() {
-					return handler.tunnel().equalsIgnoreCase("default") ? EventTunnel.defaultTunnel
-							: new EventTunnel(handler.tunnel());
-				}
-
-				public EventRunLevel getRunLevel() {
-					return handler.mainLevel();
-				}
-
-				public int getMinorRunLevel() {
-					return handler.minorLevel();
-				}
-
-				public boolean ignoreCanceled() {
-					return handler.ignoreCanceled();
-				}
-
-				public boolean canRun(Event e) {
-					Class<?> target = (Class<?>) method.getGenericParameterTypes()[0];
-					return target.isAssignableFrom(e.getClass());
-				}
-
-				public JSONObject getInfo() {
-					return new JSONObject().put("listener", listener.toString()).put("method", method.getName());
-				}
-			});
-		}
+	public EventBus unregListener(Listener listener) {
+		unregRunner(r -> {
+			if (r.getInfo() == null)
+				return false;
+			if (r.getInfo().optString("listener", "").equalsIgnoreCase(listener.toString()))
+				return true;
+			return false;
+		});
 		return this;
 	}
 
@@ -156,23 +173,6 @@ public class EventBus {
 				removeList.add(r);
 		}
 		runners.removeAll(removeList);
-		return this;
-	}
-
-	/**
-	 * 解除注册所有该Listener中可被解析为 {@link EventRunner} 的方法
-	 * 
-	 * @param listener
-	 * @return this
-	 */
-	public EventBus unregListener(Listener listener) {
-		unregRunner(r -> {
-			if (r.getInfo() == null)
-				return false;
-			if (r.getInfo().optString("listener", "").equalsIgnoreCase(listener.toString()))
-				return true;
-			return false;
-		});
 		return this;
 	}
 }

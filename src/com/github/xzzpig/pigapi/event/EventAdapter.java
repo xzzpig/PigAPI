@@ -10,11 +10,6 @@ import java.util.function.Predicate;
  */
 public interface EventAdapter {
 	/**
-	 * @return 持有的EventBus,作为该类其他方法的基础EventBus
-	 */
-	public EventBus getEventBus();
-
-	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#callEvent(Event)}
 	 */
 	public default EventRunResult callEvent(Event e) {
@@ -29,12 +24,9 @@ public interface EventAdapter {
 	}
 
 	/**
-	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regRunner(EventRunner)}
+	 * @return 持有的EventBus,作为该类其他方法的基础EventBus
 	 */
-	public default EventAdapter regRunner(EventRunner<Event> runner) {
-		getEventBus().regRunner(runner);
-		return this;
-	}
+	public EventBus getEventBus();
 
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regListener(Listener)}
@@ -45,10 +37,10 @@ public interface EventAdapter {
 	}
 
 	/**
-	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregRunner(Predicate)}
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regRunner(EventRunner)}
 	 */
-	public default EventAdapter unregRunner(Predicate<EventRunner<?>> p) {
-		getEventBus().unregRunner(p);
+	public default EventAdapter regRunner(EventRunner<Event> runner) {
+		getEventBus().regRunner(runner);
 		return this;
 	}
 
@@ -57,6 +49,14 @@ public interface EventAdapter {
 	 */
 	public default EventAdapter unregListener(Listener listener) {
 		getEventBus().unregListener(listener);
+		return this;
+	}
+
+	/**
+	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregRunner(Predicate)}
+	 */
+	public default EventAdapter unregRunner(Predicate<EventRunner<?>> p) {
+		getEventBus().unregRunner(p);
 		return this;
 	}
 }

@@ -11,12 +11,37 @@ import com.github.xzzpig.pigapi.json.JSONObject;
 public interface EventRunner<T extends Event> {
 
 	/**
-	 * 执行的主要优先级
+	 * {@link EventRunner#getLimits()}中默认包含的一个限制 判断传入事件e是否为T的子类
 	 * 
-	 * @see EventRunLevel
+	 * @param e
+	 * @return
 	 */
-	public default EventRunLevel getRunLevel() {
-		return EventRunLevel.Normal;
+	public default boolean canRun(Event e) {
+		Class<?> c = (Class<?>) getType();
+		return c.isAssignableFrom(e.getClass());
+	}
+
+	/**
+	 * @return 事件通道，与事件所在通道不同时将不会被执行
+	 */
+	public default EventTunnel getEventTunnel() {
+		return EventTunnel.defaultTunnel;
+	}
+
+	/**
+	 * @return EventRunner的可能的一些其他信息(默认为null)
+	 */
+	public default JSONObject getInfo() {
+		return null;
+	}
+
+	/**
+	 * 当每个元素test()下来都为true时this.run()才会被执行
+	 * 
+	 * @return 限制条件
+	 */
+	public default List<Predicate<Event>> getLimits() {
+		return Arrays.asList(this::canRun);
 	}
 
 	/**
@@ -29,23 +54,12 @@ public interface EventRunner<T extends Event> {
 	}
 
 	/**
-	 * @return 事件通道，与事件所在通道不同时将不会被执行
-	 */
-	public default EventTunnel getEventTunnel() {
-		return EventTunnel.defaultTunnel;
-	}
-
-	public EventRunResult run(T event);
-
-	/**
-	 * {@link EventRunner#getLimits()}中默认包含的一个限制 判断传入事件e是否为T的子类
+	 * 执行的主要优先级
 	 * 
-	 * @param e
-	 * @return
+	 * @see EventRunLevel
 	 */
-	public default boolean canRun(Event e) {
-		Class<?> c = (Class<?>) getType();
-		return c.isAssignableFrom(e.getClass());
+	public default EventRunLevel getRunLevel() {
+		return EventRunLevel.Normal;
 	}
 
 	/**
@@ -61,15 +75,6 @@ public interface EventRunner<T extends Event> {
 	}
 
 	/**
-	 * 当每个元素test()下来都为true时this.run()才会被执行
-	 * 
-	 * @return 限制条件
-	 */
-	public default List<Predicate<Event>> getLimits() {
-		return Arrays.asList(this::canRun);
-	}
-
-	/**
 	 * 是否忽略 {@link Event}的cancel 若忽略则当 {@link Event#isCanceled()}==true时
 	 * 本EventRunner仍将执行
 	 * 
@@ -80,10 +85,5 @@ public interface EventRunner<T extends Event> {
 		return false;
 	}
 
-	/**
-	 * @return EventRunner的可能的一些其他信息(默认为null)
-	 */
-	public default JSONObject getInfo() {
-		return null;
-	}
+	public EventRunResult run(T event);
 }

@@ -16,11 +16,6 @@ public class EventTunnel {
 	}
 
 	@Override
-	public String toString() {
-		return tunnel;
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		return this.toString().equalsIgnoreCase(obj.toString());
 	}
@@ -28,5 +23,10 @@ public class EventTunnel {
 	@Override
 	public int hashCode() {
 		return tunnel.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return tunnel;
 	}
 }
