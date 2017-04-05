@@ -61,6 +61,20 @@ public class EventBus {
 	}
 
 	/**
+	 * 调用regListener(c.newInstance()0
+	 * 
+	 * @see EventBus#regListener(Listener)
+	 * @param c
+	 *            此类需要有无参数的构造函数
+	 * @return this
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public EventBus regListener(Class<? extends Listener> c) throws InstantiationException, IllegalAccessException {
+		return regListener(c.newInstance());
+	}
+
+	/**
 	 * 将listener中含@{@link EventHandler}注解的方法解析为EventRunner 并使用
 	 * {@link EventBus#regRunner(EventRunner)}方法注册
 	 * 
@@ -88,7 +102,8 @@ public class EventBus {
 				}
 
 				public JSONObject getInfo() {
-					return new JSONObject().put("listener", listener.toString()).put("method", method.getName());
+					return new JSONObject().put("listener", listener.toString()).put("method", method.getName())
+							.put("class", listener.getClass().getName());
 				}
 
 				public int getMinorRunLevel() {
@@ -113,6 +128,21 @@ public class EventBus {
 				}
 			});
 		}
+		return this;
+	}
+
+	/**
+	 * 调用 regRunner(c.newInstance())
+	 * 
+	 * @see EventBus#regRunner(EventRunner)
+	 * @param c
+	 *            此类需要有无参数的构造函数
+	 * @return this
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public EventBus regRunner(Class<? extends EventRunner<?>> c) throws InstantiationException, IllegalAccessException {
+		regRunner(c.newInstance());
 		return this;
 	}
 
@@ -145,6 +175,23 @@ public class EventBus {
 	/**
 	 * 解除注册所有该Listener中可被解析为 {@link EventRunner} 的方法
 	 * 
+	 * @param c
+	 * @return this
+	 */
+	public EventBus unregListener(Class<Listener> c) {
+		unregRunner(r -> {
+			if (r.getInfo() == null)
+				return false;
+			if (r.getInfo().optString("class", "").equalsIgnoreCase(c.getName()))
+				return true;
+			return false;
+		});
+		return this;
+	}
+
+	/**
+	 * 解除注册所有该Listener中可被解析为 {@link EventRunner} 的方法
+	 * 
 	 * @param listener
 	 * @return this
 	 */
@@ -156,6 +203,17 @@ public class EventBus {
 				return true;
 			return false;
 		});
+		return this;
+	}
+
+	/**
+	 * 解除注册所有类为c或继承于c的 {@link EventRunner}
+	 * 
+	 * @param c
+	 * @return this
+	 */
+	public EventBus unregRunner(Class<? extends EventRunner<?>> c) {
+		unregRunner(r -> c.isAssignableFrom(r.getClass()));
 		return this;
 	}
 
