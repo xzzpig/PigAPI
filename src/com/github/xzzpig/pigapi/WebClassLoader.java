@@ -1,4 +1,5 @@
 package com.github.xzzpig.pigapi;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,6 +16,7 @@ public class WebClassLoader extends ClassLoader {
 		inStream.close();
 		return outSteam.toByteArray();
 	}
+
 	String host;
 
 	int port;

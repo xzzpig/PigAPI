@@ -61,6 +61,7 @@ public class JSONTokener {
 		}
 		return -1;
 	}
+
 	private long character;
 	private boolean eof;
 	private long index;

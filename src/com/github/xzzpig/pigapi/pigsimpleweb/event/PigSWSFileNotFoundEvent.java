@@ -10,23 +10,24 @@ import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
  * 用于返回404的Response
  */
 public class PigSWSFileNotFoundEvent extends PigSWSEvent {
-	
+
 	Response r;
 	IHTTPSession session;
-	
-	public PigSWSFileNotFoundEvent(PigSimpleWebServer psws,IHTTPSession session) {
+
+	public PigSWSFileNotFoundEvent(PigSimpleWebServer psws, IHTTPSession session) {
 		super(psws);
 		this.session = session;
 	}
-	
-	Response getResponse(){
+
+	Response getResponse() {
 		return r;
 	}
-	
-	public IHTTPSession getSession(){
+
+	public IHTTPSession getSession() {
 		return this.session;
 	}
-	public void setResponse(Response response){
-		r=response;
+
+	public void setResponse(Response response) {
+		r = response;
 	}
 }

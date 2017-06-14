@@ -110,15 +110,15 @@ public class CommandClient {
 	public JSONObject runCommand(String cmd, JSONObject args) {
 		JSONObject res = new JSONObject();
 		args.put("command", cmd);
-		args.put("client",this);
+		args.put("client", this);
 		if (cmd == null) {
 			res.put("command", "print");
 			res.put("l", "Error");
 			res.put("m", "命令不可未空");
 		}
 		ClientCommand[] ss = Command.getCommands().filter(c -> c instanceof ClientCommand).map(c -> (ClientCommand) c)
-				.filter(c -> c.getCmd().equalsIgnoreCase(cmd)).filter(c -> c.getType().toString().equalsIgnoreCase("Client"))
-				.toArray(ClientCommand[]::new);
+				.filter(c -> c.getCmd().equalsIgnoreCase(cmd))
+				.filter(c -> c.getType().toString().equalsIgnoreCase("Client")).toArray(ClientCommand[]::new);
 		if (ss.length == 0) {
 			res.put("command", "print");
 			res.put("l", "Error");
@@ -130,7 +130,7 @@ public class CommandClient {
 					System.out.println(result.getString("m"));
 				}
 			}
-		return res.length()==0?null:res;
+		return res.length() == 0 ? null : res;
 	}
 
 	public void stop() throws IOException, InterruptedException {

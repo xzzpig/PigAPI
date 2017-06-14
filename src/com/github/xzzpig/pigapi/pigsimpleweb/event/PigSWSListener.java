@@ -42,7 +42,7 @@ public class PigSWSListener implements Listener {
 		return null;
 	}
 
-	@EventHandler(mainLevel=EventRunLevel.Lowest)
+	@EventHandler(mainLevel = EventRunLevel.Lowest)
 	public void onPigSWSGetMIMEEVent(PigSWSGetMIMEEvent event) {
 		switch (event.getType()) {
 		case "html":
@@ -79,18 +79,18 @@ public class PigSWSListener implements Listener {
 
 	@EventHandler(mainLevel = EventRunLevel.Highest)
 	public void onPigSWSSolveMIMEEvent_pjsp_default(PigSWSSolveMIMEEvent event) {
-		File jsFile = new File(event.getPigSimpleWebServer().getRootDir()+event.getSession().getUri());
+		File jsFile = new File(event.getPigSimpleWebServer().getRootDir() + event.getSession().getUri());
 		if (!jsFile.exists()) {
-			PigSWSFileNotFoundEvent pigSWSFileNotFoundEvent = new PigSWSFileNotFoundEvent(
-					event.getPigSimpleWebServer(), event.getSession());
+			PigSWSFileNotFoundEvent pigSWSFileNotFoundEvent = new PigSWSFileNotFoundEvent(event.getPigSimpleWebServer(),
+					event.getSession());
 			event.setResponse(pigSWSFileNotFoundEvent.getResponse());
 			return;
 		}
 		ScriptEngine engine = TScript.getJavaScriptEngine();
 		Response response = null;
-		engine.put("event",event);
-		engine.put("webserver",event.getPigSimpleWebServer());
-		engine.put("session",event.getSession());
+		engine.put("event", event);
+		engine.put("webserver", event.getPigSimpleWebServer());
+		engine.put("session", event.getSession());
 		try {
 			FileReader reader = new FileReader(jsFile);
 			engine.eval(reader);
@@ -103,11 +103,11 @@ public class PigSWSListener implements Listener {
 			e.printStackTrace();
 		} catch (ScriptException e) {
 			e.printStackTrace();
-			response = Response.newFixedLengthResponse("Script Run Error\n"+e);
-		} 
+			response = Response.newFixedLengthResponse("Script Run Error\n" + e);
+		}
 		event.setResponse(response);
 	}
-	
+
 	@EventHandler(mainLevel = EventRunLevel.Highest)
 	public void onPigSWSSolveMIMEEvent_pswp_default(PigSWSSolveMIMEEvent event) {
 		if (event.getMIME().getSolveTyle().equalsIgnoreCase("pswp")) {
@@ -143,7 +143,7 @@ public class PigSWSListener implements Listener {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
-			}finally {
+			} finally {
 				try {
 					urlClassLoader.close();
 				} catch (Exception e2) {

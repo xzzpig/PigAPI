@@ -493,7 +493,7 @@ public class JSONObject {
 				}
 			else if (fo instanceof String)
 				try {
-					json.put(f.getName(), (String) f.get(o));
+					json.put(f.getName(), f.get(o));
 				} catch (JSONException | IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}

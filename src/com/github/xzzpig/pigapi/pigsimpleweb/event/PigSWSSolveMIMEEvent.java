@@ -6,31 +6,32 @@ import org.nanohttpd.protocols.http.response.Response;
 import com.github.xzzpig.pigapi.pigsimpleweb.MIME;
 import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
 
-public class PigSWSSolveMIMEEvent extends PigSWSEvent{
+public class PigSWSSolveMIMEEvent extends PigSWSEvent {
 
 	private MIME mime;
 	private Response response;
 	private IHTTPSession session;
-	public PigSWSSolveMIMEEvent(PigSimpleWebServer psws,IHTTPSession session,MIME mime) {
+
+	public PigSWSSolveMIMEEvent(PigSimpleWebServer psws, IHTTPSession session, MIME mime) {
 		super(psws);
 		this.session = session;
 		this.mime = mime;
 	}
-	
-	public MIME getMIME(){
+
+	public MIME getMIME() {
 		return mime;
 	}
-	
-	Response getResponse(){
+
+	Response getResponse() {
 		return response;
 	}
-	
-	public IHTTPSession getSession(){
+
+	public IHTTPSession getSession() {
 		return session;
 	}
-	
-	public void setResponse(Response r){
-		response =r;
+
+	public void setResponse(Response r) {
+		response = r;
 	}
 
 }

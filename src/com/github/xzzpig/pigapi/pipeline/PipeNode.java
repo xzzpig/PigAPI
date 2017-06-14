@@ -26,9 +26,10 @@ public interface PipeNode<T> {
 	 * @return stayobj
 	 */
 	<S> S finish(S stayobj, PipeLineConsumer<S, T> c);
-	
+
 	/**
 	 * 用于限制
+	 * 
 	 * @param l
 	 * @return this
 	 */

@@ -8,18 +8,18 @@ import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.tcp.pack.PackageClient;
 import com.github.xzzpig.pigapi.tcp.pack.PackageServer;
 
-public class SimplePackageServer implements PackageServer{
+public class SimplePackageServer implements PackageServer {
 	private java.util.List<PackageClient> clients;
-	
+
 	private ServerSocket serverSocket;
-	
+
 	private Thread thread;
-	
+
 	public SimplePackageServer(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 		clients = new ArrayList<>();
 	}
-	
+
 	@Override
 	public ServerSocket getServer() {
 		return serverSocket;
@@ -41,9 +41,9 @@ public class SimplePackageServer implements PackageServer{
 			return null;
 		}
 	}
-	
-	public void startAutoAcceptThread(){
-		thread = new Thread(()->{
+
+	public void startAutoAcceptThread() {
+		thread = new Thread(() -> {
 			while (!serverSocket.isClosed()) {
 				SimplePackageClient c = acceptClient();
 				Event.callEvent(new SPSAcceptClientEvent(this, c));
@@ -51,10 +51,10 @@ public class SimplePackageServer implements PackageServer{
 		});
 		thread.start();
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	public boolean stopAutoAcceptThread(){
-		if (thread!=null) {
+	public boolean stopAutoAcceptThread() {
+		if (thread != null) {
 			try {
 				thread.stop();
 				return true;
@@ -63,12 +63,12 @@ public class SimplePackageServer implements PackageServer{
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		if (thread!=null) {
+		if (thread != null) {
 			try {
 				thread.stop();
 			} catch (Exception e) {

@@ -7,14 +7,14 @@ import com.github.xzzpig.pigapi.event.Event;
 import com.github.xzzpig.pigapi.tcp.pack.Package;
 import com.github.xzzpig.pigapi.tcp.pack.PackageClient;
 
-public class SimplePackageClient implements PackageClient{
+public class SimplePackageClient implements PackageClient {
 	private Socket socket;
 	private Thread thread;
-	
+
 	public SimplePackageClient(Socket socket) {
 		this.socket = socket;
 	}
-	
+
 	@Override
 	public Socket getSocket() {
 		return socket;
@@ -44,9 +44,9 @@ public class SimplePackageClient implements PackageClient{
 		}
 		return false;
 	}
-	
-	public void startAutoReveivePackageThread(){
-		thread = new Thread(()->{
+
+	public void startAutoReveivePackageThread() {
+		thread = new Thread(() -> {
 			while (!socket.isClosed()) {
 				SimplePackage p = receivePackage();
 				Event.callEvent(new SPCReceivePackageEvent(this, p));

@@ -9,18 +9,18 @@ public class TScript {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		return manager.getEngineByName(ScriptEngineName);
 	}
-	
+
 	public static ScriptEngine getJavaScriptEngine() {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		return manager.getEngineByName("javascript");
 	}
-	
+
 	public static ScriptEngine getJythonScriptEngine() {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		return manager.getEngineByName("python");
 	}
-	
-	public static ScriptEngine runJavaScriptOnWeb(String url) throws ScriptException{
+
+	public static ScriptEngine runJavaScriptOnWeb(String url) throws ScriptException {
 		ScriptEngine engine = getJavaScriptEngine();
 		engine.eval(TUrl.getHtml(url));
 		return engine;

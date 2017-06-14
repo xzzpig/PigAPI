@@ -1297,8 +1297,8 @@ public class Base64 {
 			} // end if: white space, equals sign or better
 			else {
 				// There's a bad input character in the Base64 stream.
-				throw new java.io.IOException(String.format(
-						"Bad Base64 input character decimal %d in array position %d", (source[i]) & 0xFF, i));
+				throw new java.io.IOException(String
+						.format("Bad Base64 input character decimal %d in array position %d", (source[i]) & 0xFF, i));
 			} // end else:
 		} // each input character
 
@@ -1350,7 +1350,7 @@ public class Base64 {
 		catch (java.io.UnsupportedEncodingException uee) {
 			bytes = s.getBytes();
 		} // end catch
-		// </change>
+			// </change>
 
 		// Decode
 		bytes = decode(bytes, 0, bytes.length, options);

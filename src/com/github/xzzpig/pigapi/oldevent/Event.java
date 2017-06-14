@@ -44,7 +44,7 @@ public class Event {
 	}
 
 	public static final <T extends Event> void registListener(SimpleListener<T> listener) {
-		registListener((Listener) listener);
+		registListener(listener);
 	}
 
 	public static final void unregListener(Listener listener) {

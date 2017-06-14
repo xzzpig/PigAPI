@@ -5,7 +5,7 @@ import java.sql.Statement;
 
 public abstract class TSql {
 	public enum Type {
-		MYSQL,SQLITE
+		MYSQL, SQLITE
 	}
 
 	protected Connection conn;

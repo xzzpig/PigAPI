@@ -10,25 +10,25 @@ public class PigSWSUriIsDicEvent extends PigSWSEvent {
 
 	private String fileName;
 	private String uri;
-	
-	public PigSWSUriIsDicEvent(PigSimpleWebServer psws,String uri) {
+
+	public PigSWSUriIsDicEvent(PigSimpleWebServer psws, String uri) {
 		super(psws);
 		this.uri = uri;
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getFileName(){
+	public String getFileName() {
 		return fileName;
 	}
-	
-	public String getURI(){
+
+	public String getURI() {
 		return uri;
 	}
-	
+
 	/*
 	 * 设置默认文件名称
 	 */
-	public void setFileName(String f){
+	public void setFileName(String f) {
 		fileName = f;
 	}
 }

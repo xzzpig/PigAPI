@@ -30,8 +30,9 @@ public interface EventAdapter {
 
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regListener(Class)}
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	public default EventAdapter regListener(Class<Listener> c) throws InstantiationException, IllegalAccessException {
 		getEventBus().regListener(c);
@@ -45,11 +46,12 @@ public interface EventAdapter {
 		getEventBus().regListener(listener);
 		return this;
 	}
-	
+
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#regRunner(Class)
 	 */
-	public default EventAdapter regRunner(Class<? extends EventRunner<?>> c) throws InstantiationException, IllegalAccessException{
+	public default EventAdapter regRunner(Class<? extends EventRunner<?>> c)
+			throws InstantiationException, IllegalAccessException {
 		getEventBus().regRunner(c);
 		return this;
 	}
@@ -61,7 +63,7 @@ public interface EventAdapter {
 		getEventBus().regRunner(runner);
 		return this;
 	}
-	
+
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregListener(Class)}
 	 */
@@ -69,7 +71,7 @@ public interface EventAdapter {
 		getEventBus().unregListener(c);
 		return this;
 	}
-	
+
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregListener(Listener)}
 	 */
@@ -77,7 +79,7 @@ public interface EventAdapter {
 		getEventBus().unregListener(listener);
 		return this;
 	}
-	
+
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregRunner(Class)}
 	 */
@@ -85,7 +87,7 @@ public interface EventAdapter {
 		getEventBus().unregRunner(c);
 		return this;
 	}
-	
+
 	/**
 	 * 调用{@link EventAdapter#getEventBus()}的{@link EventBus#unregRunner(Predicate)}
 	 */

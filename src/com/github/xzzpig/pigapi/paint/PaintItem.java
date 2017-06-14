@@ -8,14 +8,14 @@ import java.util.List;
 import com.github.xzzpig.pigapi.event.EventAdapter;
 import com.github.xzzpig.pigapi.event.EventBus;
 
-public abstract class PaintItem implements IContainer, Paintable, Sizeable ,EventAdapter{
+public abstract class PaintItem implements IContainer, Paintable, Sizeable, EventAdapter {
 
 	private String name;
 	private PaintItem parent;
 	protected Rect size;
 	private List<PaintItem> subs;
 	private final EventBus event = new EventBus();
-	
+
 	public PaintItem(PaintItem parent, String name, Rect size) {
 		subs = new ArrayList<>();
 		setName(name);
@@ -30,7 +30,7 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 		return this;
 	}
 
-	public void clarAllSubs(){
+	public void clarAllSubs() {
 		subs.clear();
 	}
 
@@ -38,9 +38,9 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 	public abstract PaintItem clone();
 
 	@Override
-	public final Image getFinalImage(){
-		Image image = new BufferedImage(getSize().width,getSize().height, BufferedImage.TYPE_INT_ARGB);
-		image.getGraphics().drawImage(getSizedImage(),0,0,null);
+	public final Image getFinalImage() {
+		Image image = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
+		image.getGraphics().drawImage(getSizedImage(), 0, 0, null);
 		for (PaintItem subItem : subs) {
 			Image image2 = subItem.getFinalImage();
 			image.getGraphics().drawImage(image2, subItem.getSize().left, subItem.getSize().top, null);
@@ -51,10 +51,13 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 	public final String getName() {
 		return name;
 	}
+
 	@Override
 	public PaintItem getParent() {
 		return parent;
 	}
+
+	@Override
 	public Rect getSize() {
 		return size;
 	}
@@ -62,13 +65,13 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 	public Image getSizedImage() {
 		return getSizedImage(getSize(), SizeType.ZOOM);
 	}
-	
+
 	@Override
 	public Image getSizedImage(Rect size, SizeType type) {
 		if (type == SizeType.ZOOM) {
 			return getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
-		}else{
-			BufferedImage image = new BufferedImage(getSize().width,getSize().height,BufferedImage.TYPE_INT_ARGB);
+		} else {
+			BufferedImage image = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
 			image.getGraphics().drawImage(getImage(), 0, 0, null);
 			return image;
 		}
@@ -93,21 +96,21 @@ public abstract class PaintItem implements IContainer, Paintable, Sizeable ,Even
 		this.name = name;
 		return this;
 	}
-	
-	public PaintItem setParent(PaintItem parent){
-		if(this.parent!=null&&this.parent!=parent){
+
+	public PaintItem setParent(PaintItem parent) {
+		if (this.parent != null && this.parent != parent) {
 			this.parent.removeSub(getName());
 			parent.addSub(this);
 		}
 		this.parent = parent;
 		return this;
 	}
-	
+
 	public PaintItem setSize(Rect size) {
 		this.size = new Rect(size);
 		return this;
 	}
-	
+
 	@Override
 	public EventBus getEventBus() {
 		return event;

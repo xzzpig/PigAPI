@@ -7,7 +7,7 @@ import java.util.Random;
 import com.github.xzzpig.pigapi.json.JSONArray;
 import com.github.xzzpig.pigapi.json.JSONObject;
 
-public class TString{
+public class TString {
 	public static String getRandomCH(int len) {
 		String ret = "";
 		for (int i = 0; i < len; i++) {

@@ -17,7 +17,7 @@ public class PaintView extends JPanel {
 
 	public PaintView() {
 	}
-	
+
 	@Override
 	protected void paintComponent(Graphics arg0) {
 		super.paintComponent(arg0);
@@ -30,8 +30,8 @@ public class PaintView extends JPanel {
 	public List<PaintItem> getPaints() {
 		return paints;
 	}
-	
-	public void addPaintItem(PaintItem paintItem){
+
+	public void addPaintItem(PaintItem paintItem) {
 		paints.add(paintItem);
 	}
 }

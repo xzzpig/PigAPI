@@ -7,22 +7,22 @@ import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
  * 用于设置根目录
  * 默认为System.getProperty("user.dir")
  */
-public class PigSWSGetRootEvent extends PigSWSEvent{
+public class PigSWSGetRootEvent extends PigSWSEvent {
 	private String root;
-	
+
 	public PigSWSGetRootEvent(PigSimpleWebServer psws) {
 		super(psws);
 		root = System.getProperty("user.dir");
 	}
-	
-	public String getRoot(){
+
+	public String getRoot() {
 		if (root.endsWith("/")) {
-			root = root.substring(0,root.length()-1);
+			root = root.substring(0, root.length() - 1);
 		}
 		return root;
 	}
-	
-	public void setRoot(String r){
+
+	public void setRoot(String r) {
 		root = r;
 	}
 }

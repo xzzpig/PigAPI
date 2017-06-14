@@ -91,33 +91,40 @@ public class EventBus {
 			method.setAccessible(true);
 			regRunner(new EventRunner<Event>() {
 
+				@Override
 				public boolean canRun(Event e) {
 					Class<?> target = (Class<?>) method.getGenericParameterTypes()[0];
 					return target.isAssignableFrom(e.getClass());
 				}
 
+				@Override
 				public EventTunnel getEventTunnel() {
 					return handler.tunnel().equalsIgnoreCase("default") ? EventTunnel.defaultTunnel
 							: new EventTunnel(handler.tunnel());
 				}
 
+				@Override
 				public JSONObject getInfo() {
 					return new JSONObject().put("listener", listener.toString()).put("method", method.getName())
 							.put("class", listener.getClass().getName());
 				}
 
+				@Override
 				public int getMinorRunLevel() {
 					return handler.minorLevel();
 				}
 
+				@Override
 				public EventRunLevel getRunLevel() {
 					return handler.mainLevel();
 				}
 
+				@Override
 				public boolean ignoreCanceled() {
 					return handler.ignoreCanceled();
 				}
 
+				@Override
 				public EventRunResult run(Event event) {
 					try {
 						return (EventRunResult) method.invoke(listener, event);

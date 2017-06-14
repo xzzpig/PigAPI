@@ -28,8 +28,9 @@ public class Event {
 
 	/**
 	 * 调用默认的EventBus的{@link EventBus#regListener(Class)}
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	public static final void registListener(Class<Listener> c) throws InstantiationException, IllegalAccessException {
 		eventInstance.regListener(c);
@@ -41,16 +42,18 @@ public class Event {
 	public static final void registListener(Listener listener) {
 		eventInstance.regListener(listener);
 	}
-	
+
 	/**
 	 * 调用默认的EventBus的{@link EventBus#regRunner(Class)}
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public static final void regRunner(Class<? extends EventRunner<?>> c) throws InstantiationException, IllegalAccessException {
+	public static final void regRunner(Class<? extends EventRunner<?>> c)
+			throws InstantiationException, IllegalAccessException {
 		eventInstance.regRunner(c);
 	}
-	
+
 	/**
 	 * 调用默认的EventBus的{@link EventBus#regRunner(EventRunner)}
 	 */
@@ -64,7 +67,7 @@ public class Event {
 	public static final void unregListener(Class<Listener> c) {
 		eventInstance.unregListener(c);
 	}
-	
+
 	/**
 	 * 调用默认的EventBus的{@link EventBus#unregListener(Listener)}
 	 */
@@ -78,7 +81,7 @@ public class Event {
 	public static final void unregRunner(Class<EventRunner<?>> c) {
 		eventInstance.unregRunner(c);
 	}
-	
+
 	/**
 	 * 调用默认的EventBus的{@link EventBus#unregRunner(Predicate)}
 	 */
