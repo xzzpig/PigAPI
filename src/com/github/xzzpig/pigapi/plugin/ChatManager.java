@@ -12,9 +12,9 @@ import com.github.xzzpig.pigapi.bukkit.TMessage;
 import com.github.xzzpig.pigapi.bukkit.TPlayer;
 import com.github.xzzpig.pigapi.bukkit.TStringMatcher;
 import com.github.xzzpig.pigapi.bukkit.event.ChatMessageSendEvent;
-import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigutils.event.Event;
 
-public class ChatManager implements Listener {
+public class ChatManager implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static ChatManager self = new ChatManager();
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -35,17 +35,19 @@ public class ChatManager implements Listener {
 		event.setCancelled(true);
 	}
 
-	public static void atPlayer(ChatMessageSendEvent e) {
+	@com.github.xzzpig.pigutils.event.EventHandler
+	public void atPlayer(ChatMessageSendEvent e) {
 		if (e.msg.contains("@" + e.to.getName())) {
 			e.setMessage(e.msg.replace("@" + e.to.getName(), ChatColor.AQUA + "@" + e.to.getName() + ChatColor.RESET));
 			e.to.playSound(e.to.getLocation(), Sound.LEVEL_UP, 1, 1);
 		}
 	}
-	
-	public static void deseePlayer(ChatMessageSendEvent e) {
-		if(!Help.deseemap.containsKey(e.from.getName()))
+
+	@com.github.xzzpig.pigutils.event.EventHandler
+	public void deseePlayer(ChatMessageSendEvent e) {
+		if (!Help.deseemap.containsKey(e.from.getName()))
 			return;
-		if(Help.deseemap.get(e.from.getName()).contains(e.to.getName()))
-			e.setCancel(true);
+		if (Help.deseemap.get(e.from.getName()).contains(e.to.getName()))
+			e.setCanceled(true);
 	}
 }

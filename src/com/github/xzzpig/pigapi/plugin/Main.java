@@ -7,14 +7,7 @@ import java.net.InetSocketAddress;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.java_websocket.WebSocket;
-import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.server.WebSocketServer;
 
-import com.github.xzzpig.pigapi.Debuger;
-import com.github.xzzpig.pigapi.PigData;
-import com.github.xzzpig.pigapi.TJython;
-import com.github.xzzpig.pigapi.TScript;
 import com.github.xzzpig.pigapi.bukkit.TConfig;
 import com.github.xzzpig.pigapi.bukkit.TPrefix;
 import com.github.xzzpig.pigapi.bukkit.event.PluginLoadEvent;
@@ -35,8 +28,15 @@ import com.github.xzzpig.pigapi.bukkit.javascript.JSListener_8;
 import com.github.xzzpig.pigapi.bukkit.javascript.JSListener_9;
 import com.github.xzzpig.pigapi.bukkit.javascript.JSListener_PigAPI;
 import com.github.xzzpig.pigapi.bukkit.javascript.JSPlugin;
-import com.github.xzzpig.pigapi.event.Event;
-import com.github.xzzpig.pigapi.pigsimpleweb.PigSimpleWebServer;
+import com.github.xzzpig.pigutils.Debuger;
+import com.github.xzzpig.pigutils.PigData;
+import com.github.xzzpig.pigutils.TJython;
+import com.github.xzzpig.pigutils.TScript;
+import com.github.xzzpig.pigutils.event.Event;
+import com.github.xzzpig.pigutils.pigsimpleweb.PigSimpleWebServer;
+import com.github.xzzpig.pigutils.websocket.WebSocket;
+import com.github.xzzpig.pigutils.websocket.handshake.ClientHandshake;
+import com.github.xzzpig.pigutils.websocket.server.WebSocketServer;
 
 public class Main extends JavaPlugin {
 
@@ -45,7 +45,7 @@ public class Main extends JavaPlugin {
 	public static Main self;
 
 	private boolean ench, enjs, enws, enwsr, enjy;
-	public PigSimpleWebServer webserver;
+	public com.github.xzzpig.pigutils.pigsimpleweb.PigSimpleWebServer webserver;
 
 	public WebSocketServer wsserver;
 
@@ -59,8 +59,7 @@ public class Main extends JavaPlugin {
 		getLogger().info("聊天格式:" + Vars.chatformat);
 		autoSavePrefix.start();
 		ench = true;
-		Event.registListener(ChatManager::atPlayer);
-		Event.registListener(ChatManager::deseePlayer);
+		Event.registListener(ChatManager.self);
 	}
 
 	public void enableJsPlugin() {

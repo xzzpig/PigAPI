@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.github.xzzpig.pigapi.TUrl;
 import com.github.xzzpig.pigapi.bukkit.TConfig;
-import com.github.xzzpig.pigapi.json.JSONObject;
 import com.github.xzzpig.pigapi.plugin.Main;
+import com.github.xzzpig.pigutils.TUrl;
+import com.github.xzzpig.pigutils.json.JSONObject;
 
 public class JSPlugin {
 	private static FileConfiguration jspluginconfig;

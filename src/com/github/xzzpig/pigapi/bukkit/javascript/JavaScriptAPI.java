@@ -8,10 +8,10 @@ import java.util.Map;
 
 import org.bukkit.entity.LivingEntity;
 
-import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.bukkit.TStringMatcher;
-import com.github.xzzpig.pigapi.json.JSONObject;
 import com.github.xzzpig.pigapi.plugin.Main;
+import com.github.xzzpig.pigutils.PigData;
+import com.github.xzzpig.pigutils.json.JSONObject;
 
 public class JavaScriptAPI {
 	private PigData data = new PigData();

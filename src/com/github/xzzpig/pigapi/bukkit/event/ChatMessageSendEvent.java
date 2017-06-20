@@ -2,9 +2,7 @@ package com.github.xzzpig.pigapi.bukkit.event;
 
 import org.bukkit.entity.Player;
 
-import com.github.xzzpig.pigapi.event.Event;
-
-public class ChatMessageSendEvent extends Event {
+public class ChatMessageSendEvent extends com.github.xzzpig.pigutils.event.Event {
 	public String msg;
 	public final Player from, to;
 	public boolean highlight;

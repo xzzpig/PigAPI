@@ -2,7 +2,7 @@ package com.github.xzzpig.pigapi.bukkit.event;
 
 import java.util.HashMap;
 
-import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigutils.event.Event;
 
 public class StringMatcherEvent extends Event {
 	HashMap<String, Object> data;

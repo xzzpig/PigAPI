@@ -8,9 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import com.github.xzzpig.pigapi.TCalculate;
 import com.github.xzzpig.pigapi.bukkit.event.StringMatcherEvent;
-import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigutils.TCalculate;
+import com.github.xzzpig.pigutils.event.Event;
 
 public class TStringMatcher {
 	public static String buildStr(String str, HashMap<String, Object> data, boolean callEntity) {

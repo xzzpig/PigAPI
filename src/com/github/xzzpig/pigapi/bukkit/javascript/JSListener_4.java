@@ -18,7 +18,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
-public class JSListener_4 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_4 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_4 instance = new JSListener_4();
 
 	@EventHandler

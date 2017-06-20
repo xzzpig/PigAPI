@@ -19,7 +19,7 @@ import org.bukkit.event.server.ServiceUnregisterEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.SpawnChangeEvent;
 
-public class JSListener_8 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_8 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_8 instance = new JSListener_8();
 
 	@EventHandler

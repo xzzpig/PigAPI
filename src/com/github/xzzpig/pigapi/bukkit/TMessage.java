@@ -3,14 +3,12 @@ package com.github.xzzpig.pigapi.bukkit;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonWriter;
@@ -20,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import com.github.xzzpig.pigapi.plugin.Main;
 import com.gmail.filoghost.holographicdisplays.HolographicDisplays;
 import com.gmail.filoghost.holographicdisplays.nms.interfaces.FancyMessage;
 
@@ -270,40 +267,43 @@ public class TMessage {
 			}
 			sendPack.invoke(playerConnection, PacketPlayOutChat);
 		} catch (Exception e) {
-			if (hd == null) {
-				hd = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
-				if (hd != null)
-					Main.self.getLogger().info("尝试使用HolographicDisplays插件发送TM");
-			}
-			if (hd != null) {
-				if (fm != null) {
-					fm.send(player);
-					return;
-				}
-				fm = HolographicDisplays.getNMSManager().newFancyMessage("");
-				List<FancyMessage.MessagePart> ls = new ArrayList<>();
-				for (MessagePart mpt : messageParts) {
-					FancyMessage.MessagePart mp = new FancyMessage.MessagePart(mpt.text);
-					mp.clickActionData = mpt.clickActionData;
-					mp.clickActionName = mpt.clickActionName;
-					mp.color = mpt.color;
-					mp.hoverActionData = mpt.hoverActionData;
-					mp.hoverActionName = mpt.clickActionName;
-					mp.styles = mpt.styles;
-					ls.add(mp);
-				}
-
-				try {
-					Field f = fm.getClass().getDeclaredField("messageParts");
-					f.setAccessible(true);
-					f.set(fm, ls);
-					fm.send(player);
-					return;
-				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException
-						| IllegalAccessException e1) {
-					e1.printStackTrace();
-				}
-			}
+			// if (hd == null) {
+			// hd = (Plugin)
+			// Bukkit.getPluginManager().getPlugin("HolographicDisplays");
+			// if (hd != null)
+			// Main.self.getLogger().info("尝试使用HolographicDisplays插件发送TM");
+			// }
+			// if (hd != null) {
+			// if (fm != null) {
+			// fm.send(player);
+			// return;
+			// }
+			// fm = HolographicDisplays.getNMSManager().newFancyMessage("");
+			// List<FancyMessage.MessagePart> ls = new ArrayList<>();
+			// for (MessagePart mpt : messageParts) {
+			// FancyMessage.MessagePart mp = new
+			// FancyMessage.MessagePart(mpt.text);
+			// mp.clickActionData = mpt.clickActionData;
+			// mp.clickActionName = mpt.clickActionName;
+			// mp.color = mpt.color;
+			// mp.hoverActionData = mpt.hoverActionData;
+			// mp.hoverActionName = mpt.clickActionName;
+			// mp.styles = mpt.styles;
+			// ls.add(mp);
+			// }
+			//
+			// try {
+			// Field f = fm.getClass().getDeclaredField("messageParts");
+			// f.setAccessible(true);
+			// f.set(fm, ls);
+			// fm.send(player);
+			// return;
+			// } catch (NoSuchFieldException | SecurityException |
+			// IllegalArgumentException
+			// | IllegalAccessException e1) {
+			// e1.printStackTrace();
+			// }
+			// }
 			e.printStackTrace();
 			version = null;
 			System.err.println("FM发送错误,将以普通方式发送");

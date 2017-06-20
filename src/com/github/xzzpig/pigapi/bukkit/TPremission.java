@@ -11,6 +11,7 @@ public class TPremission {
 	public static TPremission[] getAllPremissions() {
 		return prelist.toArray(new TPremission[0]);
 	}
+
 	public static TPremission valueOf(String name) {
 		for (TPremission pre : prelist) {
 			if (pre.getName().equalsIgnoreCase(name))

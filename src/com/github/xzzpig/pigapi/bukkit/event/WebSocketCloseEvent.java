@@ -1,9 +1,8 @@
 package com.github.xzzpig.pigapi.bukkit.event;
 
-import org.java_websocket.WebSocket;
-import org.java_websocket.server.WebSocketServer;
-
-import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigutils.event.Event;
+import com.github.xzzpig.pigutils.websocket.WebSocket;
+import com.github.xzzpig.pigutils.websocket.server.WebSocketServer;
 
 public class WebSocketCloseEvent extends Event {
 	private WebSocket client;

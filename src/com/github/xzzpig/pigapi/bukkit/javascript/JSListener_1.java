@@ -19,7 +19,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
-public class JSListener_1 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_1 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_1 instance = new JSListener_1();
 
 	@EventHandler

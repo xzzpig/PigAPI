@@ -21,7 +21,7 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 
-public class JSListener_7 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_7 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_7 instance = new JSListener_7();
 
 	@EventHandler

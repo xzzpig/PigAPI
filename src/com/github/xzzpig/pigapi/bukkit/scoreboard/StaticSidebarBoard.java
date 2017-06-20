@@ -9,6 +9,7 @@ public class StaticSidebarBoard extends Board {
 	public static enum SidebarBoardType {
 		RANKED(), UNRANKED();
 	}
+
 	private Object data;
 
 	private SidebarBoardType type;

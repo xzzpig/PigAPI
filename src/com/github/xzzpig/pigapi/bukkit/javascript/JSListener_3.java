@@ -20,7 +20,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 
-public class JSListener_3 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_3 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_3 instance = new JSListener_3();
 
 	@EventHandler

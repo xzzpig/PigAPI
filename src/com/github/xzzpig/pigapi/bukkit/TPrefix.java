@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.github.xzzpig.pigapi.PigData;
 import com.github.xzzpig.pigapi.plugin.Vars;
+import com.github.xzzpig.pigutils.PigData;
 
 public class TPrefix {
 	public static boolean autoSave = true;
@@ -59,7 +59,7 @@ public class TPrefix {
 		if (isALL) {
 			// HashMap<String, String> map = Vars.prefix.getStrings();
 			// for (Entry<String, String> ele : map.entrySet()) {
-			// if (ele.getKey().replace('$', '＄').split("＄")[0]
+			// if (ele.getKey().replace('$', '锛�').split("锛�")[0]
 			// .equalsIgnoreCase(player))
 			// map.remove(ele.getKey());
 			// }

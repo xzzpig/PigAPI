@@ -19,7 +19,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-public class JSListener_2 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_2 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_2 instance = new JSListener_2();
 
 	@EventHandler

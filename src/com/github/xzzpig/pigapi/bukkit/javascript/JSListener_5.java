@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.server.MapInitializeEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 
-public class JSListener_5 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_5 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_5 instance = new JSListener_5();
 
 	@EventHandler

@@ -14,10 +14,10 @@ import javax.script.ScriptException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import com.github.xzzpig.pigapi.TScript;
 import com.github.xzzpig.pigapi.bukkit.TCommandHelp;
 import com.github.xzzpig.pigapi.bukkit.TCommandHelp.CommandInstance;
 import com.github.xzzpig.pigapi.bukkit.javascript.JSListener;
+import com.github.xzzpig.pigutils.TScript;
 
 public class Help {
 	public static TCommandHelp PigAPI = new TCommandHelp("pigapi", "PigAPI的主命令", "/pigapi help");

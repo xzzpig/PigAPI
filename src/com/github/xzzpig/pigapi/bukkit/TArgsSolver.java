@@ -2,7 +2,7 @@ package com.github.xzzpig.pigapi.bukkit;
 
 import org.bukkit.ChatColor;
 
-import com.github.xzzpig.pigapi.TData;
+import com.github.xzzpig.pigutils.TData;
 
 public class TArgsSolver {
 	private TData data = new TData();

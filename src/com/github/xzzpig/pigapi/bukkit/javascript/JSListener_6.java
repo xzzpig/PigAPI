@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class JSListener_6 implements Listener, com.github.xzzpig.pigapi.event.Listener {
+public class JSListener_6 implements Listener, com.github.xzzpig.pigutils.event.Listener {
 	public static final JSListener_6 instance = new JSListener_6();
 
 	@EventHandler

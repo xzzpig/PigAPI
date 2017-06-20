@@ -1,10 +1,9 @@
 package com.github.xzzpig.pigapi.bukkit.event;
 
-import org.java_websocket.WebSocket;
-import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.server.WebSocketServer;
-
-import com.github.xzzpig.pigapi.event.Event;
+import com.github.xzzpig.pigutils.event.Event;
+import com.github.xzzpig.pigutils.websocket.WebSocket;
+import com.github.xzzpig.pigutils.websocket.handshake.ClientHandshake;
+import com.github.xzzpig.pigutils.websocket.server.WebSocketServer;
 
 public class WebSocketOpenEvent extends Event {
 	private WebSocket client;

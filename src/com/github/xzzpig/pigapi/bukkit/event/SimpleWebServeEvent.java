@@ -3,9 +3,7 @@ package com.github.xzzpig.pigapi.bukkit.event;
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.response.Response;
 
-import com.github.xzzpig.pigapi.event.Event;
-
-public class SimpleWebServeEvent extends Event {
+public class SimpleWebServeEvent extends com.github.xzzpig.pigutils.event.Event {
 	private Response response;
 	private IHTTPSession session;
 

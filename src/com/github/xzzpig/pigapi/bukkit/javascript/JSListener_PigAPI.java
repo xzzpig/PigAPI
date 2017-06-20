@@ -9,8 +9,8 @@ import com.github.xzzpig.pigapi.bukkit.event.WebSocketCloseEvent;
 import com.github.xzzpig.pigapi.bukkit.event.WebSocketErrorEvent;
 import com.github.xzzpig.pigapi.bukkit.event.WebSocketMessageEvent;
 import com.github.xzzpig.pigapi.bukkit.event.WebSocketOpenEvent;
-import com.github.xzzpig.pigapi.event.EventHandler;
-import com.github.xzzpig.pigapi.event.Listener;
+import com.github.xzzpig.pigutils.event.EventHandler;
+import com.github.xzzpig.pigutils.event.Listener;
 
 public class JSListener_PigAPI implements Listener {
 	public static JSListener_PigAPI instance = new JSListener_PigAPI();
@@ -35,22 +35,22 @@ public class JSListener_PigAPI implements Listener {
 		JSListener.runScript(event);
 	}
 
-	@com.github.xzzpig.pigapi.event.EventHandler
+	@com.github.xzzpig.pigutils.event.EventHandler
 	public void onEvent(WebSocketCloseEvent event) {
 		JSListener.runScript(event);
 	}
 
-	@com.github.xzzpig.pigapi.event.EventHandler
+	@com.github.xzzpig.pigutils.event.EventHandler
 	public void onEvent(WebSocketErrorEvent event) {
 		JSListener.runScript(event);
 	}
 
-	@com.github.xzzpig.pigapi.event.EventHandler
+	@com.github.xzzpig.pigutils.event.EventHandler
 	public void onEvent(WebSocketMessageEvent event) {
 		JSListener.runScript(event);
 	}
 
-	@com.github.xzzpig.pigapi.event.EventHandler
+	@com.github.xzzpig.pigutils.event.EventHandler
 	public void onEvent(WebSocketOpenEvent event) {
 		JSListener.runScript(event);
 	}
