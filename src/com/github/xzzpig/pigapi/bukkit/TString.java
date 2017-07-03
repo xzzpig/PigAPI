@@ -18,6 +18,10 @@ public class TString extends com.github.xzzpig.pigutils.TString {
 		return ChatColor.getByChar(colorid) + "";
 	}
 
+	public static String removeColor(String str) {
+		return ChatColor.stripColor(str);
+	}
+
 	public static String getRandomCH(int len) {
 		String ret = "";
 		for (int i = 0; i < len; i++) {
