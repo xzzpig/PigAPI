@@ -88,6 +88,16 @@ public class TEntity {
 		return getTarget(player, 10);
 	}
 
+	public static <T extends Damageable> T setHealth(T entity, double health) {
+		entity.setHealth(health < ((Damageable) entity).getMaxHealth() ? health : ((Damageable) entity).getMaxHealth());
+		return entity;
+	}
+
+	public static <T extends Damageable> T addHealth(T entity, double health) {
+		setHealth(entity, health + ((Damageable) entity).getHealth());
+		return entity;
+	}
+
 	@SuppressWarnings("deprecation")
 	public static Player toPlayer(String name) {
 		return Bukkit.getPlayer(name);

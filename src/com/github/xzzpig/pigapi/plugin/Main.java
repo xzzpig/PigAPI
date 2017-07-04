@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.xzzpig.pigapi.bukkit.TConfig;
+import com.github.xzzpig.pigapi.bukkit.TDataUtils;
 import com.github.xzzpig.pigapi.bukkit.TPrefix;
 import com.github.xzzpig.pigapi.bukkit.event.PluginLoadEvent;
 import com.github.xzzpig.pigapi.bukkit.event.PluginUnLoadEvent;
@@ -153,18 +154,31 @@ public class Main extends JavaPlugin {
 		autoSavePrefix.finish();
 		if (webserver != null)
 			webserver.stop();
+		try {
+			TDataUtils.saveData();
+			getLogger().info("DataUtils的数据保存成功");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			getLogger().info("DataUtils的数据保存失败");
+		}
 		Event.callEvent(new PluginUnLoadEvent());
 		getLogger().info(getName() + "插件已被停用 ");
 	}
 
 	@Override
 	public void onEnable() {
-
 		self = this;
 		TPrefix.autoSave = false;
 		saveDefaultConfig();
 		getLogger().info(getName() + getDescription().getVersion() + "插件已被加载");
-		Debuger.debug = true;
+		Debuger.debug = false;
+		try {
+			TDataUtils.loadData();
+			getLogger().info("DataUtils的数据读取成功");
+		} catch (ClassNotFoundException | IOException e1) {
+			e1.printStackTrace();
+			getLogger().info("DataUtils的数据读取失败");
+		}
 		Vars.config = TConfig.getConfigFile("PigAPI", "config.yml");
 		Vars.dataFile = new File(getDataFolder(), "data.pigdata");
 		try {
