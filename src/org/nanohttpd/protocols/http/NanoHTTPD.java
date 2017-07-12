@@ -125,20 +125,6 @@ import org.nanohttpd.util.IFactoryThrowing;
  */
 public abstract class NanoHTTPD {
 
-	public static final String CONTENT_DISPOSITION_REGEX = "([ |\t]*Content-Disposition[ |\t]*:)(.*)";
-
-	public static final Pattern CONTENT_DISPOSITION_PATTERN = Pattern.compile(CONTENT_DISPOSITION_REGEX,
-			Pattern.CASE_INSENSITIVE);
-
-	public static final String CONTENT_TYPE_REGEX = "([ |\t]*content-type[ |\t]*:)(.*)";
-
-	public static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile(CONTENT_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
-
-	public static final String CONTENT_DISPOSITION_ATTRIBUTE_REGEX = "[ |\t]*([a-zA-Z]*)[ |\t]*=[ |\t]*['|\"]([^\"^']*)['|\"]";
-
-	public static final Pattern CONTENT_DISPOSITION_ATTRIBUTE_PATTERN = Pattern
-			.compile(CONTENT_DISPOSITION_ATTRIBUTE_REGEX);
-
 	public static final class ResponseException extends Exception {
 
 		private static final long serialVersionUID = 6569838532917408380L;
@@ -159,6 +145,20 @@ public abstract class NanoHTTPD {
 			return this.status;
 		}
 	}
+
+	public static final String CONTENT_DISPOSITION_REGEX = "([ |\t]*Content-Disposition[ |\t]*:)(.*)";
+
+	public static final Pattern CONTENT_DISPOSITION_PATTERN = Pattern.compile(CONTENT_DISPOSITION_REGEX,
+			Pattern.CASE_INSENSITIVE);
+
+	public static final String CONTENT_TYPE_REGEX = "([ |\t]*content-type[ |\t]*:)(.*)";
+
+	public static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile(CONTENT_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
+
+	public static final String CONTENT_DISPOSITION_ATTRIBUTE_REGEX = "[ |\t]*([a-zA-Z]*)[ |\t]*=[ |\t]*['|\"]([^\"^']*)['|\"]";
+
+	public static final Pattern CONTENT_DISPOSITION_ATTRIBUTE_PATTERN = Pattern
+			.compile(CONTENT_DISPOSITION_ATTRIBUTE_REGEX);
 
 	/**
 	 * Maximum time to wait on Socket.getInputStream().read() (in milliseconds)
@@ -193,16 +193,83 @@ public abstract class NanoHTTPD {
 	 */
 	protected static Map<String, String> MIME_TYPES;
 
-	public static Map<String, String> mimeTypes() {
-		if (MIME_TYPES == null) {
-			MIME_TYPES = new HashMap<String, String>();
-			loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/default-mimetypes.properties");
-			loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/mimetypes.properties");
-			if (MIME_TYPES.isEmpty()) {
-				LOG.log(Level.WARNING, "no mime types found in the classpath! please provide mimetypes.properties");
+	/**
+	 * Decode parameters from a URL, handing the case where a single parameter
+	 * name might have been supplied several times, by return lists of values.
+	 * In general these lists will contain a single element.
+	 * 
+	 * @param parms
+	 *            original <b>NanoHTTPD</b> parameters values, as passed to the
+	 *            <code>serve()</code> method.
+	 * @return a map of <code>String</code> (parameter name) to
+	 *         <code>List&lt;String&gt;</code> (a list of the values supplied).
+	 */
+	protected static Map<String, List<String>> decodeParameters(Map<String, String> parms) {
+		return decodeParameters(parms.get(NanoHTTPD.QUERY_STRING_PARAMETER));
+	}
+
+	/**
+	 * Decode parameters from a URL, handing the case where a single parameter
+	 * name might have been supplied several times, by return lists of values.
+	 * In general these lists will contain a single element.
+	 * 
+	 * @param queryString
+	 *            a query string pulled from the URL.
+	 * @return a map of <code>String</code> (parameter name) to
+	 *         <code>List&lt;String&gt;</code> (a list of the values supplied).
+	 */
+	protected static Map<String, List<String>> decodeParameters(String queryString) {
+		Map<String, List<String>> parms = new HashMap<String, List<String>>();
+		if (queryString != null) {
+			StringTokenizer st = new StringTokenizer(queryString, "&");
+			while (st.hasMoreTokens()) {
+				String e = st.nextToken();
+				int sep = e.indexOf('=');
+				String propertyName = sep >= 0 ? decodePercent(e.substring(0, sep)).trim() : decodePercent(e).trim();
+				if (!parms.containsKey(propertyName)) {
+					parms.put(propertyName, new ArrayList<String>());
+				}
+				String propertyValue = sep >= 0 ? decodePercent(e.substring(sep + 1)) : null;
+				if (propertyValue != null) {
+					parms.get(propertyName).add(propertyValue);
+				}
 			}
 		}
-		return MIME_TYPES;
+		return parms;
+	};
+
+	/**
+	 * Decode percent encoded <code>String</code> values.
+	 * 
+	 * @param str
+	 *            the percent encoded <code>String</code>
+	 * @return expanded form of the input, for example "foo%20bar" becomes "foo
+	 *         bar"
+	 */
+	public static String decodePercent(String str) {
+		String decoded = null;
+		try {
+			decoded = URLDecoder.decode(str, "UTF8");
+		} catch (UnsupportedEncodingException ignored) {
+			NanoHTTPD.LOG.log(Level.WARNING, "Encoding not supported, ignored", ignored);
+		}
+		return decoded;
+	}
+
+	/**
+	 * Get MIME type from file name extension, if possible
+	 * 
+	 * @param uri
+	 *            the string representing a file
+	 * @return the connected mime/type
+	 */
+	public static String getMimeTypeForFile(String uri) {
+		int dot = uri.lastIndexOf('.');
+		String mime = null;
+		if (dot >= 0) {
+			mime = mimeTypes().get(uri.substring(dot + 1).toLowerCase());
+		}
+		return mime == null ? "application/octet-stream" : mime;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -226,7 +293,7 @@ public abstract class NanoHTTPD {
 		} catch (IOException e) {
 			LOG.log(Level.INFO, "no mime types available at " + resourceName);
 		}
-	};
+	}
 
 	/**
 	 * Creates an SSLSocketFactory for HTTPS. Pass a loaded KeyStore and an
@@ -287,20 +354,16 @@ public abstract class NanoHTTPD {
 		}
 	}
 
-	/**
-	 * Get MIME type from file name extension, if possible
-	 * 
-	 * @param uri
-	 *            the string representing a file
-	 * @return the connected mime/type
-	 */
-	public static String getMimeTypeForFile(String uri) {
-		int dot = uri.lastIndexOf('.');
-		String mime = null;
-		if (dot >= 0) {
-			mime = mimeTypes().get(uri.substring(dot + 1).toLowerCase());
+	public static Map<String, String> mimeTypes() {
+		if (MIME_TYPES == null) {
+			MIME_TYPES = new HashMap<String, String>();
+			loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/default-mimetypes.properties");
+			loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/mimetypes.properties");
+			if (MIME_TYPES.isEmpty()) {
+				LOG.log(Level.WARNING, "no mime types found in the classpath! please provide mimetypes.properties");
+			}
 		}
-		return mime == null ? "application/octet-stream" : mime;
+		return MIME_TYPES;
 	}
 
 	public static final void safeClose(Object closeable) {
@@ -327,10 +390,6 @@ public abstract class NanoHTTPD {
 
 	private volatile ServerSocket myServerSocket;
 
-	public ServerSocket getMyServerSocket() {
-		return myServerSocket;
-	}
-
 	private IFactoryThrowing<ServerSocket, IOException> serverSocketFactory = new DefaultServerSocketFactory();
 
 	private Thread myThread;
@@ -339,6 +398,14 @@ public abstract class NanoHTTPD {
 	 * Pluggable strategy for asynchronously executing requests.
 	 */
 	protected IAsyncRunner asyncRunner;
+
+	// -------------------------------------------------------------------------------
+	// //
+	//
+	// Threading Strategy.
+	//
+	// -------------------------------------------------------------------------------
+	// //
 
 	/**
 	 * Pluggable strategy for creating and cleaning up temporary files.
@@ -351,14 +418,6 @@ public abstract class NanoHTTPD {
 	public NanoHTTPD(int port) {
 		this(null, port);
 	}
-
-	// -------------------------------------------------------------------------------
-	// //
-	//
-	// Threading Strategy.
-	//
-	// -------------------------------------------------------------------------------
-	// //
 
 	/**
 	 * Constructs an HTTP server on given hostname and port.
@@ -391,6 +450,9 @@ public abstract class NanoHTTPD {
 		return new ClientHandler(this, inputStream, finalAccept);
 	}
 
+	// -------------------------------------------------------------------------------
+	// //
+
 	/**
 	 * Instantiate the server runnable, can be overwritten by subclasses to
 	 * provide a subclass of the ServerRunnable.
@@ -403,105 +465,28 @@ public abstract class NanoHTTPD {
 		return new ServerRunnable(this, timeout);
 	}
 
-	/**
-	 * Decode parameters from a URL, handing the case where a single parameter
-	 * name might have been supplied several times, by return lists of values.
-	 * In general these lists will contain a single element.
-	 * 
-	 * @param parms
-	 *            original <b>NanoHTTPD</b> parameters values, as passed to the
-	 *            <code>serve()</code> method.
-	 * @return a map of <code>String</code> (parameter name) to
-	 *         <code>List&lt;String&gt;</code> (a list of the values supplied).
-	 */
-	protected static Map<String, List<String>> decodeParameters(Map<String, String> parms) {
-		return decodeParameters(parms.get(NanoHTTPD.QUERY_STRING_PARAMETER));
-	}
-
-	// -------------------------------------------------------------------------------
-	// //
-
-	/**
-	 * Decode parameters from a URL, handing the case where a single parameter
-	 * name might have been supplied several times, by return lists of values.
-	 * In general these lists will contain a single element.
-	 * 
-	 * @param queryString
-	 *            a query string pulled from the URL.
-	 * @return a map of <code>String</code> (parameter name) to
-	 *         <code>List&lt;String&gt;</code> (a list of the values supplied).
-	 */
-	protected static Map<String, List<String>> decodeParameters(String queryString) {
-		Map<String, List<String>> parms = new HashMap<String, List<String>>();
-		if (queryString != null) {
-			StringTokenizer st = new StringTokenizer(queryString, "&");
-			while (st.hasMoreTokens()) {
-				String e = st.nextToken();
-				int sep = e.indexOf('=');
-				String propertyName = sep >= 0 ? decodePercent(e.substring(0, sep)).trim() : decodePercent(e).trim();
-				if (!parms.containsKey(propertyName)) {
-					parms.put(propertyName, new ArrayList<String>());
-				}
-				String propertyValue = sep >= 0 ? decodePercent(e.substring(sep + 1)) : null;
-				if (propertyValue != null) {
-					parms.get(propertyName).add(propertyValue);
-				}
-			}
-		}
-		return parms;
-	}
-
-	/**
-	 * Decode percent encoded <code>String</code> values.
-	 * 
-	 * @param str
-	 *            the percent encoded <code>String</code>
-	 * @return expanded form of the input, for example "foo%20bar" becomes "foo
-	 *         bar"
-	 */
-	public static String decodePercent(String str) {
-		String decoded = null;
-		try {
-			decoded = URLDecoder.decode(str, "UTF8");
-		} catch (UnsupportedEncodingException ignored) {
-			NanoHTTPD.LOG.log(Level.WARNING, "Encoding not supported, ignored", ignored);
-		}
-		return decoded;
-	}
-
-	/**
-	 * @return true if the gzip compression should be used if the client
-	 *         accespts it. Default this option is on for text content and off
-	 *         for everything. Override this for custom semantics.
-	 */
-	@SuppressWarnings("static-method")
-	protected boolean useGzipWhenAccepted(Response r) {
-		return r.getMimeType() != null
-				&& (r.getMimeType().toLowerCase().contains("text/") || r.getMimeType().toLowerCase().contains("/json"));
+	public String getHostname() {
+		return hostname;
 	}
 
 	public final int getListeningPort() {
 		return this.myServerSocket == null ? -1 : this.myServerSocket.getLocalPort();
 	}
 
-	public final boolean isAlive() {
-		return wasStarted() && !this.myServerSocket.isClosed() && this.myThread.isAlive();
+	public ServerSocket getMyServerSocket() {
+		return myServerSocket;
 	}
 
 	public IFactoryThrowing<ServerSocket, IOException> getServerSocketFactory() {
 		return serverSocketFactory;
 	}
 
-	public void setServerSocketFactory(IFactoryThrowing<ServerSocket, IOException> serverSocketFactory) {
-		this.serverSocketFactory = serverSocketFactory;
-	}
-
-	public String getHostname() {
-		return hostname;
-	}
-
 	public IFactory<ITempFileManager> getTempFileManagerFactory() {
 		return tempFileManagerFactory;
+	}
+
+	public final boolean isAlive() {
+		return wasStarted() && !this.myServerSocket.isClosed() && this.myThread.isAlive();
 	}
 
 	/**
@@ -574,6 +559,10 @@ public abstract class NanoHTTPD {
 	 */
 	public void setAsyncRunner(IAsyncRunner asyncRunner) {
 		this.asyncRunner = asyncRunner;
+	}
+
+	public void setServerSocketFactory(IFactoryThrowing<ServerSocket, IOException> serverSocketFactory) {
+		this.serverSocketFactory = serverSocketFactory;
 	}
 
 	/**
@@ -649,6 +638,17 @@ public abstract class NanoHTTPD {
 		} catch (Exception e) {
 			NanoHTTPD.LOG.log(Level.SEVERE, "Could not stop all connections", e);
 		}
+	}
+
+	/**
+	 * @return true if the gzip compression should be used if the client
+	 *         accespts it. Default this option is on for text content and off
+	 *         for everything. Override this for custom semantics.
+	 */
+	@SuppressWarnings("static-method")
+	protected boolean useGzipWhenAccepted(Response r) {
+		return r.getMimeType() != null
+				&& (r.getMimeType().toLowerCase().contains("text/") || r.getMimeType().toLowerCase().contains("/json"));
 	}
 
 	public final boolean wasStarted() {

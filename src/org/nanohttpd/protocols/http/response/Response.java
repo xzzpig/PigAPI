@@ -66,6 +66,55 @@ import org.nanohttpd.protocols.http.request.Method;
 public class Response implements Closeable {
 
 	/**
+	 * Create a response with unknown length (using HTTP 1.1 chunking).
+	 */
+	public static Response newChunkedResponse(IStatus status, String mimeType, InputStream data) {
+		return new Response(status, mimeType, data, -1);
+	}
+
+	public static Response newFixedLengthResponse(IStatus status, String mimeType, byte[] data) {
+		return newFixedLengthResponse(status, mimeType, new ByteArrayInputStream(data), data.length);
+	}
+
+	/**
+	 * Create a response with known length.
+	 */
+	public static Response newFixedLengthResponse(IStatus status, String mimeType, InputStream data, long totalBytes) {
+		return new Response(status, mimeType, data, totalBytes);
+	}
+
+	/**
+	 * Create a text response with known length.
+	 */
+	public static Response newFixedLengthResponse(IStatus status, String mimeType, String txt) {
+		ContentType contentType = new ContentType(mimeType);
+		if (txt == null) {
+			return newFixedLengthResponse(status, mimeType, new ByteArrayInputStream(new byte[0]), 0);
+		} else {
+			byte[] bytes;
+			try {
+				CharsetEncoder newEncoder = Charset.forName(contentType.getEncoding()).newEncoder();
+				if (!newEncoder.canEncode(txt)) {
+					contentType = contentType.tryUTF8();
+				}
+				bytes = txt.getBytes(contentType.getEncoding());
+			} catch (UnsupportedEncodingException e) {
+				NanoHTTPD.LOG.log(Level.SEVERE, "encoding problem, responding nothing", e);
+				bytes = new byte[0];
+			}
+			return newFixedLengthResponse(status, contentType.getContentTypeHeader(), new ByteArrayInputStream(bytes),
+					bytes.length);
+		}
+	}
+
+	/**
+	 * Create a text response with known length.
+	 */
+	public static Response newFixedLengthResponse(String msg) {
+		return newFixedLengthResponse(Status.OK, NanoHTTPD.MIME_HTML, msg);
+	}
+
+	/**
 	 * HTTP status code after processing, e.g. "200 OK", Status.OK
 	 */
 	private IStatus status;
@@ -136,13 +185,6 @@ public class Response implements Closeable {
 		this.cookieHeaders = new ArrayList(10);
 	}
 
-	@Override
-	public void close() throws IOException {
-		if (this.data != null) {
-			this.data.close();
-		}
-	}
-
 	/**
 	 * Adds a cookie header to the list. Should not be called manually, this is
 	 * an internal utility.
@@ -152,20 +194,17 @@ public class Response implements Closeable {
 	}
 
 	/**
-	 * Should not be called manually. This is an internally utility for JUnit
-	 * test purposes.
-	 * 
-	 * @return All unloaded cookie headers.
-	 */
-	public List<String> getCookieHeaders() {
-		return cookieHeaders;
-	}
-
-	/**
 	 * Adds given line to the header.
 	 */
 	public void addHeader(String name, String value) {
 		this.header.put(name, value);
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (this.data != null) {
+			this.data.close();
+		}
 	}
 
 	/**
@@ -183,11 +222,13 @@ public class Response implements Closeable {
 	}
 
 	/**
-	 * @return {@code true} if connection is to be closed after this Response
-	 *         has been sent.
+	 * Should not be called manually. This is an internally utility for JUnit
+	 * test purposes.
+	 * 
+	 * @return All unloaded cookie headers.
 	 */
-	public boolean isCloseConnection() {
-		return "close".equals(getHeader("connection"));
+	public List<String> getCookieHeaders() {
+		return cookieHeaders;
 	}
 
 	public InputStream getData() {
@@ -210,12 +251,17 @@ public class Response implements Closeable {
 		return this.status;
 	}
 
-	public void setGzipEncoding(boolean encodeAsGzip) {
-		this.encodeAsGzip = encodeAsGzip;
+	/**
+	 * @return {@code true} if connection is to be closed after this Response
+	 *         has been sent.
+	 */
+	public boolean isCloseConnection() {
+		return "close".equals(getHeader("connection"));
 	}
 
-	public void setKeepAlive(boolean useKeepAlive) {
-		this.keepAlive = useKeepAlive;
+	@SuppressWarnings("static-method")
+	protected void printHeader(PrintWriter pw, String key, String value) {
+		pw.append(key).append(": ").append(value).append("\r\n");
 	}
 
 	/**
@@ -270,45 +316,6 @@ public class Response implements Closeable {
 		}
 	}
 
-	@SuppressWarnings("static-method")
-	protected void printHeader(PrintWriter pw, String key, String value) {
-		pw.append(key).append(": ").append(value).append("\r\n");
-	}
-
-	protected long sendContentLengthHeaderIfNotAlreadyPresent(PrintWriter pw, long defaultSize) {
-		String contentLengthString = getHeader("content-length");
-		long size = defaultSize;
-		if (contentLengthString != null) {
-			try {
-				size = Long.parseLong(contentLengthString);
-			} catch (NumberFormatException ex) {
-				NanoHTTPD.LOG.severe("content-length was no number " + contentLengthString);
-			}
-		}
-		pw.print("Content-Length: " + size + "\r\n");
-		return size;
-	}
-
-	private void sendBodyWithCorrectTransferAndEncoding(OutputStream outputStream, long pending) throws IOException {
-		if (this.requestMethod != Method.HEAD && this.chunkedTransfer) {
-			ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(outputStream);
-			sendBodyWithCorrectEncoding(chunkedOutputStream, -1);
-			chunkedOutputStream.finish();
-		} else {
-			sendBodyWithCorrectEncoding(outputStream, pending);
-		}
-	}
-
-	private void sendBodyWithCorrectEncoding(OutputStream outputStream, long pending) throws IOException {
-		if (encodeAsGzip) {
-			GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream);
-			sendBody(gzipOutputStream, -1);
-			gzipOutputStream.finish();
-		} else {
-			sendBody(outputStream, pending);
-		}
-	}
-
 	/**
 	 * Sends the body to the specified OutputStream. The pending parameter
 	 * limits the maximum amounts of bytes sent unless it is -1, in which case
@@ -339,12 +346,54 @@ public class Response implements Closeable {
 		}
 	}
 
+	private void sendBodyWithCorrectEncoding(OutputStream outputStream, long pending) throws IOException {
+		if (encodeAsGzip) {
+			GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream);
+			sendBody(gzipOutputStream, -1);
+			gzipOutputStream.finish();
+		} else {
+			sendBody(outputStream, pending);
+		}
+	}
+
+	private void sendBodyWithCorrectTransferAndEncoding(OutputStream outputStream, long pending) throws IOException {
+		if (this.requestMethod != Method.HEAD && this.chunkedTransfer) {
+			ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(outputStream);
+			sendBodyWithCorrectEncoding(chunkedOutputStream, -1);
+			chunkedOutputStream.finish();
+		} else {
+			sendBodyWithCorrectEncoding(outputStream, pending);
+		}
+	}
+
+	protected long sendContentLengthHeaderIfNotAlreadyPresent(PrintWriter pw, long defaultSize) {
+		String contentLengthString = getHeader("content-length");
+		long size = defaultSize;
+		if (contentLengthString != null) {
+			try {
+				size = Long.parseLong(contentLengthString);
+			} catch (NumberFormatException ex) {
+				NanoHTTPD.LOG.severe("content-length was no number " + contentLengthString);
+			}
+		}
+		pw.print("Content-Length: " + size + "\r\n");
+		return size;
+	}
+
 	public void setChunkedTransfer(boolean chunkedTransfer) {
 		this.chunkedTransfer = chunkedTransfer;
 	}
 
 	public void setData(InputStream data) {
 		this.data = data;
+	}
+
+	public void setGzipEncoding(boolean encodeAsGzip) {
+		this.encodeAsGzip = encodeAsGzip;
+	}
+
+	public void setKeepAlive(boolean useKeepAlive) {
+		this.keepAlive = useKeepAlive;
 	}
 
 	public void setMimeType(String mimeType) {
@@ -357,54 +406,5 @@ public class Response implements Closeable {
 
 	public void setStatus(IStatus status) {
 		this.status = status;
-	}
-
-	/**
-	 * Create a response with unknown length (using HTTP 1.1 chunking).
-	 */
-	public static Response newChunkedResponse(IStatus status, String mimeType, InputStream data) {
-		return new Response(status, mimeType, data, -1);
-	}
-
-	public static Response newFixedLengthResponse(IStatus status, String mimeType, byte[] data) {
-		return newFixedLengthResponse(status, mimeType, new ByteArrayInputStream(data), data.length);
-	}
-
-	/**
-	 * Create a response with known length.
-	 */
-	public static Response newFixedLengthResponse(IStatus status, String mimeType, InputStream data, long totalBytes) {
-		return new Response(status, mimeType, data, totalBytes);
-	}
-
-	/**
-	 * Create a text response with known length.
-	 */
-	public static Response newFixedLengthResponse(IStatus status, String mimeType, String txt) {
-		ContentType contentType = new ContentType(mimeType);
-		if (txt == null) {
-			return newFixedLengthResponse(status, mimeType, new ByteArrayInputStream(new byte[0]), 0);
-		} else {
-			byte[] bytes;
-			try {
-				CharsetEncoder newEncoder = Charset.forName(contentType.getEncoding()).newEncoder();
-				if (!newEncoder.canEncode(txt)) {
-					contentType = contentType.tryUTF8();
-				}
-				bytes = txt.getBytes(contentType.getEncoding());
-			} catch (UnsupportedEncodingException e) {
-				NanoHTTPD.LOG.log(Level.SEVERE, "encoding problem, responding nothing", e);
-				bytes = new byte[0];
-			}
-			return newFixedLengthResponse(status, contentType.getContentTypeHeader(), new ByteArrayInputStream(bytes),
-					bytes.length);
-		}
-	}
-
-	/**
-	 * Create a text response with known length.
-	 */
-	public static Response newFixedLengthResponse(String msg) {
-		return newFixedLengthResponse(Status.OK, NanoHTTPD.MIME_HTML, msg);
 	}
 }

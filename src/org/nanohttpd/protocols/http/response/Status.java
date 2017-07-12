@@ -66,15 +66,6 @@ public enum Status implements IStatus {
 	INTERNAL_ERROR(500, "Internal Server Error"), NOT_IMPLEMENTED(501, "Not Implemented"), SERVICE_UNAVAILABLE(503,
 			"Service Unavailable"), UNSUPPORTED_HTTP_VERSION(505, "HTTP Version Not Supported");
 
-	private final int requestStatus;
-
-	private final String description;
-
-	Status(int requestStatus, String description) {
-		this.requestStatus = requestStatus;
-		this.description = description;
-	}
-
 	public static Status lookup(int requestStatus) {
 		for (Status status : Status.values()) {
 			if (status.getRequestStatus() == requestStatus) {
@@ -82,6 +73,15 @@ public enum Status implements IStatus {
 			}
 		}
 		return null;
+	}
+
+	private final int requestStatus;
+
+	private final String description;
+
+	Status(int requestStatus, String description) {
+		this.requestStatus = requestStatus;
+		this.description = description;
 	}
 
 	@Override

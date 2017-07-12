@@ -307,13 +307,6 @@ public class HTTPSession implements IHTTPSession {
 		}
 	}
 
-	private int scipOverNewLine(byte[] partHeaderBuff, int index) {
-		while (partHeaderBuff[index] != '\n') {
-			index++;
-		}
-		return ++index;
-	}
-
 	/**
 	 * Decodes parameters in percent-encoded URI-format ( e.g.
 	 * "name=Jack%20Daniels&pass=Single%20Malt" ) and adds them to given Map.
@@ -503,6 +496,19 @@ public class HTTPSession implements IHTTPSession {
 	}
 
 	/**
+	 * Deduce body length in bytes. Either from "content-length" header or read
+	 * bytes.
+	 */
+	public long getBodySize() {
+		if (this.headers.containsKey("content-length")) {
+			return Long.parseLong(this.headers.get("content-length"));
+		} else if (this.splitbyte < this.rlen) {
+			return this.rlen - this.splitbyte;
+		}
+		return 0;
+	}
+
+	/**
 	 * Find the byte positions where multipart boundaries start. This reads a
 	 * large block at a time and uses a temporary buffer to optimize (memory
 	 * mapped) file access.
@@ -568,6 +574,11 @@ public class HTTPSession implements IHTTPSession {
 		return this.method;
 	}
 
+	@Override
+	public final Map<String, List<String>> getParameters() {
+		return this.parms;
+	}
+
 	/**
 	 * @deprecated use {@link #getParameters()} instead.
 	 */
@@ -583,13 +594,18 @@ public class HTTPSession implements IHTTPSession {
 	}
 
 	@Override
-	public final Map<String, List<String>> getParameters() {
-		return this.parms;
+	public String getQueryParameterString() {
+		return this.queryParameterString;
 	}
 
 	@Override
-	public String getQueryParameterString() {
-		return this.queryParameterString;
+	public String getRemoteHostName() {
+		return this.remoteHostname;
+	}
+
+	@Override
+	public String getRemoteIpAddress() {
+		return this.remoteIp;
 	}
 
 	private RandomAccessFile getTmpBucket() {
@@ -604,19 +620,6 @@ public class HTTPSession implements IHTTPSession {
 	@Override
 	public final String getUri() {
 		return this.uri;
-	}
-
-	/**
-	 * Deduce body length in bytes. Either from "content-length" header or read
-	 * bytes.
-	 */
-	public long getBodySize() {
-		if (this.headers.containsKey("content-length")) {
-			return Long.parseLong(this.headers.get("content-length"));
-		} else if (this.splitbyte < this.rlen) {
-			return this.rlen - this.splitbyte;
-		}
-		return 0;
 	}
 
 	@Override
@@ -712,14 +715,11 @@ public class HTTPSession implements IHTTPSession {
 		return path;
 	}
 
-	@Override
-	public String getRemoteIpAddress() {
-		return this.remoteIp;
-	}
-
-	@Override
-	public String getRemoteHostName() {
-		return this.remoteHostname;
+	private int scipOverNewLine(byte[] partHeaderBuff, int index) {
+		while (partHeaderBuff[index] != '\n') {
+			index++;
+		}
+		return ++index;
 	}
 
 	@Override

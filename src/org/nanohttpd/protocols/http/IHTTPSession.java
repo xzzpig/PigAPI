@@ -57,6 +57,8 @@ public interface IHTTPSession {
 
 	Method getMethod();
 
+	Map<String, List<String>> getParameters();
+
 	/**
 	 * This method will only return the first value for a given parameter. You
 	 * will want to use getParameters if you expect multiple values for a given
@@ -67,9 +69,21 @@ public interface IHTTPSession {
 	@Deprecated
 	Map<String, String> getParms();
 
-	Map<String, List<String>> getParameters();
-
 	String getQueryParameterString();
+
+	/**
+	 * Get the remote hostname of the requester.
+	 * 
+	 * @return the hostname.
+	 */
+	String getRemoteHostName();
+
+	/**
+	 * Get the remote ip address of the requester.
+	 * 
+	 * @return the IP address.
+	 */
+	String getRemoteIpAddress();
 
 	/**
 	 * @return the path part of the URL.
@@ -83,20 +97,6 @@ public interface IHTTPSession {
 	 *            map to modify
 	 */
 	void parseBody(Map<String, String> files) throws IOException, ResponseException;
-
-	/**
-	 * Get the remote ip address of the requester.
-	 * 
-	 * @return the IP address.
-	 */
-	String getRemoteIpAddress();
-
-	/**
-	 * Get the remote hostname of the requester.
-	 * 
-	 * @return the hostname.
-	 */
-	String getRemoteHostName();
 
 	void setUri(String uri);
 }

@@ -78,26 +78,26 @@ public class ContentType {
 		}
 	}
 
-	private String getDetailFromContentHeader(String contentTypeHeader, Pattern pattern, String defaultValue,
-			int group) {
-		Matcher matcher = pattern.matcher(contentTypeHeader);
-		return matcher.find() ? matcher.group(group) : defaultValue;
-	}
-
-	public String getContentTypeHeader() {
-		return contentTypeHeader;
+	public String getBoundary() {
+		return boundary;
 	}
 
 	public String getContentType() {
 		return contentType;
 	}
 
-	public String getEncoding() {
-		return encoding == null ? ASCII_ENCODING : encoding;
+	public String getContentTypeHeader() {
+		return contentTypeHeader;
 	}
 
-	public String getBoundary() {
-		return boundary;
+	private String getDetailFromContentHeader(String contentTypeHeader, Pattern pattern, String defaultValue,
+			int group) {
+		Matcher matcher = pattern.matcher(contentTypeHeader);
+		return matcher.find() ? matcher.group(group) : defaultValue;
+	}
+
+	public String getEncoding() {
+		return encoding == null ? ASCII_ENCODING : encoding;
 	}
 
 	public boolean isMultipart() {

@@ -57,6 +57,14 @@ public class ServerRunnable implements Runnable {
 		this.timeout = timeout;
 	}
 
+	public IOException getBindException() {
+		return bindException;
+	}
+
+	public boolean hasBinded() {
+		return hasBinded;
+	}
+
 	@Override
 	public void run() {
 		try {
@@ -79,13 +87,5 @@ public class ServerRunnable implements Runnable {
 				NanoHTTPD.LOG.log(Level.FINE, "Communication with the client broken", e);
 			}
 		} while (!httpd.getMyServerSocket().isClosed());
-	}
-
-	public IOException getBindException() {
-		return bindException;
-	}
-
-	public boolean hasBinded() {
-		return hasBinded;
 	}
 }

@@ -48,10 +48,8 @@ public class ChunkedOutputStream extends FilterOutputStream {
 		super(out);
 	}
 
-	@Override
-	public void write(int b) throws IOException {
-		byte[] data = { (byte) b };
-		write(data, 0, 1);
+	public void finish() throws IOException {
+		out.write("0\r\n\r\n".getBytes());
 	}
 
 	@Override
@@ -68,7 +66,9 @@ public class ChunkedOutputStream extends FilterOutputStream {
 		out.write("\r\n".getBytes());
 	}
 
-	public void finish() throws IOException {
-		out.write("0\r\n\r\n".getBytes());
+	@Override
+	public void write(int b) throws IOException {
+		byte[] data = { (byte) b };
+		write(data, 0, 1);
 	}
 }

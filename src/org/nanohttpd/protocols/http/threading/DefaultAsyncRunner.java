@@ -54,13 +54,6 @@ public class DefaultAsyncRunner implements IAsyncRunner {
 
 	private final List<ClientHandler> running = Collections.synchronizedList(new ArrayList<ClientHandler>());
 
-	/**
-	 * @return a list with currently running clients.
-	 */
-	public List<ClientHandler> getRunning() {
-		return running;
-	}
-
 	@Override
 	public void closeAll() {
 		// copy of the list for concurrency
@@ -74,6 +67,13 @@ public class DefaultAsyncRunner implements IAsyncRunner {
 		this.running.remove(clientHandler);
 	}
 
+	protected Thread createThread(ClientHandler clientHandler) {
+		Thread t = new Thread(clientHandler);
+		t.setDaemon(true);
+		t.setName("NanoHttpd Request Processor (#" + this.requestCount + ")");
+		return t;
+	}
+
 	@Override
 	public void exec(ClientHandler clientHandler) {
 		++this.requestCount;
@@ -81,10 +81,10 @@ public class DefaultAsyncRunner implements IAsyncRunner {
 		createThread(clientHandler).start();
 	}
 
-	protected Thread createThread(ClientHandler clientHandler) {
-		Thread t = new Thread(clientHandler);
-		t.setDaemon(true);
-		t.setName("NanoHttpd Request Processor (#" + this.requestCount + ")");
-		return t;
+	/**
+	 * @return a list with currently running clients.
+	 */
+	public List<ClientHandler> getRunning() {
+		return running;
 	}
 }
