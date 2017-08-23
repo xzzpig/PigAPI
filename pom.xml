@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>com.github.xzzpig</groupId>
 			<artifactId>PigUtils</artifactId>
-			<version>dev-SNAPSHOT</version>
+			<version>ca3a917e74</version>
 		</dependency>
 	</dependencies>
 </project>

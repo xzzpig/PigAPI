@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.xzzpig.pigapi.plugin.Vars;
-import com.github.xzzpig.pigutils.PigData;
+import com.github.xzzpig.pigutils.data.PigData;
 
 public class TPrefix {
 	public static boolean autoSave = true;

@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 import com.github.xzzpig.pigapi.bukkit.TStringMatcher;
 import com.github.xzzpig.pigapi.plugin.Main;
-import com.github.xzzpig.pigutils.PigData;
+import com.github.xzzpig.pigutils.data.PigData;
 import com.github.xzzpig.pigutils.json.JSONObject;
 
 public class JavaScriptAPI {

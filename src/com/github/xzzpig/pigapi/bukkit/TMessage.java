@@ -268,8 +268,7 @@ public class TMessage {
 			sendPack.invoke(playerConnection, PacketPlayOutChat);
 		} catch (Exception e) {
 			// if (hd == null) {
-			// hd = (Plugin)
-			// Bukkit.getPluginManager().getPlugin("HolographicDisplays");
+			// hd = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
 			// if (hd != null)
 			// Main.self.getLogger().info("尝试使用HolographicDisplays插件发送TM");
 			// }

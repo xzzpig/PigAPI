@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.github.xzzpig.pigutils.PigData;
+import com.github.xzzpig.pigutils.data.PigData;
 
 public class Vars {
 	public static String chatformat;
